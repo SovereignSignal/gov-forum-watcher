@@ -16,7 +16,7 @@ export default function Home() {
   const [filterMode, setFilterMode] = useState<'all' | 'your'>('your');
   
   const { forums, enabledForums, addForum, removeForum, toggleForum } = useForums();
-  const { discussions, isLoading, error, lastUpdated, refresh } = useDiscussions(enabledForums);
+  const { discussions, isLoading, error, lastUpdated, forumStates, refresh } = useDiscussions(enabledForums);
   const { alerts, addAlert, removeAlert, toggleAlert } = useAlerts();
 
   useEffect(() => {
@@ -52,6 +52,7 @@ export default function Home() {
                 searchQuery={searchQuery}
                 filterMode={filterMode}
                 enabledForumIds={enabledForums.map(f => f.id)}
+                forumStates={forumStates}
               />
               <RightSidebar
                 searchQuery={searchQuery}

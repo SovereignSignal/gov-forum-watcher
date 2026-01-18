@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { RefreshCw, AlertCircle, Clock } from 'lucide-react';
+import { RefreshCw, AlertCircle, Clock, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { DiscussionTopic, KeywordAlert } from '@/types';
 import { DiscussionItem } from './DiscussionItem';
+import { ForumLoadingState } from '@/hooks/useDiscussions';
 import { format } from 'date-fns';
 
 interface DiscussionFeedProps {
@@ -16,6 +17,7 @@ interface DiscussionFeedProps {
   searchQuery: string;
   filterMode: 'all' | 'your';
   enabledForumIds: string[];
+  forumStates: ForumLoadingState[];
 }
 
 export function DiscussionFeed({
@@ -28,6 +30,7 @@ export function DiscussionFeed({
   searchQuery,
   filterMode: _filterMode,
   enabledForumIds,
+  forumStates,
 }: DiscussionFeedProps) {
   void _filterMode;
   const [displayCount, setDisplayCount] = useState(20);
@@ -82,8 +85,35 @@ export function DiscussionFeed({
         </div>
       )}
 
+      {isLoading && forumStates.length > 0 && (
+        <div className="px-4 py-2 bg-gray-800/50 border-b border-gray-800">
+          <p className="text-xs text-gray-400 mb-2">Loading forums...</p>
+          <div className="flex flex-wrap gap-2">
+            {forumStates.map((state) => (
+              <span
+                key={state.forumId}
+                className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs ${
+                  state.status === 'loading'
+                    ? 'bg-indigo-900/30 text-indigo-300'
+                    : state.status === 'success'
+                    ? 'bg-green-900/30 text-green-300'
+                    : state.status === 'error'
+                    ? 'bg-red-900/30 text-red-300'
+                    : 'bg-gray-700 text-gray-400'
+                }`}
+              >
+                {state.status === 'loading' && <Loader2 className="w-3 h-3 animate-spin" />}
+                {state.status === 'success' && <CheckCircle className="w-3 h-3" />}
+                {state.status === 'error' && <XCircle className="w-3 h-3" />}
+                {state.forumName}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 overflow-y-auto">
-        {isLoading && discussions.length === 0 ? (
+        {isLoading && discussions.length === 0 && forumStates.length === 0 ? (
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <RefreshCw className="w-8 h-8 text-indigo-400 animate-spin mx-auto mb-4" />

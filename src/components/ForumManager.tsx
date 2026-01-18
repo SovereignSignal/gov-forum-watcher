@@ -1,5 +1,6 @@
 'use client';
 
+<<<<<<< Updated upstream
 import { useState, useMemo } from 'react';
 import {
   Plus,
@@ -21,6 +22,13 @@ import {
   searchForums,
   getTotalForumCount,
 } from '@/lib/forumPresets';
+=======
+import { useState } from 'react';
+import { Plus, Trash2, ExternalLink, ToggleLeft, ToggleRight, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Forum } from '@/types';
+import { ConfirmDialog } from './ConfirmDialog';
+import { normalizeUrl, isValidUrl } from '@/lib/url';
+>>>>>>> Stashed changes
 
 interface ForumManagerProps {
   forums: Forum[];
@@ -60,6 +68,7 @@ export function ForumManager({
   const [newName, setNewName] = useState('');
   const [newCategoryId, setNewCategoryId] = useState('');
   const [isAdding, setIsAdding] = useState(false);
+<<<<<<< Updated upstream
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     new Set(['l2-protocols', 'defi-lending', 'major-daos'])
@@ -85,9 +94,21 @@ export function ForumManager({
 
   const totalAvailable = getTotalForumCount();
   const totalAdded = forums.length;
+=======
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [validationSuccess, setValidationSuccess] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string } | null>(null);
+>>>>>>> Stashed changes
 
-  const handleAddForum = () => {
+  const urlExists = (url: string) => {
+    const normalized = normalizeUrl(url);
+    return forums.some(f => normalizeUrl(f.discourseForum.url) === normalized);
+  };
+
+  const handleValidateAndAdd = async () => {
     if (!newUrl.trim()) return;
+<<<<<<< Updated upstream
 
     const name =
       newName.trim() ||
@@ -114,6 +135,63 @@ export function ForumManager({
   const handleQuickAdd = (preset: ForumPreset, categoryId: string) => {
     if (addedForumUrls.has(preset.url)) return;
 
+=======
+    
+    if (!isValidUrl(newUrl)) {
+      setValidationError('Please enter a valid URL (e.g., https://forum.example.com/)');
+      return;
+    }
+
+    const normalized = normalizeUrl(newUrl);
+    if (urlExists(normalized)) {
+      setValidationError('This forum has already been added');
+      return;
+    }
+
+    setIsValidating(true);
+    setValidationError(null);
+    setValidationSuccess(false);
+
+    try {
+      const response = await fetch(`/api/validate-discourse?url=${encodeURIComponent(normalized)}`);
+      const data = await response.json();
+
+      if (data.valid) {
+        setValidationSuccess(true);
+        const name = newName.trim() || data.name || new URL(normalized).hostname.replace('www.', '').split('.')[0];
+        const cname = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        
+        onAddForum({
+          cname,
+          name,
+          discourseForum: {
+            url: normalized,
+            categoryId: newCategoryId ? parseInt(newCategoryId, 10) : undefined,
+          },
+          isEnabled: true,
+        });
+        
+        setTimeout(() => {
+          setNewUrl('');
+          setNewName('');
+          setNewCategoryId('');
+          setIsAdding(false);
+          setValidationSuccess(false);
+        }, 500);
+      } else {
+        setValidationError(data.error || 'Could not verify this is a Discourse forum');
+      }
+    } catch {
+      setValidationError('Failed to validate forum URL. Please try again.');
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  const handleQuickAdd = (preset: typeof DEFAULT_FORUMS[0]) => {
+    if (urlExists(preset.url)) return;
+    
+>>>>>>> Stashed changes
     const cname = preset.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
     onAddForum({
       cname,
@@ -129,6 +207,7 @@ export function ForumManager({
     });
   };
 
+<<<<<<< Updated upstream
   const handleAddAllInCategory = (categoryId: string) => {
     const category = FORUM_CATEGORIES.find((c) => c.id === categoryId);
     if (!category) return;
@@ -289,6 +368,176 @@ export function ForumManager({
                   <button
                     onClick={() => toggleCategory(category.id)}
                     className="flex items-center justify-between w-full p-4 text-left hover:bg-gray-800/50 transition-colors"
+=======
+  const handleDeleteClick = (forum: Forum) => {
+    setDeleteConfirm({ id: forum.id, name: forum.name });
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteConfirm) {
+      onRemoveForum(deleteConfirm.id);
+      setDeleteConfirm(null);
+    }
+  };
+
+  return (
+    <div className="p-6">
+      <h2 className="text-xl font-semibold text-white mb-6">Manage Forums</h2>
+      
+      <div className="mb-8">
+        <h3 className="text-sm font-medium text-gray-400 mb-3">Quick Add Popular Forums</h3>
+        <div className="flex flex-wrap gap-2">
+          {DEFAULT_FORUMS.map((preset) => {
+            const exists = urlExists(preset.url);
+            return (
+              <button
+                key={preset.url}
+                onClick={() => handleQuickAdd(preset)}
+                disabled={exists}
+                aria-label={exists ? `${preset.name} already added` : `Add ${preset.name} forum`}
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                  exists
+                    ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                    : 'bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/30'
+                }`}
+              >
+                {exists ? '✓ ' : '+ '}{preset.name}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="text-sm font-medium text-gray-400 mb-3">Add Custom Forum</h3>
+        {isAdding ? (
+          <div className="space-y-3 p-4 bg-gray-800/50 rounded-lg">
+            <div>
+              <input
+                type="url"
+                value={newUrl}
+                onChange={(e) => {
+                  setNewUrl(e.target.value);
+                  setValidationError(null);
+                }}
+                placeholder="Forum URL (e.g., https://governance.aave.com/)"
+                aria-label="Forum URL"
+                aria-invalid={!!validationError}
+                className={`w-full px-3 py-2 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none ${
+                  validationError ? 'border-red-500' : 'border-gray-700 focus:border-indigo-500'
+                }`}
+              />
+              {validationError && (
+                <p className="mt-1 text-sm text-red-400 flex items-center gap-1">
+                  <XCircle className="w-4 h-4" />
+                  {validationError}
+                </p>
+              )}
+              {validationSuccess && (
+                <p className="mt-1 text-sm text-green-400 flex items-center gap-1">
+                  <CheckCircle className="w-4 h-4" />
+                  Forum validated successfully!
+                </p>
+              )}
+            </div>
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="Display name (auto-detected)"
+                aria-label="Forum display name"
+                className="flex-1 px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+              />
+              <input
+                type="number"
+                value={newCategoryId}
+                onChange={(e) => setNewCategoryId(e.target.value)}
+                placeholder="Category ID"
+                aria-label="Category ID filter"
+                className="w-32 px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleValidateAndAdd}
+                disabled={!newUrl.trim() || isValidating}
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors"
+              >
+                {isValidating && <Loader2 className="w-4 h-4 animate-spin" />}
+                {isValidating ? 'Validating...' : 'Add Forum'}
+              </button>
+              <button
+                onClick={() => {
+                  setIsAdding(false);
+                  setValidationError(null);
+                  setNewUrl('');
+                  setNewName('');
+                  setNewCategoryId('');
+                }}
+                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={() => setIsAdding(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded-lg transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add Custom Forum
+          </button>
+        )}
+      </div>
+
+      <div>
+        <h3 className="text-sm font-medium text-gray-400 mb-3">Your Forums ({forums.length})</h3>
+        {forums.length === 0 ? (
+          <p className="text-gray-500 text-sm">No forums added yet. Add some forums above to get started.</p>
+        ) : (
+          <div className="space-y-2">
+            {forums.map((forum) => (
+              <div
+                key={forum.id}
+                className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
+                  forum.isEnabled ? 'bg-gray-800' : 'bg-gray-800/50'
+                }`}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-xs font-bold">
+                      {forum.name.slice(0, 2).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className={`font-medium truncate ${forum.isEnabled ? 'text-white' : 'text-gray-500'}`}>
+                      {forum.name}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {forum.discourseForum.url}
+                      {forum.discourseForum.categoryId && ` · Category ${forum.discourseForum.categoryId}`}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <a
+                    href={forum.discourseForum.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 text-gray-500 hover:text-white transition-colors"
+                    aria-label={`Open ${forum.name} forum in new tab`}
+                    title={`Open ${forum.name}`}
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                  <button
+                    onClick={() => onToggleForum(forum.id)}
+                    className="p-2 text-gray-500 hover:text-white transition-colors"
+                    aria-label={forum.isEnabled ? `Disable ${forum.name} forum` : `Enable ${forum.name} forum`}
+                    title={forum.isEnabled ? 'Disable' : 'Enable'}
+>>>>>>> Stashed changes
                   >
                     <div className="flex items-center gap-3">
                       {isExpanded ? (
@@ -379,8 +628,15 @@ export function ForumManager({
                     Add Forum
                   </button>
                   <button
+<<<<<<< Updated upstream
                     onClick={() => setIsAdding(false)}
                     className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors"
+=======
+                    onClick={() => handleDeleteClick(forum)}
+                    className="p-2 text-gray-500 hover:text-red-400 transition-colors"
+                    aria-label={`Remove ${forum.name} forum`}
+                    title="Remove forum"
+>>>>>>> Stashed changes
                   >
                     Cancel
                   </button>
@@ -396,6 +652,7 @@ export function ForumManager({
               </button>
             )}
           </div>
+<<<<<<< Updated upstream
         </div>
       ) : (
         <div className="flex-1 overflow-y-auto">
@@ -478,6 +735,20 @@ export function ForumManager({
           )}
         </div>
       )}
+=======
+        )}
+      </div>
+      <ConfirmDialog
+        isOpen={!!deleteConfirm}
+        title="Remove Forum"
+        message={`Are you sure you want to remove "${deleteConfirm?.name}"? This will remove it from your watch list.`}
+        confirmLabel="Remove"
+        cancelLabel="Keep"
+        variant="danger"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteConfirm(null)}
+      />
+>>>>>>> Stashed changes
     </div>
   );
 }

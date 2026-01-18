@@ -39,18 +39,21 @@ export function RightSidebar({
     <aside className="w-80 bg-gray-900 border-l border-gray-800 flex flex-col h-full">
       <div className="p-4 border-b border-gray-800">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" aria-hidden="true" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search discussions..."
+            aria-label="Search discussions"
             className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 text-sm"
           />
           {searchQuery && (
             <button
               onClick={() => onSearchChange('')}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+              aria-label="Clear search"
+              title="Clear search"
             >
               <X className="w-4 h-4" />
             </button>
@@ -64,9 +67,10 @@ export function RightSidebar({
             <Bell className="w-4 h-4" />
             Keyword Alerts
           </h3>
-          <p className="text-xs text-gray-500 mb-3">
-            Highlight discussions containing these keywords
-          </p>
+          <div className="text-xs text-gray-500 mb-3 p-2 bg-gray-800/50 rounded-lg">
+            <p className="mb-1"><strong className="text-gray-400">Note:</strong> Alerts highlight matching discussions with a yellow border.</p>
+            <p>Use the search box above to filter/hide non-matching discussions.</p>
+          </div>
           
           <div className="flex gap-2 mb-3">
             <input
@@ -75,11 +79,14 @@ export function RightSidebar({
               onChange={(e) => setNewKeyword(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Add keyword..."
+              aria-label="New keyword alert"
               className="flex-1 px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 text-sm"
             />
             <button
               onClick={handleAddAlert}
               disabled={!newKeyword.trim()}
+              aria-label="Add keyword alert"
+              title="Add alert"
               className="p-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
             >
               <Plus className="w-4 h-4" />
@@ -104,6 +111,8 @@ export function RightSidebar({
                     <button
                       onClick={() => onToggleAlert(alert.id)}
                       className="p-1 text-gray-500 hover:text-white transition-colors"
+                      aria-label={alert.isEnabled ? `Disable alert for "${alert.keyword}"` : `Enable alert for "${alert.keyword}"`}
+                      title={alert.isEnabled ? 'Disable' : 'Enable'}
                     >
                       {alert.isEnabled ? (
                         <Bell className="w-3.5 h-3.5 text-yellow-400" />
@@ -114,6 +123,8 @@ export function RightSidebar({
                     <button
                       onClick={() => onRemoveAlert(alert.id)}
                       className="p-1 text-gray-500 hover:text-red-400 transition-colors"
+                      aria-label={`Remove alert for "${alert.keyword}"`}
+                      title="Remove"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
