@@ -26,13 +26,32 @@ export async function GET(request: NextRequest) {
     const baseUrl = url.endsWith('/') ? url.slice(0, -1) : url;
     let forumName = 'Discourse Forum';
 
+    // Helper to extract a clean name from hostname
+    const getNameFromHostname = (url: string): string => {
+      const hostname = new URL(url).hostname;
+      // Remove common prefixes and get the main domain part
+      const cleanHost = hostname
+        .replace(/^(www\.|forum\.|gov\.|governance\.|discuss\.|community\.|research\.|dao\.)/i, '')
+        .split('.')[0];
+      // Capitalize first letter
+      return cleanHost.charAt(0).toUpperCase() + cleanHost.slice(1);
+    };
+
+    // Helper to validate and clean forum name
+    const cleanForumName = (name: string | undefined, fallbackUrl: string): string => {
+      if (!name || name.toLowerCase() === 'forum' || name.toLowerCase() === 'discourse') {
+        return getNameFromHostname(fallbackUrl);
+      }
+      return name;
+    };
+
     // Try /site.json first (most reliable for Discourse detection)
     const siteResponse = await tryFetch(`${baseUrl}/site.json`);
     if (siteResponse) {
       try {
         const siteData = await siteResponse.json();
         if (siteData.default_locale !== undefined || siteData.categories !== undefined) {
-          forumName = siteData.title || siteData.description || forumName;
+          forumName = cleanForumName(siteData.title || siteData.description, baseUrl);
           return NextResponse.json({ valid: true, name: forumName });
         }
       } catch {
@@ -46,7 +65,7 @@ export async function GET(request: NextRequest) {
       try {
         const aboutData = await aboutResponse.json();
         if (aboutData.about?.title || aboutData.about?.description) {
-          forumName = aboutData.about.title || forumName;
+          forumName = cleanForumName(aboutData.about.title, baseUrl);
           return NextResponse.json({ valid: true, name: forumName });
         }
       } catch {
@@ -60,10 +79,7 @@ export async function GET(request: NextRequest) {
       try {
         const latestData = await latestResponse.json();
         if (latestData.topic_list?.topics) {
-          // Extract name from URL if we got here
-          const hostname = new URL(baseUrl).hostname;
-          forumName = hostname.replace('www.', '').split('.')[0];
-          forumName = forumName.charAt(0).toUpperCase() + forumName.slice(1) + ' Forum';
+          forumName = getNameFromHostname(baseUrl);
           return NextResponse.json({ valid: true, name: forumName });
         }
       } catch {
@@ -76,9 +92,7 @@ export async function GET(request: NextRequest) {
     if (htmlResponse) {
       const html = await htmlResponse.text();
       if (html.includes('discourse') || html.includes('Discourse') || html.includes('data-discourse')) {
-        const hostname = new URL(baseUrl).hostname;
-        forumName = hostname.replace('www.', '').split('.')[0];
-        forumName = forumName.charAt(0).toUpperCase() + forumName.slice(1) + ' Forum';
+        forumName = getNameFromHostname(baseUrl);
         return NextResponse.json({ valid: true, name: forumName });
       }
     }

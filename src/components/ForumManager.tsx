@@ -25,6 +25,7 @@ import {
   getTotalForumCount,
 } from '@/lib/forumPresets';
 import { ConfirmDialog } from './ConfirmDialog';
+import { Tooltip } from './Tooltip';
 import { normalizeUrl, isValidUrl } from '@/lib/url';
 
 interface ForumManagerProps {
@@ -537,36 +538,39 @@ export function ForumManager({
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <a
-                      href={forum.discourseForum.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 text-gray-500 hover:text-white transition-colors"
-                      aria-label={`Open ${forum.name} forum in new tab`}
-                      title={`Open ${forum.name}`}
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                    <button
-                      onClick={() => onToggleForum(forum.id)}
-                      className="p-2 text-gray-500 hover:text-white transition-colors"
-                      aria-label={forum.isEnabled ? `Disable ${forum.name} forum` : `Enable ${forum.name} forum`}
-                      title={forum.isEnabled ? 'Disable' : 'Enable'}
-                    >
-                      {forum.isEnabled ? (
-                        <ToggleRight className="w-5 h-5 text-indigo-400" />
-                      ) : (
-                        <ToggleLeft className="w-5 h-5" />
-                      )}
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(forum)}
-                      className="p-2 text-gray-500 hover:text-red-400 transition-colors"
-                      aria-label={`Remove ${forum.name} forum`}
-                      title="Remove forum"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <Tooltip content={`Open ${forum.name}`} position="top">
+                      <a
+                        href={forum.discourseForum.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 text-gray-500 hover:text-white transition-colors"
+                        aria-label={`Open ${forum.name} forum in new tab`}
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                    </Tooltip>
+                    <Tooltip content={forum.isEnabled ? 'Disable' : 'Enable'} position="top">
+                      <button
+                        onClick={() => onToggleForum(forum.id)}
+                        className="p-2 text-gray-500 hover:text-white transition-colors"
+                        aria-label={forum.isEnabled ? `Disable ${forum.name} forum` : `Enable ${forum.name} forum`}
+                      >
+                        {forum.isEnabled ? (
+                          <ToggleRight className="w-5 h-5 text-indigo-400" />
+                        ) : (
+                          <ToggleLeft className="w-5 h-5" />
+                        )}
+                      </button>
+                    </Tooltip>
+                    <Tooltip content="Remove" position="top">
+                      <button
+                        onClick={() => handleDeleteClick(forum)}
+                        className="p-2 text-gray-500 hover:text-red-400 transition-colors"
+                        aria-label={`Remove ${forum.name} forum`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </Tooltip>
                   </div>
                 </div>
               ))}
