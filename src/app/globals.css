@@ -15,15 +15,15 @@ html, html.dark {
 
 /* Light theme */
 html.light {
-  --background: #f3f4f6 !important;
-  --foreground: #111827 !important;
-  --card-bg: #ffffff !important;
-  --card-border: #e5e7eb !important;
-  --sidebar-bg: #ffffff !important;
-  --header-bg: #f9fafb !important;
-  --text-primary: #111827 !important;
-  --text-secondary: #4b5563 !important;
-  --text-muted: #6b7280 !important;
+  --background: #f3f4f6;
+  --foreground: #111827;
+  --card-bg: #ffffff;
+  --card-border: #d1d5db;
+  --sidebar-bg: #ffffff;
+  --header-bg: #f9fafb;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
 }
 
 @theme inline {
@@ -64,4 +64,84 @@ body {
 
 .theme-text-muted {
   color: var(--text-muted) !important;
+}
+
+/* ===== LIGHT THEME OVERRIDES FOR TAILWIND CLASSES ===== */
+/* Override all hardcoded dark background colors in light mode */
+html.light .bg-gray-900,
+html.light .bg-gray-800,
+html.light .bg-gray-950 {
+  background-color: var(--card-bg) !important;
+}
+
+html.light .bg-gray-900\/50,
+html.light .bg-gray-800\/50 {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Override dark border colors */
+html.light .border-gray-800,
+html.light .border-gray-700 {
+  border-color: var(--card-border) !important;
+}
+
+/* Override text colors */
+html.light .text-white {
+  color: var(--text-primary) !important;
+}
+
+html.light .text-gray-400,
+html.light .text-gray-300 {
+  color: var(--text-secondary) !important;
+}
+
+html.light .text-gray-500,
+html.light .text-gray-600 {
+  color: var(--text-muted) !important;
+}
+
+/* Hover states */
+html.light .hover\:bg-gray-800:hover,
+html.light .hover\:bg-gray-700:hover {
+  background-color: #e5e7eb !important;
+}
+
+html.light .hover\:text-white:hover {
+  color: var(--text-primary) !important;
+}
+
+/* Keep indigo/purple accent colors the same */
+html.light .bg-indigo-600 {
+  background-color: #4f46e5 !important;
+}
+
+html.light .text-indigo-400,
+html.light .text-indigo-500 {
+  color: #6366f1 !important;
+}
+
+/* Input and select elements */
+html.light input,
+html.light select,
+html.light textarea {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-primary) !important;
+}
+
+html.light input::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Scrollbar styling for light mode */
+html.light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
