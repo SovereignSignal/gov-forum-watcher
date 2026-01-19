@@ -43,16 +43,19 @@ src/
 ├── components/                   # React components
 │   ├── ConfirmDialog.tsx         # Reusable confirmation modal
 │   ├── DiscussionFeed.tsx        # Main feed display with loading states
-│   ├── DiscussionItem.tsx        # Individual discussion card
+│   ├── DiscussionItem.tsx        # Individual discussion card with bookmark toggle
+│   ├── FeedFilters.tsx           # Date range and forum source filters
 │   ├── FilterTabs.tsx            # Tab filter component (All/Your Forums)
 │   ├── ForumManager.tsx          # Forum management UI with preset directory
 │   ├── RightSidebar.tsx          # Search and keyword alerts sidebar
-│   ├── Sidebar.tsx               # Left navigation (Feed/Projects/Settings)
+│   ├── Sidebar.tsx               # Left navigation with theme toggle
 │   └── Tooltip.tsx               # Reusable tooltip component
 ├── hooks/                        # Custom React hooks
 │   ├── useAlerts.ts              # Keyword alerts state with localStorage
+│   ├── useBookmarks.ts           # Bookmarked discussions with localStorage + migration
 │   ├── useDiscussions.ts         # Discussions fetching with per-forum states
-│   └── useForums.ts              # Forums state management with localStorage
+│   ├── useForums.ts              # Forums state management with localStorage
+│   └── useTheme.ts               # Dark/light theme with localStorage persistence
 ├── lib/                          # Utility libraries
 │   ├── forumPresets.ts           # 70+ pre-configured forum presets by category
 │   ├── storage.ts                # LocalStorage utilities for forums/alerts
@@ -188,6 +191,19 @@ interface ForumLoadingState {
   error?: string;
 }
 
+// Bookmarked discussion (stored in localStorage)
+interface Bookmark {
+  id: string;              // UUID
+  topicRefId: string;      // Reference to discussion (protocol-topicId)
+  topicTitle: string;
+  topicUrl: string;        // Full URL to discussion
+  protocol: string;        // Forum identifier
+  createdAt: string;       // ISO timestamp
+}
+
+// Theme preference
+type Theme = 'dark' | 'light';
+
 // Raw Discourse API response types
 interface DiscourseTopicResponse {
   id: number;
@@ -219,8 +235,13 @@ interface DiscourseLatestResponse {
 
 LocalStorage keys used by the application:
 
-- `gov-forum-watcher-forums` - Array of Forum objects
-- `gov-forum-watcher-alerts` - Array of KeywordAlert objects
+| Key | Type | Description |
+|-----|------|-------------|
+| `gov-forum-watcher-forums` | `Forum[]` | User's forum configurations |
+| `gov-forum-watcher-alerts` | `KeywordAlert[]` | Keyword alert settings |
+| `gov-forum-watcher-bookmarks` | `Bookmark[]` | Saved discussion bookmarks |
+| `gov-forum-watcher-theme` | `'dark' \| 'light'` | User's theme preference |
+| `gov-forum-watcher-bookmarks-migrated-v1` | `'true'` | Migration flag for bookmark URL fix |
 
 ## URL Utilities
 
@@ -283,7 +304,8 @@ import {
 |-----------|---------|-----------|
 | `ConfirmDialog` | Modal confirmation dialog | `isOpen`, `title`, `message`, `onConfirm`, `onCancel`, `variant` |
 | `DiscussionFeed` | Main feed displaying discussion topics | `discussions`, `isLoading`, `alerts`, `searchQuery`, `forumStates` |
-| `DiscussionItem` | Individual discussion card | `topic`, `alerts` (for keyword highlighting) |
+| `DiscussionItem` | Individual discussion card | `topic`, `alerts`, `isBookmarked`, `onToggleBookmark` |
+| `FeedFilters` | Date range and forum source filters | `dateRange`, `forumFilter`, `onDateRangeChange`, `onForumFilterChange`, `forums` |
 | `FilterTabs` | Toggle between "All" and "Your Forums" | `filterMode`, `onFilterChange`, `totalCount`, `enabledCount` |
 | `ForumManager` | Full forum management UI with presets | `forums`, `onAddForum`, `onRemoveForum`, `onToggleForum` |
 | `RightSidebar` | Search input and keyword alerts panel | `searchQuery`, `onSearchChange`, `alerts`, `onAddAlert` |
@@ -294,18 +316,53 @@ import {
 
 | Hook | Purpose | Returns |
 |------|---------|---------|
+| `useTheme` | Theme toggle with localStorage | `theme`, `toggleTheme`, `isDark` |
+| `useBookmarks` | Bookmark CRUD with localStorage | `bookmarks`, `addBookmark`, `removeBookmark`, `isBookmarked` |
 | `useForums` | Forum CRUD with localStorage | `forums`, `enabledForums`, `addForum`, `removeForum`, `toggleForum`, `updateForum` |
 | `useDiscussions` | Fetch discussions from enabled forums | `discussions`, `isLoading`, `error`, `lastUpdated`, `forumStates`, `refresh` |
 | `useAlerts` | Keyword alert CRUD with localStorage | `alerts`, `enabledAlerts`, `addAlert`, `removeAlert`, `toggleAlert` |
 
+### useBookmarks Details
+
+The `useBookmarks` hook includes a one-time migration that fixes old bookmarks created with base-domain-only URLs. On first load, it:
+1. Detects bookmarks missing `/t/` in the URL
+2. Reconstructs the full topic URL from `topicRefId` and `topicTitle`
+3. Saves the migrated bookmarks back to localStorage
+4. Sets a migration flag to prevent re-running
+
 ## Styling Conventions
 
 - **Framework**: Tailwind CSS 4
-- **Theme**: Dark mode with gray-900/950 backgrounds
+- **Default Theme**: Dark mode with gray-900/950 backgrounds
+- **Light Theme**: Light gray backgrounds with dark text
 - **Accent Color**: Indigo-600
 - **Alert Highlighting**: Yellow-500 background
 
-All styling uses Tailwind utility classes inline. Global styles are minimal and defined in `globals.css`.
+### Theme System
+
+The app supports dark/light mode toggle via CSS variables defined in `globals.css`:
+
+```css
+/* Dark theme (default) */
+html, html.dark {
+  --background: #0a0a0a;
+  --card-bg: #111827;
+  --text-primary: #ffffff;
+  /* ... */
+}
+
+/* Light theme */
+html.light {
+  --background: #f3f4f6;
+  --card-bg: #ffffff;
+  --text-primary: #111827;
+  /* ... */
+}
+```
+
+The `useTheme` hook manages theme state and applies the `.light` or `.dark` class to `<html>`.
+
+**Important**: Because components use hardcoded Tailwind classes (e.g., `bg-gray-900`, `text-white`), `globals.css` includes `html.light` selectors that override these classes in light mode.
 
 ## Code Conventions
 
@@ -398,3 +455,41 @@ No testing framework is currently configured. If adding tests:
 - Branch naming: `claude/<feature-name>-<session-id>`
 - Commit messages should be descriptive of changes made
 - Push with: `git push -u origin <branch-name>`
+
+## Deployment
+
+- **Platform**: Railway
+- **Production URL**: https://gov-forum-watcher-production.up.railway.app/
+- **Build Command**: `npm run build`
+- **Start Command**: `npm start`
+
+No environment variables required - the app is entirely client-side with API routes for Discourse proxying.
+
+## Phase 1 Features (Completed)
+
+The following features have been implemented:
+
+1. **Dark/Light Theme Toggle** - Toggle in sidebar header, persists to localStorage
+2. **Discussion Bookmarking** - Bookmark icon on each discussion, "Saved" view in sidebar
+3. **Date Range Filtering** - Filter by Today, This Week, This Month, All Time
+4. **Forum Source Filtering** - Filter discussions by specific forum
+5. **Custom Favicon** - Purple bell icon with notification dot (`/icon.svg`)
+
+## Known Patterns and Gotchas
+
+### Hydration Safety
+All hooks that use localStorage must handle SSR:
+```typescript
+const [isHydrated, setIsHydrated] = useState(false);
+if (typeof window !== 'undefined' && !isHydrated) {
+  // Read from localStorage
+  setIsHydrated(true);
+}
+```
+
+### Theme CSS Override Strategy
+Because components use hardcoded Tailwind classes like `bg-gray-900`, the light theme uses CSS selectors like `html.light .bg-gray-900` with `!important` to override them. This is intentional - modifying all components to use CSS variables would be a larger refactor.
+
+### Bookmark URL Format
+Bookmark URLs must be full topic URLs: `{forumUrl}/t/{slug}/{topicId}`
+The migration system ensures old bookmarks with incomplete URLs are fixed on app load.

@@ -2,6 +2,8 @@
 
 A unified interface for aggregating and monitoring governance discussions from Discourse-based forums used by DAOs, blockchain protocols, and developer communities.
 
+**Live Demo:** https://gov-forum-watcher-production.up.railway.app/
+
 ## Features
 
 - **Multi-Forum Aggregation** - Monitor 70+ pre-configured governance forums from a single dashboard
@@ -9,6 +11,9 @@ A unified interface for aggregating and monitoring governance discussions from D
 - **Keyword Alerts** - Set up alerts to highlight discussions containing specific keywords
 - **Forum Management** - Add, remove, enable/disable forums with a visual directory
 - **Search & Filter** - Search discussions and filter by enabled forums
+- **Dark/Light Theme** - Toggle between dark and light modes with preference persistence
+- **Bookmark Discussions** - Save important discussions for later reference
+- **Advanced Filtering** - Filter by date range (Today, This Week, This Month) and forum source
 - **Privacy-First** - All data stored locally in browser; no external database
 
 ## Supported Forums

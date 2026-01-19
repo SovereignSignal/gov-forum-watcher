@@ -1,63 +1,88 @@
 # Gov Forum Watcher - Improvement Plan
 
-## Phase 1: Quick Wins (Current Sprint)
+## Phase 1: Quick Wins ✅ COMPLETED
 
-### 1.1 Advanced Filtering - Date Range
-**Status:** Pending
-**Files:** `src/components/DiscussionFeed.tsx`, `src/app/page.tsx`
+### 1.1 Advanced Filtering - Date Range ✅
 
-**Tasks:**
-- [ ] Add date range filter buttons: Today, This Week, This Month, All Time
-- [ ] Filter discussions by `bumpedAt` or `createdAt` timestamp
-- [ ] Persist filter selection in state
-- [ ] Update UI to show active filter
+**Status:** Completed  
+**Files:** `src/components/FeedFilters.tsx`, `src/app/page.tsx`
 
----
+**Implemented:**
 
-### 1.2 Advanced Filtering - Category/Status
-**Status:** Pending  
-**Files:** `src/components/FilterTabs.tsx`, `src/app/page.tsx`
-
-**Tasks:**
-- [ ] Add filter dropdown for discussion categories (if available from API)
-- [ ] Add filter by forum source (show only Arbitrum, only Aave, etc.)
-- [ ] Combine with existing "Your Projects" / "All Projects" tabs
+- [x] Date range filter buttons: Today, This Week, This Month, All Time
+- [x] Filter discussions by `bumpedAt` timestamp
+- [x] Filter state managed in page.tsx
+- [x] Active filter visually indicated
 
 ---
 
-### 1.3 Dark/Light Mode Toggle
-**Status:** Pending
-**Files:** `src/app/layout.tsx`, `src/components/Sidebar.tsx`, new `src/hooks/useTheme.ts`
+### 1.2 Advanced Filtering - Forum Source ✅
 
-**Tasks:**
-- [ ] Create useTheme hook with localStorage persistence
-- [ ] Add theme toggle button to Sidebar (sun/moon icon)
-- [ ] Update Tailwind config for light mode classes
-- [ ] Apply theme classes to all components
+**Status:** Completed  
+**Files:** `src/components/FeedFilters.tsx`, `src/app/page.tsx`
+
+**Implemented:**
+
+- [x] Dropdown to filter by specific forum source
+- [x] Shows all enabled forums in dropdown
+- [x] Combined with date range filtering
 
 ---
 
-### 1.4 Bookmarking Discussions
-**Status:** Pending
-**Files:** `src/components/DiscussionItem.tsx`, new `src/hooks/useBookmarks.ts`, `src/lib/storage.ts`
+### 1.3 Dark/Light Mode Toggle ✅
 
-**Tasks:**
-- [ ] Add bookmark icon to each discussion item
-- [ ] Create useBookmarks hook with localStorage persistence
-- [ ] Add "Saved" view in sidebar navigation
-- [ ] Show bookmarked discussions in dedicated feed
+**Status:** Completed  
+**Files:** `src/hooks/useTheme.ts`, `src/components/Sidebar.tsx`, `src/app/globals.css`
+
+**Implemented:**
+
+- [x] `useTheme` hook with localStorage persistence
+- [x] Theme toggle button in Sidebar header (sun/moon icon)
+- [x] CSS variables for theme colors in globals.css
+- [x] Light theme overrides for Tailwind classes
+- [x] Theme persists across page reloads
+
+---
+
+### 1.4 Bookmarking Discussions ✅
+
+**Status:** Completed  
+**Files:** `src/hooks/useBookmarks.ts`, `src/components/DiscussionItem.tsx`, `src/app/page.tsx`
+
+**Implemented:**
+
+- [x] Bookmark icon on each discussion item
+- [x] `useBookmarks` hook with localStorage persistence
+- [x] "Saved" view in sidebar navigation
+- [x] Bookmarked discussions shown in dedicated feed
+- [x] Migration system for fixing old bookmark URLs
 
 ---
 
 ### 1.5 Forum Statistics Cards
-**Status:** Pending
+
+**Status:** Pending (deferred to Phase 2)  
 **Files:** `src/components/ForumManager.tsx`, `src/hooks/useDiscussions.ts`
 
 **Tasks:**
+
 - [ ] Track discussion count per forum during fetch
 - [ ] Show "X discussions" on forum cards in Your Forums
 - [ ] Show last activity timestamp per forum
 - [ ] Add visual indicator for forums with recent activity
+
+---
+
+### 1.6 Custom Favicon ✅
+
+**Status:** Completed  
+**Files:** `src/app/icon.svg`, `src/app/layout.tsx`
+
+**Implemented:**
+
+- [x] Custom purple bell icon with notification dot
+- [x] Replaces default Vercel favicon
+- [x] Configured in layout.tsx metadata
 
 ---
 
