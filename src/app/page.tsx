@@ -40,7 +40,7 @@ export default function Home() {
   }, [enabledForums.length, discussions.length, isLoading, refresh]);
 
   return (
-    <div className={`flex h-screen text-white overflow-hidden ${theme === 'dark' ? 'bg-gray-950' : 'bg-gray-100'}`}>
+    <div className="flex h-screen overflow-hidden theme-bg theme-text">
       <Sidebar 
         activeView={activeView} 
         onViewChange={setActiveView}

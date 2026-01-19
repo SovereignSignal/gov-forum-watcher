@@ -84,10 +84,10 @@ export function DiscussionFeed({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-gray-900 dark:bg-gray-900">
-      <div className="flex items-center justify-between p-4 border-b border-gray-800">
+    <div className="flex-1 flex flex-col theme-card">
+      <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'var(--card-border)' }}>
         <div className="flex items-center gap-4">
-          <h2 className="text-lg font-semibold text-white">Discussions</h2>
+          <h2 className="text-lg font-semibold theme-text">Discussions</h2>
           {lastUpdated && (
             <span className="flex items-center gap-1 text-xs text-gray-500">
               <Clock className="w-3 h-3" />

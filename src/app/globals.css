@@ -1,8 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card-bg: #111827;
+  --card-border: #1f2937;
+  --sidebar-bg: #111827;
+  --header-bg: #030712;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+}
+
+:root.light {
+  --background: #f3f4f6;
+  --foreground: #111827;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --sidebar-bg: #ffffff;
+  --header-bg: #f9fafb;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
 }
 
 @theme inline {
@@ -12,15 +31,35 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Theme-aware component styles */
+.theme-bg {
+  background-color: var(--background);
+}
+
+.theme-card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+.theme-sidebar {
+  background-color: var(--sidebar-bg);
+  border-color: var(--card-border);
+}
+
+.theme-text {
+  color: var(--text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--text-secondary);
+}
+
+.theme-text-muted {
+  color: var(--text-muted);
 }

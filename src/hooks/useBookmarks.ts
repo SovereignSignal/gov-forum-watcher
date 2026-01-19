@@ -35,16 +35,21 @@ export function useBookmarks() {
     refId: string;
     title: string;
     forumUrl: string;
+    slug: string;
+    id: number;
     protocol: string;
   }) => {
     const exists = bookmarks.some(b => b.topicRefId === topic.refId);
     if (exists) return;
 
+    // Construct the full topic URL: {forumUrl}/t/{slug}/{id}
+    const fullTopicUrl = `${topic.forumUrl}/t/${topic.slug}/${topic.id}`;
+
     const newBookmark: Bookmark = {
       id: crypto.randomUUID(),
       topicRefId: topic.refId,
       topicTitle: topic.title,
-      topicUrl: topic.forumUrl,
+      topicUrl: fullTopicUrl,
       protocol: topic.protocol,
       createdAt: new Date().toISOString(),
     };

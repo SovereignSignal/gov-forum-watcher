@@ -27,11 +27,11 @@ export function FeedFilters({
   forums,
 }: FeedFiltersProps) {
   return (
-    <div className="flex items-center gap-4 px-4 py-2 border-b border-gray-800 dark:border-gray-800 light:border-gray-200 bg-gray-900/50 dark:bg-gray-900/50 light:bg-gray-50">
+    <div className="flex items-center gap-4 px-4 py-2 border-b theme-card" style={{ borderColor: 'var(--card-border)' }}>
       {/* Date Range Filter */}
       <div className="flex items-center gap-2">
-        <Calendar className="w-4 h-4 text-gray-500" />
-        <div className="flex rounded-lg overflow-hidden border border-gray-700 dark:border-gray-700 light:border-gray-300">
+        <Calendar className="w-4 h-4 theme-text-muted" />
+        <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: 'var(--card-border)' }}>
           {DATE_RANGE_OPTIONS.map((option) => (
             <button
               key={option.value}
@@ -39,8 +39,9 @@ export function FeedFilters({
               className={`px-3 py-1 text-xs font-medium transition-colors ${
                 dateRange === option.value
                   ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-800 dark:bg-gray-800 light:bg-white text-gray-400 dark:text-gray-400 light:text-gray-600 hover:bg-gray-700 dark:hover:bg-gray-700 light:hover:bg-gray-100'
+                  : 'theme-text-secondary hover:opacity-80'
               }`}
+              style={dateRange !== option.value ? { backgroundColor: 'var(--card-bg)' } : undefined}
             >
               {option.label}
             </button>
@@ -50,11 +51,12 @@ export function FeedFilters({
 
       {/* Forum Source Filter */}
       <div className="flex items-center gap-2">
-        <Filter className="w-4 h-4 text-gray-500" />
+        <Filter className="w-4 h-4 theme-text-muted" />
         <select
           value={selectedForumId || ''}
           onChange={(e) => onForumFilterChange(e.target.value || null)}
-          className="px-3 py-1 text-xs bg-gray-800 dark:bg-gray-800 light:bg-white border border-gray-700 dark:border-gray-700 light:border-gray-300 rounded-lg text-gray-300 dark:text-gray-300 light:text-gray-700 focus:outline-none focus:border-indigo-500"
+          className="px-3 py-1 text-xs rounded-lg theme-text-secondary focus:outline-none focus:border-indigo-500"
+          style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', border: '1px solid var(--card-border)' }}
         >
           <option value="">All Forums</option>
           {forums.map((forum) => (
