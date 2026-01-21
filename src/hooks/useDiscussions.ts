@@ -67,10 +67,12 @@ export function useDiscussions(forums: Forum[]): UseDiscussionsResult {
 
           try {
             const response = await fetch(`/api/discourse?${params.toString()}`, { signal });
-            if (!response.ok) {
-              throw new Error(`HTTP ${response.status}`);
-            }
             const data = await response.json();
+
+            // Check for error response from API
+            if (!response.ok || data.error) {
+              throw new Error(data.error || `HTTP ${response.status}`);
+            }
 
             // Only update state if request wasn't aborted
             if (!signal.aborted) {
