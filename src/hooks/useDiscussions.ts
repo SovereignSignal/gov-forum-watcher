@@ -8,6 +8,7 @@ export interface ForumLoadingState {
   forumName: string;
   status: 'pending' | 'loading' | 'success' | 'error';
   error?: string;
+  isDefunct?: boolean; // Forum has shut down or moved
 }
 
 interface UseDiscussionsResult {
@@ -85,9 +86,13 @@ export function useDiscussions(forums: Forum[]): UseDiscussionsResult {
               throw err;
             }
             const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+            // Detect defunct forums (redirects, not JSON, shut down)
+            const isDefunct = errorMsg.includes('shut down') ||
+                              errorMsg.includes('redirects') ||
+                              errorMsg.includes('not JSON');
             if (!signal.aborted) {
               setForumStates(prev => prev.map((s, i) =>
-                i === index ? { ...s, status: 'error', error: errorMsg } : s
+                i === index ? { ...s, status: 'error', error: errorMsg, isDefunct } : s
               ));
             }
             throw new Error(`${forum.name}: ${errorMsg}`);

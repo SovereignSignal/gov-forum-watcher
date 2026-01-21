@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { RefreshCw, AlertCircle, Clock, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { RefreshCw, AlertCircle, Clock, CheckCircle, XCircle, Loader2, Trash2 } from 'lucide-react';
 import { DiscussionTopic, KeywordAlert, DateRangeFilter, Forum } from '@/types';
 import { DiscussionItem } from './DiscussionItem';
 import { FeedFilters } from './FeedFilters';
@@ -21,6 +21,7 @@ interface DiscussionFeedProps {
   forums: Forum[];
   isBookmarked: (refId: string) => boolean;
   onToggleBookmark: (topic: DiscussionTopic) => void;
+  onRemoveForum?: (forumId: string) => void;
 }
 
 export function DiscussionFeed({
@@ -36,6 +37,7 @@ export function DiscussionFeed({
   forums,
   isBookmarked,
   onToggleBookmark,
+  onRemoveForum,
 }: DiscussionFeedProps) {
   const [displayCount, setDisplayCount] = useState(20);
   const [dateRange, setDateRange] = useState<DateRangeFilter>('all');
@@ -115,6 +117,30 @@ export function DiscussionFeed({
           <div className="flex items-center gap-2 text-red-400 text-sm">
             <AlertCircle className="w-4 h-4" />
             {error}
+          </div>
+        </div>
+      )}
+
+      {/* Show defunct forums with remove option */}
+      {onRemoveForum && forumStates.some(s => s.isDefunct) && (
+        <div className="p-4 bg-yellow-900/20 border-b border-yellow-800">
+          <p className="text-yellow-400 text-sm mb-2">Some forums have shut down or moved:</p>
+          <div className="flex flex-wrap gap-2">
+            {forumStates.filter(s => s.isDefunct).map((state) => (
+              <span
+                key={state.forumId}
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-900/30 rounded text-xs text-yellow-300"
+              >
+                {state.forumName}
+                <button
+                  onClick={() => onRemoveForum(state.forumId)}
+                  className="p-0.5 hover:bg-yellow-800/50 rounded"
+                  title={`Remove ${state.forumName}`}
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
           </div>
         </div>
       )}

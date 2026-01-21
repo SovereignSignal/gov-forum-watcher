@@ -85,6 +85,7 @@ export default function Home() {
                 forums={enabledForums}
                 isBookmarked={isBookmarked}
                 onToggleBookmark={handleToggleBookmark}
+                onRemoveForum={removeForum}
               />
               <RightSidebar
                 searchQuery={searchQuery}
