@@ -52,10 +52,23 @@ export async function GET(request: NextRequest) {
         'Accept': 'application/json',
       },
       next: { revalidate: 120 },
+      redirect: 'manual', // Don't follow redirects automatically
     });
 
+    // Check for redirects (forum may have moved or shut down)
+    if (response.status >= 300 && response.status < 400) {
+      const redirectUrl = response.headers.get('location');
+      throw new Error(`Forum has moved or shut down (redirects to ${redirectUrl || 'unknown'})`);
+    }
+
     if (!response.ok) {
-      throw new Error(`Failed to fetch from ${apiUrl}: ${response.status}`);
+      throw new Error(`Failed to fetch: HTTP ${response.status}`);
+    }
+
+    // Verify we got JSON, not HTML (some forums return HTML on error)
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      throw new Error('Forum returned invalid response (not JSON) - it may have shut down');
     }
 
     const data: DiscourseLatestResponse = await response.json();
