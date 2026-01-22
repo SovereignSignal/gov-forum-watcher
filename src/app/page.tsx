@@ -12,6 +12,7 @@ import { OnboardingWizard } from '@/components/OnboardingWizard';
 import { ConfigExportImport } from '@/components/ConfigExportImport';
 import { OfflineBanner } from '@/components/OfflineBanner';
 import { KeyboardShortcuts } from '@/components/KeyboardShortcuts';
+import { SkipLinks } from '@/components/SkipLinks';
 import { useForums } from '@/hooks/useForums';
 import { useDiscussions } from '@/hooks/useDiscussions';
 import { useAlerts } from '@/hooks/useAlerts';
@@ -160,6 +161,7 @@ export default function Home() {
 
   return (
     <ErrorBoundary>
+      <SkipLinks />
       <OfflineBanner />
       <div className="flex h-screen overflow-hidden theme-bg theme-text pt-14 md:pt-0">
         <Sidebar
@@ -182,7 +184,7 @@ export default function Home() {
             />
           </header>
 
-          <main className="flex-1 flex overflow-hidden">
+          <main id="main-content" className="flex-1 flex overflow-hidden">
             {activeView === 'feed' && (
               <>
                 <DiscussionFeed

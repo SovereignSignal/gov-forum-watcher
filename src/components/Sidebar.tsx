@@ -90,7 +90,7 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
         <p className="text-xs theme-text-muted mt-1">Governance Forum Aggregator</p>
       </div>
       
-      <nav className="flex-1 p-4" aria-label="Main navigation">
+      <nav id="navigation" className="flex-1 p-4" aria-label="Main navigation">
         <ul className="space-y-1" role="list">
           {navItems.map((item) => {
             const Icon = item.icon;

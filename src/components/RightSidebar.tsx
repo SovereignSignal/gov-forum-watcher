@@ -69,7 +69,7 @@ export function RightSidebar({
         right-0 top-14 md:top-0
         max-h-[calc(100vh-3.5rem)] md:max-h-full
       `}>
-      <div className="p-4 border-b border-gray-800">
+      <div id="search" className="p-4 border-b border-gray-800">
         <div className="relative">
           <label htmlFor="discussion-search" className="sr-only">
             Search discussions
