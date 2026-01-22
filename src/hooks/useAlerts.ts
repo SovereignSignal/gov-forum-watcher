@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { KeywordAlert } from '@/types';
-import { getAlerts, addAlert as addAlertToStorage, removeAlert as removeAlertFromStorage, toggleAlert as toggleAlertInStorage } from '@/lib/storage';
+import { getAlerts, saveAlerts, addAlert as addAlertToStorage, removeAlert as removeAlertFromStorage, toggleAlert as toggleAlertInStorage } from '@/lib/storage';
 
 export function useAlerts() {
   // Use lazy initialization - this runs only on client after hydration
@@ -34,6 +34,22 @@ export function useAlerts() {
     return updated;
   }, []);
 
+  const importAlerts = useCallback((newAlerts: KeywordAlert[], replace = false) => {
+    if (replace) {
+      setAlerts(newAlerts);
+      saveAlerts(newAlerts);
+    } else {
+      // Merge: add alerts that don't already exist (by keyword)
+      setAlerts(prev => {
+        const existingKeywords = new Set(prev.map(a => a.keyword.toLowerCase()));
+        const toAdd = newAlerts.filter(a => !existingKeywords.has(a.keyword.toLowerCase()));
+        const merged = [...prev, ...toAdd];
+        saveAlerts(merged);
+        return merged;
+      });
+    }
+  }, []);
+
   // Memoize derived state to prevent unnecessary recalculations
   const enabledAlerts = useMemo(() => alerts.filter(a => a.isEnabled), [alerts]);
 
@@ -43,5 +59,6 @@ export function useAlerts() {
     addAlert,
     removeAlert,
     toggleAlert,
+    importAlerts,
   };
 }

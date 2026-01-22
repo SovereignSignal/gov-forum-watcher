@@ -1,8 +1,7 @@
 'use client';
 
-import { Calendar, Filter } from 'lucide-react';
-import { DateRangeFilter } from '@/types';
-import { Forum } from '@/types';
+import { Calendar, Filter, ArrowUpDown } from 'lucide-react';
+import { DateRangeFilter, SortOption, Forum } from '@/types';
 
 interface FeedFiltersProps {
   dateRange: DateRangeFilter;
@@ -10,6 +9,8 @@ interface FeedFiltersProps {
   selectedForumId: string | null;
   onForumFilterChange: (forumId: string | null) => void;
   forums: Forum[];
+  sortBy: SortOption;
+  onSortChange: (sort: SortOption) => void;
 }
 
 const DATE_RANGE_OPTIONS: { value: DateRangeFilter; label: string }[] = [
@@ -19,12 +20,21 @@ const DATE_RANGE_OPTIONS: { value: DateRangeFilter; label: string }[] = [
   { value: 'month', label: 'This Month' },
 ];
 
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'recent', label: 'Most Recent' },
+  { value: 'replies', label: 'Most Replies' },
+  { value: 'views', label: 'Most Views' },
+  { value: 'likes', label: 'Most Likes' },
+];
+
 export function FeedFilters({
   dateRange,
   onDateRangeChange,
   selectedForumId,
   onForumFilterChange,
   forums,
+  sortBy,
+  onSortChange,
 }: FeedFiltersProps) {
   return (
     <div className="flex flex-wrap items-center gap-4 px-4 py-2 border-b theme-card" style={{ borderColor: 'var(--card-border)' }}>
@@ -72,6 +82,27 @@ export function FeedFilters({
           {forums.map((forum) => (
             <option key={forum.id} value={forum.id}>
               {forum.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Sort Options */}
+      <div className="flex items-center gap-2">
+        <label htmlFor="sort-filter" className="sr-only">
+          Sort discussions
+        </label>
+        <ArrowUpDown className="w-4 h-4 theme-text-muted" aria-hidden="true" />
+        <select
+          id="sort-filter"
+          value={sortBy}
+          onChange={(e) => onSortChange(e.target.value as SortOption)}
+          className="px-3 py-2 min-h-[36px] text-xs rounded-lg theme-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+          style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', border: '1px solid var(--card-border)' }}
+        >
+          {SORT_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
             </option>
           ))}
         </select>

@@ -99,10 +99,22 @@ export function useBookmarks() {
     return bookmarks.some(b => b.topicRefId === topicRefId);
   }, [bookmarks]);
 
+  const importBookmarks = useCallback((newBookmarks: Bookmark[], replace = false) => {
+    if (replace) {
+      saveBookmarks(newBookmarks);
+    } else {
+      // Merge: add bookmarks that don't already exist (by topicRefId)
+      const existingRefs = new Set(bookmarks.map(b => b.topicRefId));
+      const toAdd = newBookmarks.filter(b => !existingRefs.has(b.topicRefId));
+      saveBookmarks([...bookmarks, ...toAdd]);
+    }
+  }, [bookmarks, saveBookmarks]);
+
   return {
     bookmarks,
     addBookmark,
     removeBookmark,
     isBookmarked,
+    importBookmarks,
   };
 }

@@ -60,6 +60,8 @@ export interface KeywordAlert {
 
 export type DateRangeFilter = 'all' | 'today' | 'week' | 'month';
 
+export type SortOption = 'recent' | 'replies' | 'views' | 'likes';
+
 export interface Bookmark {
   id: string;
   topicRefId: string;

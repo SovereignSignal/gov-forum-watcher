@@ -8,13 +8,18 @@ import { RightSidebar } from '@/components/RightSidebar';
 import { FilterTabs } from '@/components/FilterTabs';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ToastContainer } from '@/components/Toast';
+import { OnboardingWizard } from '@/components/OnboardingWizard';
+import { ConfigExportImport } from '@/components/ConfigExportImport';
 import { useForums } from '@/hooks/useForums';
 import { useDiscussions } from '@/hooks/useDiscussions';
 import { useAlerts } from '@/hooks/useAlerts';
 import { useBookmarks } from '@/hooks/useBookmarks';
+import { useReadState } from '@/hooks/useReadState';
+import { useOnboarding } from '@/hooks/useOnboarding';
 import { useTheme } from '@/hooks/useTheme';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useToast } from '@/hooks/useToast';
+import { ForumPreset } from '@/lib/forumPresets';
 import { DiscussionTopic } from '@/types';
 import { Bookmark as BookmarkIcon, ExternalLink, Trash2 } from 'lucide-react';
 
@@ -25,12 +30,17 @@ export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileAlertsOpen, setIsMobileAlertsOpen] = useState(false);
 
-  const { forums, enabledForums, addForum, removeForum, toggleForum } = useForums();
+  const { forums, enabledForums, addForum, removeForum, toggleForum, importForums } = useForums();
   const { discussions, isLoading, error, lastUpdated, forumStates, refresh } = useDiscussions(enabledForums);
-  const { alerts, addAlert, removeAlert, toggleAlert } = useAlerts();
-  const { bookmarks, addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  const { alerts, addAlert, removeAlert, toggleAlert, importAlerts } = useAlerts();
+  const { bookmarks, addBookmark, removeBookmark, isBookmarked, importBookmarks } = useBookmarks();
+  const { isRead, markAsRead, markMultipleAsRead, getUnreadCount } = useReadState();
+  const { shouldShowOnboarding, completeOnboarding } = useOnboarding();
   const { theme, toggleTheme } = useTheme();
   const { toasts, dismissToast, success, error: showError, warning } = useToast();
+
+  // Calculate unread count for currently displayed discussions
+  const unreadCount = getUnreadCount(discussions.map((d) => d.refId));
 
   // Debounce search query to avoid filtering on every keystroke
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -52,6 +62,52 @@ export default function Home() {
       success(`${forum.name} removed from your forums`);
     }
   }, [forums, removeForum, success]);
+
+  const handleMarkAllAsRead = useCallback((refIds: string[]) => {
+    markMultipleAsRead(refIds);
+    success(`Marked ${refIds.length} discussions as read`);
+  }, [markMultipleAsRead, success]);
+
+  const handleOnboardingComplete = useCallback((selectedForums: ForumPreset[]) => {
+    // Add selected forums
+    selectedForums.forEach((preset) => {
+      addForum({
+        name: preset.name,
+        cname: preset.name.toLowerCase().replace(/\s+/g, '-'),
+        description: preset.description,
+        token: preset.token,
+        discourseForum: {
+          url: preset.url,
+          categoryId: preset.categoryId,
+        },
+        isEnabled: true,
+      });
+    });
+    completeOnboarding();
+    if (selectedForums.length > 0) {
+      success(`Added ${selectedForums.length} forum${selectedForums.length !== 1 ? 's' : ''} to your feed`);
+    }
+  }, [addForum, completeOnboarding, success]);
+
+  const handleOnboardingSkip = useCallback(() => {
+    completeOnboarding();
+  }, [completeOnboarding]);
+
+  const handleConfigImport = useCallback((data: {
+    forums?: import('@/types').Forum[];
+    alerts?: import('@/types').KeywordAlert[];
+    bookmarks?: import('@/types').Bookmark[];
+  }) => {
+    if (data.forums && data.forums.length > 0) {
+      importForums(data.forums, false);
+    }
+    if (data.alerts && data.alerts.length > 0) {
+      importAlerts(data.alerts, false);
+    }
+    if (data.bookmarks && data.bookmarks.length > 0) {
+      importBookmarks(data.bookmarks, false);
+    }
+  }, [importForums, importAlerts, importBookmarks]);
 
   // Show toast when there are errors
   useEffect(() => {
@@ -106,7 +162,11 @@ export default function Home() {
                   forumStates={forumStates}
                   forums={enabledForums}
                   isBookmarked={isBookmarked}
+                  isRead={isRead}
                   onToggleBookmark={handleToggleBookmark}
+                  onMarkAsRead={markAsRead}
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                  unreadCount={unreadCount}
                   onRemoveForum={handleRemoveForum}
                 />
                 <RightSidebar
@@ -221,6 +281,15 @@ export default function Home() {
                       responses are cached for 2 minutes to reduce load on forum servers.
                     </p>
                   </section>
+                  <section className="p-4 bg-gray-800 rounded-lg">
+                    <h3 className="font-medium text-white mb-3">Export / Import</h3>
+                    <ConfigExportImport
+                      forums={forums}
+                      alerts={alerts}
+                      bookmarks={bookmarks}
+                      onImport={handleConfigImport}
+                    />
+                  </section>
                 </div>
               </div>
             )}
@@ -229,6 +298,14 @@ export default function Home() {
 
         {/* Toast notifications */}
         <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+
+        {/* Onboarding wizard for new users */}
+        {shouldShowOnboarding && (
+          <OnboardingWizard
+            onComplete={handleOnboardingComplete}
+            onSkip={handleOnboardingSkip}
+          />
+        )}
       </div>
     </ErrorBoundary>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import { format, isToday, isYesterday } from 'date-fns';
-import { MessageSquare, Eye, ThumbsUp, Pin, Lock, Archive, Bookmark, BookmarkCheck } from 'lucide-react';
+import { MessageSquare, Eye, ThumbsUp, Pin, Lock, Archive, Bookmark, BookmarkCheck, Circle } from 'lucide-react';
 import { DiscussionTopic, KeywordAlert } from '@/types';
 
 // Validate image URLs to prevent malicious content
@@ -27,7 +27,9 @@ interface DiscussionItemProps {
   topic: DiscussionTopic;
   alerts: KeywordAlert[];
   isBookmarked?: boolean;
+  isRead?: boolean;
   onToggleBookmark?: (topic: DiscussionTopic) => void;
+  onMarkAsRead?: (refId: string) => void;
 }
 
 function formatTimestamp(dateString: string): string {
@@ -43,37 +45,64 @@ function formatTimestamp(dateString: string): string {
 
 function highlightKeywords(text: string, alerts: KeywordAlert[]): React.ReactNode {
   if (alerts.length === 0) return text;
-  
-  const enabledKeywords = alerts.filter(a => a.isEnabled).map(a => a.keyword.toLowerCase());
+
+  const enabledKeywords = alerts.filter((a) => a.isEnabled).map((a) => a.keyword.toLowerCase());
   if (enabledKeywords.length === 0) return text;
-  
-  const regex = new RegExp(`(${enabledKeywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
+
+  const regex = new RegExp(
+    `(${enabledKeywords.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`,
+    'gi'
+  );
   const parts = text.split(regex);
-  
+
   return parts.map((part, i) => {
     if (enabledKeywords.includes(part.toLowerCase())) {
-      return <mark key={i} className="bg-yellow-500/30 text-yellow-200 px-1 rounded">{part}</mark>;
+      return (
+        <mark key={i} className="bg-yellow-500/30 text-yellow-200 px-1 rounded">
+          {part}
+        </mark>
+      );
     }
     return part;
   });
 }
 
-export function DiscussionItem({ topic, alerts, isBookmarked, onToggleBookmark }: DiscussionItemProps) {
+export function DiscussionItem({
+  topic,
+  alerts,
+  isBookmarked,
+  isRead = false,
+  onToggleBookmark,
+  onMarkAsRead,
+}: DiscussionItemProps) {
   const topicUrl = `${topic.forumUrl}/t/${topic.slug}/${topic.id}`;
-  const hasMatchingKeyword = alerts.some(a =>
-    a.isEnabled && topic.title.toLowerCase().includes(a.keyword.toLowerCase())
+  const hasMatchingKeyword = alerts.some(
+    (a) => a.isEnabled && topic.title.toLowerCase().includes(a.keyword.toLowerCase())
   );
 
   const handleBookmarkClick = () => {
     onToggleBookmark?.(topic);
   };
 
+  const handleLinkClick = () => {
+    if (!isRead && onMarkAsRead) {
+      onMarkAsRead(topic.refId);
+    }
+  };
+
   return (
     <article
       className={`relative p-4 border-b border-gray-800 dark:border-gray-800 hover:bg-gray-800/50 dark:hover:bg-gray-800/50 transition-colors ${
         hasMatchingKeyword ? 'bg-yellow-900/10 border-l-2 border-l-yellow-500' : ''
-      }`}
+      } ${isRead ? 'opacity-70' : ''}`}
     >
+      {/* Unread indicator */}
+      {!isRead && (
+        <div className="absolute left-1.5 top-1/2 -translate-y-1/2">
+          <Circle className="w-2 h-2 fill-red-500 text-red-500" aria-label="Unread" />
+        </div>
+      )}
+
       {/* Bookmark button - positioned outside the link for accessibility */}
       {onToggleBookmark && (
         <button
@@ -86,11 +115,7 @@ export function DiscussionItem({ topic, alerts, isBookmarked, onToggleBookmark }
           aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
           aria-pressed={isBookmarked}
         >
-          {isBookmarked ? (
-            <BookmarkCheck className="w-5 h-5" />
-          ) : (
-            <Bookmark className="w-5 h-5" />
-          )}
+          {isBookmarked ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
         </button>
       )}
 
@@ -98,7 +123,8 @@ export function DiscussionItem({ topic, alerts, isBookmarked, onToggleBookmark }
         href={topicUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-start gap-3 pr-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-lg"
+        onClick={handleLinkClick}
+        className="flex items-start gap-3 pr-14 pl-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-lg"
       >
         <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center overflow-hidden">
           {isValidImageUrl(topic.imageUrl) ? (
@@ -131,7 +157,9 @@ export function DiscussionItem({ topic, alerts, isBookmarked, onToggleBookmark }
             {topic.archived && <Archive className="w-3 h-3 text-gray-500" aria-label="Archived" />}
           </div>
 
-          <h3 className="text-white dark:text-white font-medium mb-2 line-clamp-2">
+          <h3
+            className={`font-medium mb-2 line-clamp-2 ${isRead ? 'text-gray-400' : 'text-white dark:text-white'}`}
+          >
             {highlightKeywords(topic.title, alerts)}
           </h3>
 
@@ -150,14 +178,12 @@ export function DiscussionItem({ topic, alerts, isBookmarked, onToggleBookmark }
             </span>
             {topic.tags.length > 0 && (
               <div className="flex items-center gap-1 flex-wrap">
-                {topic.tags.slice(0, 3).map(tag => (
+                {topic.tags.slice(0, 3).map((tag) => (
                   <span key={tag} className="px-1.5 py-0.5 bg-gray-800 rounded text-gray-400">
                     {tag}
                   </span>
                 ))}
-                {topic.tags.length > 3 && (
-                  <span className="text-gray-600">+{topic.tags.length - 3}</span>
-                )}
+                {topic.tags.length > 3 && <span className="text-gray-600">+{topic.tags.length - 3}</span>}
               </div>
             )}
           </div>

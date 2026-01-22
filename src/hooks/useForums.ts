@@ -42,6 +42,22 @@ export function useForums() {
     });
   }, []);
 
+  const importForums = useCallback((newForums: Forum[], replace = false) => {
+    if (replace) {
+      setForums(newForums);
+      saveForums(newForums);
+    } else {
+      // Merge: add forums that don't already exist (by URL)
+      setForums(prev => {
+        const existingUrls = new Set(prev.map(f => f.discourseForum.url));
+        const toAdd = newForums.filter(f => !existingUrls.has(f.discourseForum.url));
+        const merged = [...prev, ...toAdd];
+        saveForums(merged);
+        return merged;
+      });
+    }
+  }, []);
+
   // Memoize derived state to prevent unnecessary recalculations
   const enabledForums = useMemo(() => forums.filter(f => f.isEnabled), [forums]);
 
@@ -52,5 +68,6 @@ export function useForums() {
     removeForum,
     toggleForum,
     updateForum,
+    importForums,
   };
 }

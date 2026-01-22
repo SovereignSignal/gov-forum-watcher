@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { RefreshCw, Clock, CheckCircle, XCircle, Loader2, Trash2 } from 'lucide-react';
-import { DiscussionTopic, KeywordAlert, DateRangeFilter, Forum } from '@/types';
+import { useState, useMemo, memo } from 'react';
+import { RefreshCw, Clock, CheckCircle, XCircle, Loader2, Trash2, CheckCheck } from 'lucide-react';
+import { DiscussionTopic, KeywordAlert, DateRangeFilter, Forum, SortOption } from '@/types';
 import { DiscussionItem } from './DiscussionItem';
 import { DiscussionSkeletonList } from './DiscussionSkeleton';
 import { FeedFilters } from './FeedFilters';
 import { ForumLoadingState } from '@/hooks/useDiscussions';
 import { format, isToday, isThisWeek, isThisMonth } from 'date-fns';
+
+const MemoizedDiscussionItem = memo(DiscussionItem);
 
 interface DiscussionFeedProps {
   discussions: DiscussionTopic[];
@@ -21,14 +23,18 @@ interface DiscussionFeedProps {
   forumStates: ForumLoadingState[];
   forums: Forum[];
   isBookmarked: (refId: string) => boolean;
+  isRead: (refId: string) => boolean;
   onToggleBookmark: (topic: DiscussionTopic) => void;
+  onMarkAsRead: (refId: string) => void;
+  onMarkAllAsRead: (refIds: string[]) => void;
+  unreadCount: number;
   onRemoveForum?: (forumId: string) => void;
 }
 
 export function DiscussionFeed({
   discussions,
   isLoading,
-  error: _error, // Errors are now shown via toast notifications
+  error: _error,
   lastUpdated,
   onRefresh,
   alerts,
@@ -37,15 +43,21 @@ export function DiscussionFeed({
   forumStates,
   forums,
   isBookmarked,
+  isRead,
   onToggleBookmark,
+  onMarkAsRead,
+  onMarkAllAsRead,
+  unreadCount,
   onRemoveForum,
 }: DiscussionFeedProps) {
   const [displayCount, setDisplayCount] = useState(20);
   const [dateRange, setDateRange] = useState<DateRangeFilter>('all');
   const [selectedForumId, setSelectedForumId] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<SortOption>('recent');
 
-  const filteredDiscussions = useMemo(() => {
-    return discussions.filter((topic) => {
+  const filteredAndSortedDiscussions = useMemo(() => {
+    // First filter
+    const filtered = discussions.filter((topic) => {
       // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -74,13 +86,33 @@ export function DiscussionFeed({
 
       return true;
     });
-  }, [discussions, searchQuery, dateRange, selectedForumId, forums]);
 
-  const displayedDiscussions = filteredDiscussions.slice(0, displayCount);
-  const hasMore = displayCount < filteredDiscussions.length;
+    // Then sort
+    return [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'replies':
+          return b.replyCount - a.replyCount;
+        case 'views':
+          return b.views - a.views;
+        case 'likes':
+          return b.likeCount - a.likeCount;
+        case 'recent':
+        default:
+          return new Date(b.bumpedAt).getTime() - new Date(a.bumpedAt).getTime();
+      }
+    });
+  }, [discussions, searchQuery, dateRange, selectedForumId, forums, sortBy]);
+
+  const displayedDiscussions = filteredAndSortedDiscussions.slice(0, displayCount);
+  const hasMore = displayCount < filteredAndSortedDiscussions.length;
 
   const handleLoadMore = () => {
     setDisplayCount((prev) => prev + 20);
+  };
+
+  const handleMarkAllAsRead = () => {
+    const visibleRefIds = displayedDiscussions.map((d) => d.refId);
+    onMarkAllAsRead(visibleRefIds);
   };
 
   return (
@@ -91,22 +123,40 @@ export function DiscussionFeed({
       >
         <div className="flex items-center gap-4">
           <h2 className="text-lg font-semibold theme-text">Discussions</h2>
+          {unreadCount > 0 && (
+            <span className="px-2 py-0.5 bg-red-600 text-white text-xs font-medium rounded-full">
+              {unreadCount} new
+            </span>
+          )}
           {lastUpdated && (
-            <span className="flex items-center gap-1 text-xs text-gray-400">
+            <span className="flex items-center gap-1 text-xs text-gray-400 hidden sm:flex">
               <Clock className="w-3 h-3" aria-hidden="true" />
               <span>Updated {format(lastUpdated, 'HH:mm:ss')}</span>
             </span>
           )}
         </div>
-        <button
-          onClick={onRefresh}
-          disabled={isLoading}
-          className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-red-600 hover:bg-red-700 disabled:bg-red-800 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-          aria-label={isLoading ? 'Loading discussions' : 'Refresh discussions'}
-        >
-          <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} aria-hidden="true" />
-          {isLoading ? 'Loading...' : 'Refresh'}
-        </button>
+        <div className="flex items-center gap-2">
+          {unreadCount > 0 && (
+            <button
+              onClick={handleMarkAllAsRead}
+              className="flex items-center gap-2 px-3 py-2 min-h-[44px] bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+              aria-label="Mark all visible as read"
+              title="Mark all as read"
+            >
+              <CheckCheck className="w-4 h-4" aria-hidden="true" />
+              <span className="hidden sm:inline">Mark read</span>
+            </button>
+          )}
+          <button
+            onClick={onRefresh}
+            disabled={isLoading}
+            className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-red-600 hover:bg-red-700 disabled:bg-red-800 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            aria-label={isLoading ? 'Loading discussions' : 'Refresh discussions'}
+          >
+            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} aria-hidden="true" />
+            {isLoading ? 'Loading...' : 'Refresh'}
+          </button>
+        </div>
       </header>
 
       <FeedFilters
@@ -115,6 +165,8 @@ export function DiscussionFeed({
         selectedForumId={selectedForumId}
         onForumFilterChange={setSelectedForumId}
         forums={forums.filter((f) => f.isEnabled)}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
       />
 
       {/* Show defunct forums with remove option */}
@@ -200,12 +252,14 @@ export function DiscussionFeed({
         ) : (
           <>
             {displayedDiscussions.map((topic) => (
-              <DiscussionItem
+              <MemoizedDiscussionItem
                 key={topic.refId}
                 topic={topic}
                 alerts={alerts}
                 isBookmarked={isBookmarked(topic.refId)}
+                isRead={isRead(topic.refId)}
                 onToggleBookmark={onToggleBookmark}
+                onMarkAsRead={onMarkAsRead}
               />
             ))}
             {hasMore && (
@@ -214,7 +268,7 @@ export function DiscussionFeed({
                   onClick={handleLoadMore}
                   className="px-4 py-2 min-h-[44px] bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                 >
-                  Load more ({filteredDiscussions.length - displayCount} remaining)
+                  Load more ({filteredAndSortedDiscussions.length - displayCount} remaining)
                 </button>
               </div>
             )}
