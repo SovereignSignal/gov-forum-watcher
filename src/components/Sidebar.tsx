@@ -1,6 +1,7 @@
 'use client';
 
 import { LayoutGrid, FolderOpen, Settings, Bell, Bookmark, Sun, Moon, Menu, X } from 'lucide-react';
+import { UserButton } from './UserButton';
 
 interface SidebarProps {
   activeView: 'feed' | 'projects' | 'saved' | 'settings';
@@ -127,6 +128,11 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
         </ul>
       </nav>
       
+      {/* User authentication section */}
+      <div className="px-4 py-3 border-t hidden md:block" style={{ borderColor: 'var(--card-border)' }}>
+        <UserButton />
+      </div>
+
       <div className="p-4 border-t hidden md:block" style={{ borderColor: 'var(--card-border)' }}>
         <p className="text-xs theme-text-muted">
           Aggregating governance discussions from Discourse forums
