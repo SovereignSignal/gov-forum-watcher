@@ -13,6 +13,7 @@ import { ConfigExportImport } from '@/components/ConfigExportImport';
 import { OfflineBanner } from '@/components/OfflineBanner';
 import { KeyboardShortcuts } from '@/components/KeyboardShortcuts';
 import { SkipLinks } from '@/components/SkipLinks';
+import { AuthGate } from '@/components/AuthGate';
 import { useForums } from '@/hooks/useForums';
 import { useDiscussions } from '@/hooks/useDiscussions';
 import { useAlerts } from '@/hooks/useAlerts';
@@ -175,10 +176,11 @@ export default function AppPage() {
   }, []);
 
   return (
-    <ErrorBoundary>
-      <SkipLinks />
-      <OfflineBanner />
-      <div className="flex h-screen overflow-hidden theme-bg theme-text pt-14 md:pt-0">
+    <AuthGate>
+      <ErrorBoundary>
+        <SkipLinks />
+        <OfflineBanner />
+        <div className="flex h-screen overflow-hidden theme-bg theme-text pt-14 md:pt-0">
         <Sidebar
           activeView={activeView}
           onViewChange={setActiveView}
@@ -386,6 +388,7 @@ export default function AppPage() {
           />
         )}
       </div>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </AuthGate>
   );
 }

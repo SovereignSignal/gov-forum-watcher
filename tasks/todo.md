@@ -13,7 +13,7 @@
 ### V1 Polish
 - [x] **Fix color scheme consistency** - Changed from red to indigo accent color to match landing page
 - [x] **Update landing page messaging** - Removed "no accounts" messaging, updated to reflect optional sign-in
-- [ ] **Require login before accessing app** - Users should authenticate to use the system
+- [x] **Require login before accessing app** - Added AuthGate component that requires authentication
 - [ ] **Fix Google login** - Google OAuth not working in Privy
 
 ### Post-Deployment

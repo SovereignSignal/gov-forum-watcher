@@ -113,7 +113,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       config={{
         appearance: {
           theme: 'dark',
-          accentColor: '#DC2626', // Red-600 to match app theme
+          accentColor: '#4f46e5', // Indigo-600 to match app theme
           logo: '/icon.svg',
         },
         loginMethods: ['email', 'google', 'wallet'],

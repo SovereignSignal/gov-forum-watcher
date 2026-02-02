@@ -185,6 +185,37 @@ Before deploying, test:
 
 ---
 
+## Authentication
+
+### Requiring Login with AuthGate Pattern
+**Date:** February 2, 2026
+**Pattern:** Use an AuthGate component to wrap protected content
+
+```typescript
+// AuthGate.tsx
+export function AuthGate({ children }: { children: ReactNode }) {
+  const { isAuthenticated, isLoading, isConfigured, login } = useAuth();
+
+  if (isLoading) return <LoadingSpinner />;
+  if (!isConfigured) return <ConfigurationError />;
+  if (!isAuthenticated) return <LoginScreen onLogin={login} />;
+
+  return <>{children}</>;
+}
+
+// Usage in app page
+<AuthGate>
+  <AppContent />
+</AuthGate>
+```
+
+**Benefits:**
+- Clean separation of auth logic from app content
+- Easy to customize login screen appearance
+- Handles loading, unconfigured, and unauthenticated states
+
+---
+
 ## Git Workflow
 
 ### Commit Message Format
