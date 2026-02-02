@@ -108,7 +108,7 @@ export function RightSidebar({
             Keyword Alerts
           </h3>
           <div className="text-xs text-gray-500 mb-3 p-2 bg-gray-800/50 rounded-lg">
-            <p className="mb-1"><strong className="text-gray-400">Note:</strong> Alerts highlight matching discussions with a yellow border.</p>
+            <p className="mb-1"><strong className="text-gray-400">Note:</strong> Alerts highlight matching keywords in discussion titles.</p>
             <p>Use the search box above to filter/hide non-matching discussions.</p>
           </div>
           
@@ -143,10 +143,10 @@ export function RightSidebar({
                 <li
                   key={alert.id}
                   className={`flex items-center justify-between p-2 rounded-lg ${
-                    alert.isEnabled ? 'bg-yellow-900/20' : 'bg-gray-800/50'
+                    alert.isEnabled ? 'bg-indigo-900/30' : 'bg-gray-800/50'
                   }`}
                 >
-                  <span className={`text-sm ${alert.isEnabled ? 'text-yellow-200' : 'text-gray-500'}`}>
+                  <span className={`text-sm ${alert.isEnabled ? 'text-indigo-200' : 'text-gray-500'}`}>
                     {alert.keyword}
                   </span>
                   <div className="flex items-center gap-1">
@@ -157,7 +157,7 @@ export function RightSidebar({
                       aria-pressed={alert.isEnabled}
                     >
                       {alert.isEnabled ? (
-                        <Bell className="w-4 h-4 text-yellow-400" />
+                        <Bell className="w-4 h-4 text-indigo-400" />
                       ) : (
                         <BellOff className="w-4 h-4" />
                       )}
@@ -180,7 +180,7 @@ export function RightSidebar({
           <h3 className="text-sm font-medium text-gray-400 mb-2">Tips</h3>
           <ul className="text-xs text-gray-500 space-y-1">
             <li>• Click on a discussion to open it in a new tab</li>
-            <li>• Matching keywords are highlighted in yellow</li>
+            <li>• Matching keywords are highlighted in the title</li>
             <li>• Enable/disable forums in the Projects tab</li>
           </ul>
         </div>

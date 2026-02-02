@@ -8,13 +8,14 @@
 - [x] ~~Railway build errors~~ - Fixed with nixpacks.toml for Node 22
 - [x] Set up Privy account and configure `NEXT_PUBLIC_PRIVY_APP_ID` in Railway
 - [x] Set up Railway Postgres and configure `DATABASE_URL` in Railway
-- [ ] Run database schema (`src/lib/schema.sql`) on Railway Postgres
+- [x] Run database schema (`src/lib/schema.sql`) on Railway Postgres - All 7 tables created
 
 ### V1 Polish
 - [x] **Fix color scheme consistency** - Changed from red to indigo accent color to match landing page
 - [x] **Update landing page messaging** - Removed "no accounts" messaging, updated to reflect optional sign-in
 - [x] **Require login before accessing app** - Added AuthGate component that requires authentication
-- [ ] **Fix Google login** - Enable Google in Privy dashboard → Login Methods. Verify Railway URL is in Allowed Origins.
+- [x] **Fix Aave forum redirect error** - Discourse redirects `/c/{id}.json` to `/c/{slug}/{id}.json`; now follows same-domain redirects
+- [ ] **Verify Google login** - Google button now visible in Privy modal. Test login flow to confirm it works.
 
 ### Post-Deployment
 - [ ] Test authentication flow end-to-end
@@ -130,7 +131,7 @@
 
 ```
 Modified:
-- src/app/api/discourse/route.ts (tags normalization)
+- src/app/api/discourse/route.ts (tags normalization, same-domain redirect handling)
 - src/app/layout.tsx (AuthProvider, DataSyncProvider)
 - src/components/DiscussionItem.tsx (tags rendering fix)
 - src/components/Sidebar.tsx (UserButton)

@@ -67,7 +67,7 @@ function highlightKeywords(text: string, alerts: KeywordAlert[]): React.ReactNod
   return parts.map((part, i) => {
     if (enabledKeywords.includes(part.toLowerCase())) {
       return (
-        <mark key={i} className="bg-yellow-500/30 text-yellow-200 px-1 rounded">
+        <mark key={i} className="bg-indigo-500/30 text-indigo-200 px-1 rounded font-medium">
           {part}
         </mark>
       );
@@ -102,7 +102,7 @@ export function DiscussionItem({
   return (
     <article
       className={`relative p-4 border-b border-gray-800 dark:border-gray-800 hover:bg-gray-800/50 dark:hover:bg-gray-800/50 transition-colors ${
-        hasMatchingKeyword ? 'bg-yellow-900/10 border-l-2 border-l-yellow-500' : ''
+        hasMatchingKeyword ? 'border-l-2 border-l-indigo-500' : ''
       } ${isRead ? 'opacity-70' : ''}`}
     >
       {/* Unread indicator */}
