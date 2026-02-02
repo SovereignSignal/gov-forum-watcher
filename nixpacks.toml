@@ -1,9 +1,14 @@
 # Railway/Nixpacks configuration
+# Use Node 22 to satisfy dependency requirements
+
 [phases.setup]
-nixPkgs = ["nodejs_22"]
+nixPkgs = ["nodejs_22", "npm"]
+
+[phases.install]
+cmds = ["npm ci"]
 
 [phases.build]
-cmds = ["npm ci", "npm run build"]
+cmds = ["npm run build"]
 
 [start]
 cmd = "npm start"

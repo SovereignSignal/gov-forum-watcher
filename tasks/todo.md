@@ -1,224 +1,151 @@
-# Gov Watch V1 Roadmap
+# Gov Watch - Task Tracking
 
-## Current Status (After QA Testing - Feb 2, 2026)
+> Last Updated: February 2, 2026
 
-### Working Features
+## Current Sprint: V1 Launch
+
+### Deployment Blockers
+- [ ] **Railway build errors** - Investigating, added nixpacks.toml for Node 22
+- [ ] Set up Privy account and configure `NEXT_PUBLIC_PRIVY_APP_ID` in Railway
+- [ ] Set up Railway Postgres and configure `DATABASE_URL` in Railway
+- [ ] Run database schema (`src/lib/schema.sql`) on Railway Postgres
+
+### Post-Deployment
+- [ ] Test authentication flow end-to-end
+- [ ] Test data sync between localStorage and database
+- [ ] Verify mobile responsiveness on production
+- [ ] Monitor for errors in Railway logs
+
+---
+
+## Completed Tasks
+
+### Session: February 2, 2026
+
+#### Bug Fixes
+- [x] **Fix tags rendering crash** - Discourse API returns tags as strings OR objects depending on forum. Fixed in `DiscussionItem.tsx` and `api/discourse/route.ts`
+
+#### Authentication (Privy)
+- [x] Install `@privy-io/react-auth` SDK
+- [x] Create `AuthProvider` component with fallback for unconfigured mode
+- [x] Create `UserButton` component for login/logout UI
+- [x] Add UserButton to Sidebar
+- [x] Update app layout to wrap with AuthProvider
+
+#### Database (Railway Postgres)
+- [x] Install `@neondatabase/serverless` for Postgres client
+- [x] Create database client (`src/lib/db.ts`)
+- [x] Design and create schema (`src/lib/schema.sql`)
+- [x] Create API route: `/api/user` - Create/get user
+- [x] Create API route: `/api/user/preferences` - Theme, onboarding
+- [x] Create API route: `/api/user/forums` - Enable/disable forums
+- [x] Create API route: `/api/user/alerts` - Keyword alerts CRUD
+- [x] Create API route: `/api/user/bookmarks` - Bookmarks CRUD
+- [x] Create API route: `/api/user/read-state` - Read/unread tracking
+
+#### Data Sync
+- [x] Create `DataSyncProvider` for localStorage ↔ database sync
+- [x] Implement debounced sync to avoid excessive API calls
+- [x] Create `migrateLocalData()` function for first-login migration
+- [x] Add DataSyncProvider to app layout
+
+#### Infrastructure
+- [x] Upgrade Next.js to 16.1.6 (security fix)
+- [x] Create `.env.example` with required variables
+- [x] Add `nixpacks.toml` for Railway Node 22 configuration
+
+---
+
+## Previously Completed (Phase 1 & 2)
+
+### Core Features
 - [x] Forum aggregation from 70+ Discourse-based governance forums
-- [x] Discussion feed with loading states
-- [x] Keyword alerts with highlighting
-- [x] Bookmarking with Saved view
-- [x] Read/unread tracking
+- [x] Discussion feed with loading states and skeletons
+- [x] Keyword alerts with yellow highlighting
+- [x] Bookmarking with dedicated Saved view
+- [x] Read/unread tracking with red dot indicators
 - [x] Sorting (Recent, Replies, Views, Likes)
 - [x] Date filtering (Today, Week, Month, All Time)
 - [x] Forum source filtering
 - [x] Search functionality
-- [x] Dark/Light theme toggle
-- [x] Mobile responsive layout
+- [x] Dark/Light theme toggle with persistence
+- [x] Mobile responsive layout (hamburger menu, slide-in panels)
 - [x] Export/Import configuration (JSON backup)
-- [x] Onboarding wizard
-- [x] Keyboard shortcuts
-- [x] Offline detection
-- [x] Rate limiting
+- [x] Onboarding wizard (3-step flow)
+- [x] Keyboard shortcuts (/, j, k, Escape, etc.)
+- [x] Offline detection with banner
+- [x] Rate limiting (token bucket algorithm)
+- [x] Input sanitization (XSS prevention)
+- [x] Skip links for accessibility
 
-### Bug Fixes Applied
-- [x] Tags rendering crash (Discourse API returns mixed formats) - Fixed Feb 2, 2026
-
----
-
-## V1 Feature Requirements
-
-### 1. User Authentication (Privy)
-**Priority: P0 - Required for V1**
-
-Implement user authentication using Privy to enable:
-- Email login (primary)
-- Social login (Google, Discord, Twitter)
-- Wallet login (MetaMask, WalletConnect for web3 users)
-- Progressive authentication (start anonymous, upgrade to account)
-
-**Tasks:**
-- [ ] Set up Privy account and get API keys
-- [ ] Install Privy React SDK (`@privy-io/react-auth`)
-- [ ] Create PrivyProvider wrapper in app layout
-- [ ] Add login/logout UI to sidebar header
-- [ ] Create user profile component
-- [ ] Handle authentication state throughout app
-- [ ] Protect routes if needed (or keep app accessible with anonymous mode)
-
-### 2. Database for User Data Persistence
-**Priority: P0 - Required for V1**
-
-Move from localStorage to server-side storage for authenticated users:
-- User preferences (theme, enabled forums)
-- Keyword alerts
-- Bookmarks
-- Read state
-
-**Options:**
-1. **Supabase** (Recommended) - PostgreSQL, auth integration, real-time, free tier
-2. **PlanetScale** - MySQL, serverless, free tier
-3. **Neon** - Serverless Postgres, good free tier
-4. **Railway Postgres** - Already on Railway for hosting
-
-**Tasks:**
-- [ ] Choose and set up database provider
-- [ ] Design schema for users, preferences, alerts, bookmarks
-- [ ] Create API routes for CRUD operations
-- [ ] Update hooks to sync with database when authenticated
-- [ ] Keep localStorage as fallback for anonymous users
-- [ ] Add migration path from localStorage to database
-
-### 3. Landing Page Enhancement
-**Priority: P1 - Nice to have**
-
-- [ ] Add login/signup CTA on landing page
-- [ ] Show testimonials or use cases
-- [ ] Add "Try without signing up" option
+### Landing Page
+- [x] Hero section with "Gov Watch" branding
+- [x] Feature highlights (Save Time, Never Miss, Privacy First)
+- [x] "70+ Forums" badge
+- [x] Launch App button
 
 ---
 
-## Database Schema Design (Draft)
+## Backlog (Post-V1)
 
-```sql
--- Users (managed by Privy, we store reference)
-CREATE TABLE users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  privy_did TEXT UNIQUE NOT NULL,  -- Privy's unique identifier
-  email TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+### P1 - High Priority
+- [ ] Real-time sync across devices (WebSocket or polling)
+- [ ] Email notifications for keyword alerts
+- [ ] Push notifications (PWA)
+- [ ] Forum health monitoring (detect dead/moved forums)
 
--- User Preferences
-CREATE TABLE user_preferences (
-  user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-  theme TEXT DEFAULT 'dark',
-  onboarding_completed BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+### P2 - Medium Priority
+- [ ] Custom forum categories
+- [ ] Discussion commenting/notes
+- [ ] Share collections of forums
+- [ ] Advanced search (by author, date range, category)
 
--- User Forums (enabled forums per user)
-CREATE TABLE user_forums (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  forum_cname TEXT NOT NULL,  -- References preset forum cname
-  is_enabled BOOLEAN DEFAULT true,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(user_id, forum_cname)
-);
+### P3 - Nice to Have
+- [ ] Discord bot integration
+- [ ] Telegram bot integration
+- [ ] Browser extension
+- [ ] API for third-party integrations
 
--- Custom Forums (user-added forums)
-CREATE TABLE custom_forums (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  name TEXT NOT NULL,
-  cname TEXT NOT NULL,
-  description TEXT,
-  logo_url TEXT,
-  discourse_url TEXT NOT NULL,
-  discourse_category_id INTEGER,
-  is_enabled BOOLEAN DEFAULT true,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+---
 
--- Keyword Alerts
-CREATE TABLE keyword_alerts (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  keyword TEXT NOT NULL,
-  is_enabled BOOLEAN DEFAULT true,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(user_id, keyword)
-);
+## Architecture Decisions
 
--- Bookmarks
-CREATE TABLE bookmarks (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  topic_ref_id TEXT NOT NULL,  -- protocol-topicId
-  topic_title TEXT NOT NULL,
-  topic_url TEXT NOT NULL,
-  protocol TEXT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(user_id, topic_ref_id)
-);
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Auth Provider | Privy | Web3-native, supports email+wallet, good DX |
+| Database | Railway Postgres | Same platform as hosting, simple billing |
+| DB Client | @neondatabase/serverless | Works with any Postgres, serverless-friendly |
+| Anonymous Mode | Yes | Lower friction, localStorage fallback |
+| Data Sync | Debounced writes | Avoid excessive API calls |
 
--- Read State
-CREATE TABLE read_state (
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  topic_ref_id TEXT NOT NULL,
-  read_at TIMESTAMPTZ DEFAULT NOW(),
-  PRIMARY KEY(user_id, topic_ref_id)
-);
+---
 
--- Indexes
-CREATE INDEX idx_user_forums_user_id ON user_forums(user_id);
-CREATE INDEX idx_keyword_alerts_user_id ON keyword_alerts(user_id);
-CREATE INDEX idx_bookmarks_user_id ON bookmarks(user_id);
-CREATE INDEX idx_read_state_user_id ON read_state(user_id);
+## Files Changed This Session
+
 ```
+Modified:
+- src/app/api/discourse/route.ts (tags normalization)
+- src/app/layout.tsx (AuthProvider, DataSyncProvider)
+- src/components/DiscussionItem.tsx (tags rendering fix)
+- src/components/Sidebar.tsx (UserButton)
+- src/types/index.ts (tag type update)
+- package.json (new dependencies)
+- .gitignore (.env.example exception)
 
----
-
-## Implementation Order
-
-### Phase 1: Database Setup (1-2 days)
-1. Set up Supabase project
-2. Create schema and migrations
-3. Configure environment variables
-4. Test database connectivity
-
-### Phase 2: Privy Authentication (1-2 days)
-1. Create Privy account and app
-2. Install and configure SDK
-3. Add PrivyProvider to app
-4. Create login/logout UI
-5. Display user profile when logged in
-
-### Phase 3: Data Sync (2-3 days)
-1. Create API routes for CRUD operations
-2. Update useForums hook to sync with database
-3. Update useAlerts hook to sync with database
-4. Update useBookmarks hook to sync with database
-5. Update useReadState hook to sync with database
-6. Update useTheme hook to sync preference
-7. Handle anonymous vs authenticated mode
-
-### Phase 4: Polish & Testing (1 day)
-1. Test authentication flow
-2. Test data persistence
-3. Test localStorage fallback
-4. Handle edge cases (logout, multiple devices)
-5. Deploy and verify on production
-
----
-
-## Environment Variables Needed
-
-```env
-# Privy
-NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
-
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+Created:
+- src/app/api/user/route.ts
+- src/app/api/user/alerts/route.ts
+- src/app/api/user/bookmarks/route.ts
+- src/app/api/user/forums/route.ts
+- src/app/api/user/preferences/route.ts
+- src/app/api/user/read-state/route.ts
+- src/components/AuthProvider.tsx
+- src/components/DataSyncProvider.tsx
+- src/components/UserButton.tsx
+- src/hooks/useUserSync.ts
+- src/lib/db.ts
+- src/lib/schema.sql
+- .env.example
+- nixpacks.toml
+- tasks/todo.md
 ```
-
----
-
-## Questions to Resolve
-
-1. **Anonymous mode?** - Should users be able to use the app without logging in? (Recommended: Yes, with localStorage fallback)
-2. **Data migration?** - Should we offer to migrate localStorage data to account on signup?
-3. **Multi-device sync?** - Real-time sync or manual refresh?
-4. **Privy login methods?** - Which to enable (email, Google, Discord, wallet)?
-
----
-
-## References
-
-- [Privy Documentation](https://docs.privy.io)
-- [Supabase Documentation](https://supabase.com/docs)
-- [Next.js App Router Auth Patterns](https://nextjs.org/docs/app/building-your-application/authentication)
