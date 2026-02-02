@@ -67,7 +67,7 @@ function highlightKeywords(text: string, alerts: KeywordAlert[]): React.ReactNod
   return parts.map((part, i) => {
     if (enabledKeywords.includes(part.toLowerCase())) {
       return (
-        <mark key={i} className="bg-indigo-500/30 text-indigo-200 px-1 rounded font-medium">
+        <mark key={i} className="bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded-md font-semibold border border-indigo-500/30">
           {part}
         </mark>
       );
@@ -101,14 +101,16 @@ export function DiscussionItem({
 
   return (
     <article
-      className={`relative p-4 border-b border-gray-800 dark:border-gray-800 hover:bg-gray-800/50 dark:hover:bg-gray-800/50 transition-colors ${
-        hasMatchingKeyword ? 'border-l-2 border-l-indigo-500' : ''
-      } ${isRead ? 'opacity-70' : ''}`}
+      className={`relative group mx-3 my-2 p-4 rounded-xl border transition-all duration-200 ${
+        hasMatchingKeyword
+          ? 'border-indigo-500/40 bg-indigo-500/5 hover:bg-indigo-500/10 hover:border-indigo-500/60'
+          : 'border-gray-800 bg-gray-900/50 hover:bg-gray-800/70 hover:border-gray-700'
+      } ${isRead ? 'opacity-60' : ''}`}
     >
       {/* Unread indicator */}
       {!isRead && (
-        <div className="absolute left-1.5 top-1/2 -translate-y-1/2">
-          <Circle className="w-2 h-2 fill-indigo-500 text-indigo-500" aria-label="Unread" />
+        <div className="absolute -left-1 top-1/2 -translate-y-1/2">
+          <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-lg shadow-indigo-500/50" aria-label="Unread" />
         </div>
       )}
 
@@ -116,15 +118,15 @@ export function DiscussionItem({
       {onToggleBookmark && (
         <button
           onClick={handleBookmarkClick}
-          className={`absolute top-4 right-4 z-10 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+          className={`absolute top-4 right-4 z-10 p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
             isBookmarked
-              ? 'text-indigo-400 bg-indigo-400/10 hover:bg-indigo-400/20'
-              : 'text-gray-500 hover:text-gray-300 hover:bg-gray-700'
+              ? 'text-indigo-400 bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30'
+              : 'text-gray-500 opacity-0 group-hover:opacity-100 hover:text-white hover:bg-gray-700/80 border border-transparent hover:border-gray-600'
           }`}
           aria-label={`${isBookmarked ? 'Remove from' : 'Add to'} bookmarks: ${topic.title}`}
           aria-pressed={isBookmarked}
         >
-          {isBookmarked ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
+          {isBookmarked ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
         </button>
       )}
 
@@ -135,7 +137,7 @@ export function DiscussionItem({
         onClick={handleLinkClick}
         className="flex items-start gap-3 pr-14 pl-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-lg"
       >
-        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-indigo-900 flex items-center justify-center overflow-hidden">
+        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center overflow-hidden shadow-lg shadow-indigo-500/20 ring-1 ring-white/10">
           {isValidImageUrl(topic.imageUrl) ? (
             <img
               src={topic.imageUrl}
@@ -148,21 +150,19 @@ export function DiscussionItem({
               }}
             />
           ) : (
-            <span className="text-white text-sm font-bold" aria-hidden="true">
+            <span className="text-white text-xs font-bold tracking-wide" aria-hidden="true">
               {topic.protocol.slice(0, 2).toUpperCase()}
             </span>
           )}
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 text-xs text-gray-400 mb-1">
-            <span>{formatTimestamp(topic.bumpedAt)}</span>
-            <span aria-hidden="true">·</span>
-            <span className="capitalize">{topic.protocol}</span>
-            <span aria-hidden="true">·</span>
-            <span>Discourse Discussion</span>
+          <div className="flex items-center gap-2 text-xs text-gray-500 mb-1.5">
+            <span className="text-gray-400">{formatTimestamp(topic.bumpedAt)}</span>
+            <span aria-hidden="true" className="text-gray-600">·</span>
+            <span className="capitalize font-medium text-gray-400">{topic.protocol}</span>
             {topic.pinned && <Pin className="w-3 h-3 text-indigo-400" aria-label="Pinned" />}
-            {topic.closed && <Lock className="w-3 h-3 text-orange-400" aria-label="Closed" />}
+            {topic.closed && <Lock className="w-3 h-3 text-amber-500" aria-label="Closed" />}
             {topic.archived && <Archive className="w-3 h-3 text-gray-500" aria-label="Archived" />}
           </div>
 
@@ -186,17 +186,17 @@ export function DiscussionItem({
               {topic.likeCount}
             </span>
             {topic.tags.length > 0 && (
-              <div className="flex items-center gap-1 flex-wrap">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 {topic.tags.slice(0, 3).map((tag) => {
                   // Defensive: handle both string and object tags (API normalizes, but be safe)
                   const tagName = typeof tag === 'string' ? tag : (tag as { name: string }).name;
                   return (
-                    <span key={tagName} className="px-1.5 py-0.5 bg-gray-800 rounded text-gray-400">
+                    <span key={tagName} className="px-2 py-0.5 bg-gray-800/80 border border-gray-700/50 rounded-full text-gray-400 text-[11px]">
                       {tagName}
                     </span>
                   );
                 })}
-                {topic.tags.length > 3 && <span className="text-gray-600">+{topic.tags.length - 3}</span>}
+                {topic.tags.length > 3 && <span className="text-gray-500 text-[11px]">+{topic.tags.length - 3}</span>}
               </div>
             )}
           </div>

@@ -15,6 +15,7 @@
 - [x] **Update landing page messaging** - Removed "no accounts" messaging, updated to reflect optional sign-in
 - [x] **Require login before accessing app** - Added AuthGate component that requires authentication
 - [x] **Fix Aave forum redirect error** - Discourse redirects `/c/{id}.json` to `/c/{slug}/{id}.json`; now follows same-domain redirects
+- [x] **Fix keyword highlighting UI** - Changed jarring yellow highlighting to subtle indigo theme (badges, borders, alert tags)
 - [ ] **Verify Google login** - Google button now visible in Privy modal. Test login flow to confirm it works.
 
 ### Post-Deployment
@@ -68,7 +69,7 @@
 ### Core Features
 - [x] Forum aggregation from 70+ Discourse-based governance forums
 - [x] Discussion feed with loading states and skeletons
-- [x] Keyword alerts with yellow highlighting
+- [x] Keyword alerts with indigo highlighting
 - [x] Bookmarking with dedicated Saved view
 - [x] Read/unread tracking with red dot indicators
 - [x] Sorting (Recent, Replies, Views, Likes)
@@ -133,7 +134,8 @@
 Modified:
 - src/app/api/discourse/route.ts (tags normalization, same-domain redirect handling)
 - src/app/layout.tsx (AuthProvider, DataSyncProvider)
-- src/components/DiscussionItem.tsx (tags rendering fix)
+- src/components/DiscussionItem.tsx (tags rendering fix, keyword highlighting UI - yellow to indigo)
+- src/components/RightSidebar.tsx (keyword alert tags - yellow to indigo)
 - src/components/Sidebar.tsx (UserButton)
 - src/types/index.ts (tag type update)
 - package.json (new dependencies)

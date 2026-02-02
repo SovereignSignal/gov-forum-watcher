@@ -136,35 +136,41 @@ export function RightSidebar({
           </div>
 
           {alerts.length === 0 ? (
-            <p className="text-gray-400 text-sm" role="status">No keyword alerts set</p>
+            <p className="text-gray-500 text-sm" role="status">No keyword alerts set</p>
           ) : (
             <ul className="space-y-2" role="list" aria-label="Keyword alerts">
               {alerts.map((alert) => (
                 <li
                   key={alert.id}
-                  className={`flex items-center justify-between p-2 rounded-lg ${
-                    alert.isEnabled ? 'bg-indigo-900/30' : 'bg-gray-800/50'
+                  className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-colors ${
+                    alert.isEnabled
+                      ? 'bg-indigo-500/10 border-indigo-500/30 hover:bg-indigo-500/15'
+                      : 'bg-gray-800/50 border-gray-700/50 hover:bg-gray-800'
                   }`}
                 >
-                  <span className={`text-sm ${alert.isEnabled ? 'text-indigo-200' : 'text-gray-500'}`}>
+                  <span className={`text-sm font-medium ${alert.isEnabled ? 'text-white' : 'text-gray-500'}`}>
                     {alert.keyword}
                   </span>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-0.5">
                     <button
                       onClick={() => onToggleAlert(alert.id)}
-                      className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-gray-500 hover:text-white transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                      className={`p-2 min-w-[36px] min-h-[36px] flex items-center justify-center transition-colors rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                        alert.isEnabled
+                          ? 'text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/20'
+                          : 'text-gray-500 hover:text-gray-300 hover:bg-gray-700'
+                      }`}
                       aria-label={alert.isEnabled ? `Disable alert for "${alert.keyword}"` : `Enable alert for "${alert.keyword}"`}
                       aria-pressed={alert.isEnabled}
                     >
                       {alert.isEnabled ? (
-                        <Bell className="w-4 h-4 text-indigo-400" />
+                        <Bell className="w-4 h-4" />
                       ) : (
                         <BellOff className="w-4 h-4" />
                       )}
                     </button>
                     <button
                       onClick={() => onRemoveAlert(alert.id)}
-                      className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-gray-500 hover:text-indigo-400 transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                      className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                       aria-label={`Remove alert for "${alert.keyword}"`}
                     >
                       <X className="w-4 h-4" />
