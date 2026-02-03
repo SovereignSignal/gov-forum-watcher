@@ -127,13 +127,13 @@ export function DiscussionItem({
 
   return (
     <article
-      className={`relative group mx-3 my-2.5 p-4 rounded-xl border transition-all duration-200 hover:shadow-md ${isRead ? 'opacity-50' : ''}`}
+      className="relative group mx-3 my-2.5 p-4 rounded-xl border transition-all duration-200 hover:shadow-md"
       style={{ 
         backgroundColor: hasMatchingKeyword ? 'rgba(79, 70, 229, 0.05)' : 'var(--card-bg)', 
         borderColor: hasMatchingKeyword ? 'rgba(79, 70, 229, 0.4)' : 'var(--card-border)' 
       }}
     >
-      {/* Unread indicator */}
+      {/* Unread indicator - subtle left border */}
       {!isRead && (
         <div className="absolute left-0 top-4 bottom-4 w-1 rounded-full bg-gradient-to-b from-indigo-500 to-indigo-600" aria-label="Unread" />
       )}
@@ -163,15 +163,12 @@ export function DiscussionItem({
       >
         {/* Protocol Logo */}
         <div 
-          className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden shadow-sm ring-1 ${
-            isValidImageUrl(forumLogoUrl) 
-              ? '' 
-              : 'bg-gradient-to-br from-indigo-500 to-indigo-600'
-          }`}
-          style={isValidImageUrl(forumLogoUrl) ? { 
-            backgroundColor: 'var(--card-bg)', 
-            boxShadow: '0 0 0 1px var(--card-border)' 
-          } : { boxShadow: '0 0 0 1px rgba(255,255,255,0.1)' }}
+          className="flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden shadow-sm"
+          style={{ 
+            backgroundColor: isValidImageUrl(forumLogoUrl) ? 'var(--card-bg)' : undefined,
+            boxShadow: isValidImageUrl(forumLogoUrl) ? '0 0 0 1px var(--card-border)' : '0 0 0 1px rgba(255,255,255,0.1)',
+            background: isValidImageUrl(forumLogoUrl) ? undefined : 'linear-gradient(to bottom right, #6366f1, #4f46e5)'
+          }}
         >
           {isValidImageUrl(forumLogoUrl) ? (
             <img
@@ -187,7 +184,8 @@ export function DiscussionItem({
                 if (fallback) fallback.style.display = 'flex';
                 const parent = target.parentElement;
                 if (parent) {
-                  parent.className = parent.className.replace('bg-white dark:bg-neutral-800', 'bg-gradient-to-br from-indigo-500 to-indigo-700');
+                  parent.style.background = 'linear-gradient(to bottom right, #6366f1, #4f46e5)';
+                  parent.style.boxShadow = '0 0 0 1px rgba(255,255,255,0.1)';
                 }
               }}
             />
