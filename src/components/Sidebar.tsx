@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutGrid, FolderOpen, Settings, Bell, Bookmark, Sun, Moon, Menu, X } from 'lucide-react';
+import { LayoutGrid, FolderOpen, Settings, Bookmark, Sun, Moon, Menu, X } from 'lucide-react';
 import { UserButton } from './UserButton';
 
 interface SidebarProps {
@@ -42,7 +42,7 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
           {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
         <div className="flex items-center gap-1 min-w-0">
-          <Bell className="w-4 h-4 text-indigo-500 flex-shrink-0" aria-hidden="true" />
+          <span className="text-base flex-shrink-0" aria-hidden="true">🗳️</span>
           <span className="font-semibold theme-text text-sm truncate">Gov Watch</span>
         </div>
         <button
@@ -76,7 +76,7 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
       <div className="p-4 border-b" style={{ borderColor: 'var(--card-border)' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Bell className="w-6 h-6 text-indigo-500" aria-hidden="true" />
+            <span className="text-2xl" aria-hidden="true">🗳️</span>
             <h1 className="text-lg font-semibold theme-text">Gov Watch</h1>
           </div>
           <button

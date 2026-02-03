@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { Bell, LogIn, Loader2 } from 'lucide-react';
+import { LogIn, Loader2 } from 'lucide-react';
 import { useAuth } from './AuthProvider';
 
 interface AuthGateProps {
@@ -37,7 +37,7 @@ export function AuthGate({ children }: AuthGateProps) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-950 p-4">
         <div className="text-center max-w-md">
-          <Bell className="w-12 h-12 text-indigo-500 mx-auto mb-4" />
+          <span className="text-5xl mx-auto mb-4 block">🗳️</span>
           <h1 className="text-2xl font-bold text-white mb-2">Gov Watch</h1>
           <p className="text-gray-400 mb-6">
             Authentication is not configured. Please set up Privy to enable login.
@@ -56,7 +56,7 @@ export function AuthGate({ children }: AuthGateProps) {
       <div className="min-h-screen flex items-center justify-center bg-gray-950 p-4">
         <div className="text-center max-w-md">
           <div className="mb-8">
-            <Bell className="w-16 h-16 text-indigo-500 mx-auto mb-4" />
+            <span className="text-6xl mx-auto mb-4 block text-center">🗳️</span>
             <h1 className="text-3xl font-bold text-white mb-2">Gov Watch</h1>
             <p className="text-gray-400">
               Your unified gateway to DAO governance discussions

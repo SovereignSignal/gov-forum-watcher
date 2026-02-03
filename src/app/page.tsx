@@ -28,8 +28,9 @@ export default function LandingPage() {
               <Globe className="w-4 h-4" />
               <span>70+ Governance Forums Supported</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
-              Gov Watch
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              <span className="mr-3">🗳️</span>
+              <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">Gov Watch</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-400 mb-4 max-w-3xl mx-auto">
               Your Unified Gateway to DAO Governance
@@ -294,7 +295,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="py-8 border-t border-neutral-800">
         <div className="max-w-6xl mx-auto px-6 text-center text-neutral-500 text-sm">
-          <p>Gov Watch - Governance Forum Aggregator</p>
+          <p>🗳️ Gov Watch - Governance Forum Aggregator</p>
           <p className="mt-2">
             Open source. Privacy-focused. Optional sync with secure authentication.
           </p>
