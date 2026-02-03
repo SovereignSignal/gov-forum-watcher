@@ -18,6 +18,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { Forum, ForumCategoryId } from '@/types';
+import { getProtocolLogo } from '@/lib/logoUtils';
 import {
   FORUM_CATEGORIES,
   ForumPreset,
@@ -160,12 +161,14 @@ export function ForumManager({
     if (urlExists(preset.url)) return;
 
     const cname = preset.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+    // Use preset logo or fall back to logo utility
+    const logoUrl = preset.logoUrl || getProtocolLogo(preset.name);
     onAddForum({
       cname,
       name: preset.name,
       description: preset.description,
       token: preset.token,
-      logoUrl: preset.logoUrl,
+      logoUrl,
       category: categoryId as ForumCategoryId,
       discourseForum: {
         url: preset.url,
@@ -223,6 +226,8 @@ export function ForumManager({
 
   const renderForumPreset = (preset: ForumPreset, categoryId: string) => {
     const isAdded = urlExists(preset.url);
+    // Get logo from preset or fallback to logo utility
+    const logoUrl = preset.logoUrl || getProtocolLogo(preset.name);
     return (
       <button
         key={preset.url}
@@ -236,13 +241,13 @@ export function ForumManager({
         }`}
       >
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden ${
-          preset.logoUrl 
+          logoUrl 
             ? 'bg-white dark:bg-neutral-700' 
             : 'bg-gradient-to-br from-indigo-600 to-indigo-900'
         }`}>
-          {preset.logoUrl ? (
+          {logoUrl ? (
             <img
-              src={preset.logoUrl}
+              src={logoUrl}
               alt=""
               className="w-6 h-6 object-contain"
               onError={(e) => {
@@ -259,7 +264,7 @@ export function ForumManager({
           ) : null}
           <span 
             className="text-white text-xs font-bold"
-            style={{ display: preset.logoUrl ? 'none' : 'flex' }}
+            style={{ display: logoUrl ? 'none' : 'flex' }}
           >
             {preset.name.slice(0, 2).toUpperCase()}
           </span>
@@ -540,7 +545,10 @@ export function ForumManager({
             </div>
           ) : (
             <div className="space-y-2">
-              {forums.map((forum) => (
+              {forums.map((forum) => {
+                // Get logo from forum or fallback to logo utility
+                const logoUrl = forum.logoUrl || getProtocolLogo(forum.name);
+                return (
                 <div
                   key={forum.id}
                   className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
@@ -549,13 +557,13 @@ export function ForumManager({
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden ${
-                      forum.logoUrl 
+                      logoUrl 
                         ? 'bg-white dark:bg-neutral-700' 
                         : 'bg-gradient-to-br from-indigo-600 to-indigo-900'
                     }`}>
-                      {forum.logoUrl ? (
+                      {logoUrl ? (
                         <img
-                          src={forum.logoUrl}
+                          src={logoUrl}
                           alt=""
                           className="w-6 h-6 object-contain"
                           onError={(e) => {
@@ -572,7 +580,7 @@ export function ForumManager({
                       ) : null}
                       <span 
                         className="text-white text-xs font-bold"
-                        style={{ display: forum.logoUrl ? 'none' : 'flex' }}
+                        style={{ display: logoUrl ? 'none' : 'flex' }}
                       >
                         {forum.name.slice(0, 2).toUpperCase()}
                       </span>
@@ -633,7 +641,7 @@ export function ForumManager({
                     </Tooltip>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           )}
         </div>

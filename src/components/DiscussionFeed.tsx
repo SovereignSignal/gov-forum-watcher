@@ -3,6 +3,7 @@
 import { useState, useMemo, memo } from 'react';
 import { RefreshCw, Clock, CheckCircle, XCircle, Loader2, Trash2, CheckCheck } from 'lucide-react';
 import { DiscussionTopic, KeywordAlert, DateRangeFilter, DateFilterMode, Forum, SortOption } from '@/types';
+import { getProtocolLogo } from '@/lib/logoUtils';
 import { DiscussionItem } from './DiscussionItem';
 import { DiscussionSkeletonList } from './DiscussionSkeleton';
 import { FeedFilters } from './FeedFilters';
@@ -57,11 +58,14 @@ export function DiscussionFeed({
   const [sortBy, setSortBy] = useState<SortOption>('recent');
 
   // Create a lookup map for forum logos by cname
+  // Uses forum's logoUrl if set, otherwise falls back to logo utility
   const forumLogoMap = useMemo(() => {
     const map = new Map<string, string>();
     forums.forEach((forum) => {
-      if (forum.logoUrl) {
-        map.set(forum.cname.toLowerCase(), forum.logoUrl);
+      // Try forum's own logoUrl first, then fall back to utility
+      const logoUrl = forum.logoUrl || getProtocolLogo(forum.name);
+      if (logoUrl) {
+        map.set(forum.cname.toLowerCase(), logoUrl);
       }
     });
     return map;
