@@ -310,6 +310,12 @@ html.light mark {
 }
 
 /* ===== DISCUSSION CARD OVERRIDES ===== */
+/* Ensure article cards respect theme in both modes */
+article {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
 /* Light mode card styling */
 html.light .border-gray-800.bg-gray-900\/50 {
   background-color: white !important;

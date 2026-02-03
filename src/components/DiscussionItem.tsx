@@ -103,12 +103,11 @@ export function DiscussionItem({
 
   return (
     <article
-      className={`relative group mx-3 my-2.5 p-4 rounded-xl border transition-all duration-200 ${
-        hasMatchingKeyword
-          ? 'border-indigo-500/40 bg-indigo-500/5 hover:bg-indigo-500/10 hover:border-indigo-500/60 shadow-sm shadow-indigo-500/10'
-          : 'theme-card hover:shadow-md'
-      } ${isRead ? 'opacity-50' : ''}`}
-      style={!hasMatchingKeyword ? { backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' } : undefined}
+      className={`relative group mx-3 my-2.5 p-4 rounded-xl border transition-all duration-200 hover:shadow-md ${isRead ? 'opacity-50' : ''}`}
+      style={{ 
+        backgroundColor: hasMatchingKeyword ? 'rgba(79, 70, 229, 0.05)' : 'var(--card-bg)', 
+        borderColor: hasMatchingKeyword ? 'rgba(79, 70, 229, 0.4)' : 'var(--card-border)' 
+      }}
     >
       {/* Unread indicator */}
       {!isRead && (
