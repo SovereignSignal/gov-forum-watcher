@@ -182,7 +182,6 @@ export default function LandingPage() {
                     likes={61}
                     isHot
                     isDark={isDark}
-                    logoUrl="https://icons.llama.fi/arbitrum.jpg"
                     date="Feb 1"
                   />
                   <MockFeedItem 
@@ -193,7 +192,6 @@ export default function LandingPage() {
                     likes={34}
                     isNew
                     isDark={isDark}
-                    logoUrl="https://icons.llama.fi/uniswap.jpg"
                     date="Feb 2"
                   />
                   <MockFeedItem 
@@ -203,7 +201,6 @@ export default function LandingPage() {
                     views={892}
                     likes={28}
                     isDark={isDark}
-                    logoUrl="https://icons.llama.fi/aave.jpg"
                     date="Jan 30"
                   />
                   <MockFeedItem 
@@ -214,7 +211,6 @@ export default function LandingPage() {
                     likes={52}
                     isHot
                     isDark={isDark}
-                    logoUrl="https://icons.llama.fi/optimism.jpg"
                     date="Jan 28"
                   />
                 </div>
