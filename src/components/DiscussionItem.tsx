@@ -1,7 +1,7 @@
 'use client';
 
 import { format, isToday, isYesterday } from 'date-fns';
-import { MessageSquare, Eye, ThumbsUp, Pin, Lock, Archive, Bookmark, BookmarkCheck, Flame, TrendingUp } from 'lucide-react';
+import { MessageSquare, Eye, ThumbsUp, Pin, Lock, Archive, Bookmark, BookmarkCheck, Flame, TrendingUp, Sparkles, Clock } from 'lucide-react';
 import { DiscussionTopic, KeywordAlert } from '@/types';
 
 // Validate image URLs to prevent malicious content
@@ -33,15 +33,22 @@ interface DiscussionItemProps {
   forumLogoUrl?: string;
 }
 
-function formatTimestamp(dateString: string): string {
+function formatTimestamp(dateString: string, short = false): string {
   const date = new Date(dateString);
   if (isToday(date)) {
-    return format(date, 'HH:mm');
+    return short ? format(date, 'HH:mm') : format(date, 'HH:mm');
   }
   if (isYesterday(date)) {
-    return 'Yesterday ' + format(date, 'HH:mm');
+    return short ? 'Yesterday' : 'Yesterday ' + format(date, 'HH:mm');
   }
-  return format(date, 'MMM dd, HH:mm');
+  return short ? format(date, 'MMM dd') : format(date, 'MMM dd, HH:mm');
+}
+
+function isNewTopic(createdAt: string): boolean {
+  const created = new Date(createdAt);
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  return created > sevenDaysAgo;
 }
 
 // Limits for keyword matching to prevent ReDoS attacks
@@ -203,11 +210,35 @@ export function DiscussionItem({
             {highlightKeywords(topic.title, alerts)}
           </h3>
 
-          {/* Meta row - Protocol, time, activity, status */}
-          <div className="flex items-center gap-2 text-xs mb-2.5">
+          {/* Meta row - Protocol, dates, activity, status */}
+          <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-xs mb-2.5">
             <span className="font-medium text-indigo-500 capitalize">{topic.protocol}</span>
             <span className="theme-text-muted" aria-hidden="true">·</span>
-            <span className="theme-text-muted">{formatTimestamp(topic.bumpedAt)}</span>
+            
+            {/* Created date */}
+            <span className="flex items-center gap-1 theme-text-muted" title={`Created: ${format(new Date(topic.createdAt), 'PPP')}`}>
+              <Sparkles className="w-3 h-3 text-emerald-500" aria-hidden="true" />
+              <span>{formatTimestamp(topic.createdAt, true)}</span>
+            </span>
+            
+            {/* Last activity - only show if different from created */}
+            {topic.bumpedAt !== topic.createdAt && (
+              <>
+                <span className="theme-text-muted" aria-hidden="true">·</span>
+                <span className="flex items-center gap-1 theme-text-muted" title={`Last activity: ${format(new Date(topic.bumpedAt), 'PPP p')}`}>
+                  <Clock className="w-3 h-3 text-amber-500" aria-hidden="true" />
+                  <span>{formatTimestamp(topic.bumpedAt, true)}</span>
+                </span>
+              </>
+            )}
+            
+            {/* NEW badge for recently created topics */}
+            {isNewTopic(topic.createdAt) && (
+              <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-500 text-[10px] font-semibold">
+                NEW
+              </span>
+            )}
+            
             {/* Activity indicators */}
             {getActivityLevel(topic) === 'hot' && (
               <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-orange-500/15 text-orange-500 font-medium" title="High activity">
@@ -216,23 +247,25 @@ export function DiscussionItem({
               </span>
             )}
             {getActivityLevel(topic) === 'trending' && (
-              <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-500 font-medium" title="Trending">
+              <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-sky-500/15 text-sky-500 font-medium" title="Trending">
                 <TrendingUp className="w-3 h-3" aria-hidden="true" />
                 <span className="text-[10px]">Active</span>
               </span>
             )}
+            
+            {/* Status icons */}
             {topic.pinned && (
-              <span className="flex items-center gap-1 text-indigo-400">
+              <span className="flex items-center gap-1 text-indigo-400" title="Pinned">
                 <Pin className="w-3 h-3" aria-label="Pinned" />
               </span>
             )}
             {topic.closed && (
-              <span className="flex items-center gap-1 text-amber-500">
+              <span className="flex items-center gap-1 text-amber-500" title="Closed">
                 <Lock className="w-3 h-3" aria-label="Closed" />
               </span>
             )}
             {topic.archived && (
-              <span className="flex items-center gap-1 theme-text-muted">
+              <span className="flex items-center gap-1 theme-text-muted" title="Archived">
                 <Archive className="w-3 h-3" aria-label="Archived" />
               </span>
             )}

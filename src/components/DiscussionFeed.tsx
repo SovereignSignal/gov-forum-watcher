@@ -2,7 +2,7 @@
 
 import { useState, useMemo, memo } from 'react';
 import { RefreshCw, Clock, CheckCircle, XCircle, Loader2, Trash2, CheckCheck } from 'lucide-react';
-import { DiscussionTopic, KeywordAlert, DateRangeFilter, Forum, SortOption } from '@/types';
+import { DiscussionTopic, KeywordAlert, DateRangeFilter, DateFilterMode, Forum, SortOption } from '@/types';
 import { DiscussionItem } from './DiscussionItem';
 import { DiscussionSkeletonList } from './DiscussionSkeleton';
 import { FeedFilters } from './FeedFilters';
@@ -52,6 +52,7 @@ export function DiscussionFeed({
 }: DiscussionFeedProps) {
   const [displayCount, setDisplayCount] = useState(20);
   const [dateRange, setDateRange] = useState<DateRangeFilter>('all');
+  const [dateFilterMode, setDateFilterMode] = useState<DateFilterMode>('activity');
   const [selectedForumId, setSelectedForumId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>('recent');
 
@@ -79,9 +80,10 @@ export function DiscussionFeed({
         if (!matchesSearch) return false;
       }
 
-      // Date range filter
+      // Date range filter - uses either createdAt or bumpedAt based on mode
       if (dateRange !== 'all') {
-        const topicDate = new Date(topic.bumpedAt);
+        const dateField = dateFilterMode === 'created' ? topic.createdAt : topic.bumpedAt;
+        const topicDate = new Date(dateField);
         if (dateRange === 'today' && !isToday(topicDate)) return false;
         if (dateRange === 'week' && !isThisWeek(topicDate)) return false;
         if (dateRange === 'month' && !isThisMonth(topicDate)) return false;
@@ -112,7 +114,7 @@ export function DiscussionFeed({
           return new Date(b.bumpedAt).getTime() - new Date(a.bumpedAt).getTime();
       }
     });
-  }, [discussions, searchQuery, dateRange, selectedForumId, forums, sortBy]);
+  }, [discussions, searchQuery, dateRange, dateFilterMode, selectedForumId, forums, sortBy]);
 
   const displayedDiscussions = filteredAndSortedDiscussions.slice(0, displayCount);
   const hasMore = displayCount < filteredAndSortedDiscussions.length;
@@ -174,6 +176,8 @@ export function DiscussionFeed({
       <FeedFilters
         dateRange={dateRange}
         onDateRangeChange={setDateRange}
+        dateFilterMode={dateFilterMode}
+        onDateFilterModeChange={setDateFilterMode}
         selectedForumId={selectedForumId}
         onForumFilterChange={setSelectedForumId}
         forums={forums.filter((f) => f.isEnabled)}

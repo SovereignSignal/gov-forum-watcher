@@ -59,6 +59,7 @@ export interface KeywordAlert {
 }
 
 export type DateRangeFilter = 'all' | 'today' | 'week' | 'month';
+export type DateFilterMode = 'created' | 'activity';
 
 export type SortOption = 'recent' | 'replies' | 'views' | 'likes';
 
