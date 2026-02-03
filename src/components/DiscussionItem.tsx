@@ -103,17 +103,15 @@ export function DiscussionItem({
 
   return (
     <article
-      className={`relative group mx-3 my-2 p-4 rounded-lg border transition-all duration-200 ${
+      className={`relative group mx-3 my-2.5 p-4 rounded-xl border transition-all duration-200 ${
         hasMatchingKeyword
-          ? 'border-indigo-500/40 bg-indigo-500/5 hover:bg-indigo-500/10 hover:border-indigo-500/60'
-          : 'theme-card hover:opacity-90'
-      } ${isRead ? 'opacity-60' : ''}`}
+          ? 'border-indigo-500/40 bg-indigo-500/5 hover:bg-indigo-500/10 hover:border-indigo-500/60 shadow-sm shadow-indigo-500/10'
+          : 'theme-card hover:shadow-md hover:border-neutral-200 dark:hover:border-neutral-700'
+      } ${isRead ? 'opacity-50' : ''}`}
     >
       {/* Unread indicator */}
       {!isRead && (
-        <div className="absolute -left-1 top-1/2 -translate-y-1/2">
-          <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-lg shadow-indigo-500/50" aria-label="Unread" />
-        </div>
+        <div className="absolute left-0 top-4 bottom-4 w-1 rounded-full bg-gradient-to-b from-indigo-500 to-indigo-600" aria-label="Unread" />
       )}
 
       {/* Bookmark button - positioned outside the link for accessibility */}
@@ -137,12 +135,13 @@ export function DiscussionItem({
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleLinkClick}
-        className="flex items-start gap-3 pr-14 pl-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-lg"
+        className="flex items-start gap-4 pr-14 pl-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-lg"
       >
-        <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden shadow-lg ring-1 ring-white/10 ${
+        {/* Protocol Logo */}
+        <div className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden shadow-md ring-1 ring-black/5 dark:ring-white/10 ${
           isValidImageUrl(forumLogoUrl) 
-            ? 'bg-white dark:bg-neutral-800 shadow-neutral-500/10' 
-            : 'bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-indigo-500/20'
+            ? 'bg-white dark:bg-neutral-800' 
+            : 'bg-gradient-to-br from-indigo-500 to-indigo-700'
         }`}>
           {isValidImageUrl(forumLogoUrl) ? (
             <img
@@ -156,10 +155,9 @@ export function DiscussionItem({
                 target.style.display = 'none';
                 const fallback = target.nextElementSibling as HTMLElement;
                 if (fallback) fallback.style.display = 'flex';
-                // Also update parent background
                 const parent = target.parentElement;
                 if (parent) {
-                  parent.className = parent.className.replace('bg-white dark:bg-neutral-800 shadow-neutral-500/10', 'bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-indigo-500/20');
+                  parent.className = parent.className.replace('bg-white dark:bg-neutral-800', 'bg-gradient-to-br from-indigo-500 to-indigo-700');
                 }
               }}
             />
@@ -173,47 +171,72 @@ export function DiscussionItem({
           </span>
         </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 text-xs theme-text-muted mb-1.5">
-            <span className="theme-text-secondary">{formatTimestamp(topic.bumpedAt)}</span>
-            <span aria-hidden="true">·</span>
-            <span className="capitalize font-medium theme-text-secondary">{topic.protocol}</span>
-            {topic.pinned && <Pin className="w-3 h-3 text-indigo-400" aria-label="Pinned" />}
-            {topic.closed && <Lock className="w-3 h-3 text-amber-500" aria-label="Closed" />}
-            {topic.archived && <Archive className="w-3 h-3 theme-text-muted" aria-label="Archived" />}
-          </div>
-
+        {/* Content */}
+        <div className="flex-1 min-w-0 py-0.5">
+          {/* Title - Primary focus */}
           <h3
-            className={`font-medium mb-2 line-clamp-2 ${isRead ? 'theme-text-muted' : 'theme-text'}`}
+            className={`text-[15px] font-semibold leading-snug mb-2 line-clamp-2 ${isRead ? 'theme-text-muted' : 'theme-text'}`}
           >
             {highlightKeywords(topic.title, alerts)}
           </h3>
 
-          <div className="flex items-center gap-4 text-xs theme-text-secondary">
-            <span className="flex items-center gap-1" aria-label={`${topic.replyCount} replies`}>
-              <MessageSquare className="w-3 h-3" aria-hidden="true" />
-              {topic.replyCount}
-            </span>
-            <span className="flex items-center gap-1 hidden sm:flex" aria-label={`${topic.views} views`}>
-              <Eye className="w-3 h-3" aria-hidden="true" />
-              {topic.views}
-            </span>
-            <span className="flex items-center gap-1" aria-label={`${topic.likeCount} likes`}>
-              <ThumbsUp className="w-3 h-3" aria-hidden="true" />
-              {topic.likeCount}
-            </span>
+          {/* Meta row - Protocol, time, status */}
+          <div className="flex items-center gap-2 text-xs mb-2.5">
+            <span className="font-medium text-indigo-400 dark:text-indigo-400 capitalize">{topic.protocol}</span>
+            <span className="theme-text-muted" aria-hidden="true">·</span>
+            <span className="theme-text-muted">{formatTimestamp(topic.bumpedAt)}</span>
+            {topic.pinned && (
+              <span className="flex items-center gap-1 text-indigo-400">
+                <Pin className="w-3 h-3" aria-label="Pinned" />
+              </span>
+            )}
+            {topic.closed && (
+              <span className="flex items-center gap-1 text-amber-500">
+                <Lock className="w-3 h-3" aria-label="Closed" />
+              </span>
+            )}
+            {topic.archived && (
+              <span className="flex items-center gap-1 theme-text-muted">
+                <Archive className="w-3 h-3" aria-label="Archived" />
+              </span>
+            )}
+          </div>
+
+          {/* Bottom row - Stats and Tags */}
+          <div className="flex items-center justify-between gap-4">
+            {/* Stats - compact inline */}
+            <div className="flex items-center gap-3 text-xs theme-text-muted">
+              <span className="flex items-center gap-1.5" aria-label={`${topic.replyCount} replies`}>
+                <MessageSquare className="w-3.5 h-3.5" aria-hidden="true" />
+                <span className="tabular-nums">{topic.replyCount}</span>
+              </span>
+              <span className="flex items-center gap-1.5 hidden sm:flex" aria-label={`${topic.views} views`}>
+                <Eye className="w-3.5 h-3.5" aria-hidden="true" />
+                <span className="tabular-nums">{topic.views.toLocaleString()}</span>
+              </span>
+              <span className="flex items-center gap-1.5" aria-label={`${topic.likeCount} likes`}>
+                <ThumbsUp className="w-3.5 h-3.5" aria-hidden="true" />
+                <span className="tabular-nums">{topic.likeCount}</span>
+              </span>
+            </div>
+
+            {/* Tags - right aligned */}
             {topic.tags.length > 0 && (
-              <div className="flex items-center gap-1.5 flex-wrap">
-                {topic.tags.slice(0, 3).map((tag) => {
-                  // Defensive: handle both string and object tags (API normalizes, but be safe)
+              <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                {topic.tags.slice(0, 2).map((tag) => {
                   const tagName = typeof tag === 'string' ? tag : (tag as { name: string }).name;
                   return (
-                    <span key={tagName} className="px-2 py-0.5 rounded-full text-[11px] theme-text-secondary" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)' }}>
+                    <span 
+                      key={tagName} 
+                      className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700"
+                    >
                       {tagName}
                     </span>
                   );
                 })}
-                {topic.tags.length > 3 && <span className="theme-text-muted text-[11px]">+{topic.tags.length - 3}</span>}
+                {topic.tags.length > 2 && (
+                  <span className="text-[11px] theme-text-muted font-medium">+{topic.tags.length - 2}</span>
+                )}
               </div>
             )}
           </div>
