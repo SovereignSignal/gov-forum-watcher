@@ -21,6 +21,13 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// Get initial theme from localStorage (runs on client only)
+function getInitialTheme(): 'dark' | 'light' {
+  if (typeof window === 'undefined') return 'dark';
+  const saved = localStorage.getItem('gov-watch-theme');
+  return saved === 'light' ? 'light' : 'dark';
+}
+
 // Hook to use auth context
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
@@ -101,10 +108,42 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [mounted, setMounted] = useState(false);
+
+  // Read theme from localStorage on mount and listen for changes
+  useEffect(() => {
+    setTheme(getInitialTheme());
+    setMounted(true);
+
+    // Listen for theme changes via storage event (cross-tab) and custom event (same tab)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'gov-watch-theme') {
+        setTheme(e.newValue === 'light' ? 'light' : 'dark');
+      }
+    };
+
+    const handleThemeChange = () => {
+      setTheme(getInitialTheme());
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('themechange', handleThemeChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('themechange', handleThemeChange);
+    };
+  }, []);
 
   // If Privy is not configured, use fallback provider
   if (!appId) {
     return <NoAuthProvider>{children}</NoAuthProvider>;
+  }
+
+  // Don't render Privy until we know the theme (prevents flash)
+  if (!mounted) {
+    return null;
   }
 
   return (
@@ -112,7 +151,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       appId={appId}
       config={{
         appearance: {
-          theme: 'dark',
+          theme: theme,
           accentColor: '#4f46e5', // Indigo-600 to match app theme
           logo: '/icon.svg',
         },

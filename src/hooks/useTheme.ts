@@ -4,7 +4,8 @@ import { useState, useCallback, useEffect } from 'react';
 
 type Theme = 'dark' | 'light';
 
-const THEME_KEY = 'gov-forum-watcher-theme';
+// Use consistent key across app and landing page
+const THEME_KEY = 'gov-watch-theme';
 
 function getStoredTheme(): Theme {
   if (typeof window === 'undefined') return 'dark';
@@ -36,6 +37,8 @@ export function useTheme() {
     setThemeState(newTheme);
     if (typeof window !== 'undefined') {
       localStorage.setItem(THEME_KEY, newTheme);
+      // Dispatch custom event so AuthProvider can update Privy theme
+      window.dispatchEvent(new Event('themechange'));
     }
   }, []);
 
