@@ -87,21 +87,21 @@ export function FeedFilters({
         </select>
       </div>
 
-      {/* Sort Options */}
-      <div className="flex items-center gap-2">
-        <label htmlFor="sort-filter" className="sr-only">
-          Sort discussions
-        </label>
+      {/* Sort Options - More prominent */}
+      <div className="flex items-center gap-2 ml-auto">
         <ArrowUpDown className="w-4 h-4 theme-text-muted" aria-hidden="true" />
+        <label htmlFor="sort-filter" className="text-xs theme-text-muted hidden sm:inline">
+          Sort by
+        </label>
         <select
           id="sort-filter"
           value={sortBy}
           onChange={(e) => onSortChange(e.target.value as SortOption)}
-          className="px-3 py-1.5 min-h-[32px] text-xs rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer transition-colors theme-text-secondary"
-          style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)' }}
+          className="px-3 py-1.5 min-h-[32px] text-xs font-medium rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer transition-colors"
+          style={{ backgroundColor: 'var(--accent)', color: 'white', border: 'none' }}
         >
           {SORT_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
+            <option key={option.value} value={option.value} style={{ backgroundColor: 'var(--card-bg)', color: 'var(--text-primary)' }}>
               {option.label}
             </option>
           ))}

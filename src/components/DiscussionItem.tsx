@@ -1,7 +1,7 @@
 'use client';
 
 import { format, isToday, isYesterday } from 'date-fns';
-import { MessageSquare, Eye, ThumbsUp, Pin, Lock, Archive, Bookmark, BookmarkCheck, Circle } from 'lucide-react';
+import { MessageSquare, Eye, ThumbsUp, Pin, Lock, Archive, Bookmark, BookmarkCheck, Flame, TrendingUp } from 'lucide-react';
 import { DiscussionTopic, KeywordAlert } from '@/types';
 
 // Validate image URLs to prevent malicious content
@@ -47,6 +47,23 @@ function formatTimestamp(dateString: string): string {
 // Limits for keyword matching to prevent ReDoS attacks
 const MAX_KEYWORD_LENGTH = 100;
 const MAX_KEYWORDS = 50;
+
+// Calculate activity level based on engagement metrics
+function getActivityLevel(topic: DiscussionTopic): 'hot' | 'trending' | 'normal' {
+  const { replyCount, views, likeCount } = topic;
+  
+  // Hot: Very high engagement
+  if (replyCount >= 20 || views >= 2000 || likeCount >= 30) {
+    return 'hot';
+  }
+  
+  // Trending: Good engagement
+  if (replyCount >= 8 || views >= 500 || likeCount >= 10) {
+    return 'trending';
+  }
+  
+  return 'normal';
+}
 
 function highlightKeywords(text: string, alerts: KeywordAlert[]): React.ReactNode {
   if (alerts.length === 0) return text;
@@ -186,11 +203,24 @@ export function DiscussionItem({
             {highlightKeywords(topic.title, alerts)}
           </h3>
 
-          {/* Meta row - Protocol, time, status */}
+          {/* Meta row - Protocol, time, activity, status */}
           <div className="flex items-center gap-2 text-xs mb-2.5">
             <span className="font-medium text-indigo-500 capitalize">{topic.protocol}</span>
             <span className="theme-text-muted" aria-hidden="true">·</span>
             <span className="theme-text-muted">{formatTimestamp(topic.bumpedAt)}</span>
+            {/* Activity indicators */}
+            {getActivityLevel(topic) === 'hot' && (
+              <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-orange-500/15 text-orange-500 font-medium" title="High activity">
+                <Flame className="w-3 h-3" aria-hidden="true" />
+                <span className="text-[10px]">Hot</span>
+              </span>
+            )}
+            {getActivityLevel(topic) === 'trending' && (
+              <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-500 font-medium" title="Trending">
+                <TrendingUp className="w-3 h-3" aria-hidden="true" />
+                <span className="text-[10px]">Active</span>
+              </span>
+            )}
             {topic.pinned && (
               <span className="flex items-center gap-1 text-indigo-400">
                 <Pin className="w-3 h-3" aria-label="Pinned" />
