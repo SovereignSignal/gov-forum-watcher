@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gov Watch - Governance Forum Aggregator",
-  description: "Aggregates and displays governance discussions from multiple Discourse-based forums used by DAOs and blockchain protocols",
+  title: "discuss.watch – Unified Forum Feed",
+  description: "All your forums, one feed. Aggregate discussions from crypto, AI, and open source communities.",
   icons: {
     icon: "/icon.svg",
   },

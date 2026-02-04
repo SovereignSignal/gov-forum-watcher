@@ -50,8 +50,8 @@ export function AuthGate({ children }: AuthGateProps) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: isDark ? '#0a0a0f' : '#f8f9fa' }}>
         <div className="text-center max-w-md">
-          <span className="text-5xl block mb-4">🗳️</span>
-          <h1 className="text-2xl font-bold mb-2" style={{ color: isDark ? '#fff' : '#111827' }}>Gov Watch</h1>
+          <span className="text-5xl block mb-4">📡</span>
+          <h1 className="text-2xl font-bold mb-2" style={{ color: isDark ? '#fff' : '#111827' }}>discuss.watch</h1>
           <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>
             Authentication not configured. Set up Privy to enable login.
           </p>
@@ -76,22 +76,22 @@ export function AuthGate({ children }: AuthGateProps) {
         >
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-3xl">🗳️</span>
-              <span className="font-bold text-2xl" style={{ color: isDark ? '#fff' : '#111827' }}>Gov Watch</span>
+              <span className="text-3xl">📡</span>
+              <span className="font-bold text-2xl" style={{ color: isDark ? '#fff' : '#111827' }}>discuss.watch</span>
             </div>
-            <p style={{ color: isDark ? '#6b7280' : '#6b7280' }}>Governance Forum Aggregator</p>
+            <p style={{ color: isDark ? '#6b7280' : '#6b7280' }}>Unified forum feed</p>
           </div>
 
           <div className="space-y-8">
             <h2 className="text-3xl font-bold leading-tight" style={{ color: isDark ? '#fff' : '#111827' }}>
-              Your unified gateway to<br />
-              <span className="text-indigo-500">DAO governance</span>
+              All your forums.<br />
+              <span className="text-indigo-500">One feed.</span>
             </h2>
             
             <div className="space-y-4">
-              <FeatureItem icon={<Globe className="w-5 h-5" />} title="70+ Forums" description="Aave, Uniswap, Arbitrum, and more" isDark={isDark} />
+              <FeatureItem icon={<Globe className="w-5 h-5" />} title="100+ Forums" description="Crypto, AI, and open source communities" isDark={isDark} />
               <FeatureItem icon={<Zap className="w-5 h-5" />} title="Save Hours" description="One feed instead of dozens of tabs" isDark={isDark} />
-              <FeatureItem icon={<Bell className="w-5 h-5" />} title="Keyword Alerts" description="Never miss important proposals" isDark={isDark} />
+              <FeatureItem icon={<Bell className="w-5 h-5" />} title="Keyword Alerts" description="Never miss important discussions" isDark={isDark} />
               <FeatureItem icon={<Shield className="w-5 h-5" />} title="Privacy First" description="Optional sync, works offline" isDark={isDark} />
             </div>
           </div>
@@ -119,10 +119,10 @@ export function AuthGate({ children }: AuthGateProps) {
             <div className="w-full max-w-md">
               {/* Mobile header */}
               <div className="lg:hidden text-center mb-8">
-                <span className="text-4xl block mb-2">🗳️</span>
-                <h1 className="text-2xl font-bold" style={{ color: isDark ? '#fff' : '#111827' }}>Gov Watch</h1>
+                <span className="text-4xl block mb-2">📡</span>
+                <h1 className="text-2xl font-bold" style={{ color: isDark ? '#fff' : '#111827' }}>discuss.watch</h1>
                 <p className="text-sm mt-1" style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>
-                  Your unified gateway to DAO governance
+                  All your forums, one feed
                 </p>
               </div>
 
@@ -137,7 +137,7 @@ export function AuthGate({ children }: AuthGateProps) {
                 <div className="text-center mb-8">
                   <h2 className="text-xl font-semibold mb-2" style={{ color: isDark ? '#fff' : '#111827' }}>Welcome</h2>
                   <p className="text-sm" style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>
-                    Sign in to access your personalized governance feed
+                    Sign in to sync your feed across devices
                   </p>
                 </div>
 
@@ -166,7 +166,7 @@ export function AuthGate({ children }: AuthGateProps) {
 
               {/* Mobile benefits */}
               <div className="lg:hidden mt-8 grid grid-cols-2 gap-3">
-                <MobileBenefit icon={<Globe className="w-4 h-4" />} text="70+ forums" isDark={isDark} />
+                <MobileBenefit icon={<Globe className="w-4 h-4" />} text="100+ forums" isDark={isDark} />
                 <MobileBenefit icon={<Zap className="w-4 h-4" />} text="Save hours" isDark={isDark} />
                 <MobileBenefit icon={<Bell className="w-4 h-4" />} text="Alerts" isDark={isDark} />
                 <MobileBenefit icon={<Shield className="w-4 h-4" />} text="Private" isDark={isDark} />

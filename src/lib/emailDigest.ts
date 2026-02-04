@@ -200,7 +200,7 @@ export function formatDigestEmail(digest: DigestContent, userName?: string): str
   <!-- Header -->
   <div style="text-align: center; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #e5e7eb;">
     <h1 style="font-size: 24px; font-weight: 700; color: #111827; margin: 0;">
-      🗳️ Gov Watch ${periodLabel} Digest
+      📡 discuss.watch ${periodLabel} Digest
     </h1>
     <p style="color: #6b7280; margin-top: 8px; font-size: 14px;">
       ${digest.startDate.toLocaleDateString()} - ${digest.endDate.toLocaleDateString()}
@@ -272,7 +272,7 @@ export function formatDigestEmail(digest: DigestContent, userName?: string): str
 
   <!-- CTA -->
   <div style="text-align: center; margin: 32px 0;">
-    <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://gov-watch.app'}/app" 
+    <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://discuss.watch'}/app" 
        style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600;">
       View All Discussions →
     </a>
@@ -281,9 +281,9 @@ export function formatDigestEmail(digest: DigestContent, userName?: string): str
   <!-- Footer -->
   <div style="border-top: 1px solid #e5e7eb; padding-top: 24px; margin-top: 32px; text-align: center; font-size: 12px; color: #9ca3af;">
     <p>
-      You're receiving this because you signed up for Gov Watch digests.
+      You're receiving this because you signed up for discuss.watch digests.
       <br>
-      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://gov-watch.app'}/app?tab=settings" style="color: #6366f1;">
+      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://discuss.watch'}/app?tab=settings" style="color: #6366f1;">
         Manage email preferences
       </a>
       ·
@@ -292,7 +292,7 @@ export function formatDigestEmail(digest: DigestContent, userName?: string): str
       </a>
     </p>
     <p style="margin-top: 16px;">
-      🗳️ Gov Watch - Your Gateway to DAO Governance
+      📡 discuss.watch - All your forums, one feed
     </p>
   </div>
 
@@ -308,7 +308,7 @@ export function formatDigestPlainText(digest: DigestContent, userName?: string):
   const greeting = userName ? `Hi ${userName}` : 'Hi there';
   const periodLabel = digest.period === 'daily' ? 'Daily' : 'Weekly';
 
-  let text = `🗳️ GOV WATCH ${periodLabel.toUpperCase()} DIGEST
+  let text = `📡 GOV WATCH ${periodLabel.toUpperCase()} DIGEST
 ${digest.startDate.toLocaleDateString()} - ${digest.endDate.toLocaleDateString()}
 
 ${greeting}! Here's your governance roundup.
@@ -347,7 +347,7 @@ ${digest.stats.totalDiscussions} active discussions · ${digest.stats.totalRepli
     });
   }
 
-  text += `\n---\nView all discussions: ${process.env.NEXT_PUBLIC_APP_URL || 'https://gov-watch.app'}/app\nManage preferences: ${process.env.NEXT_PUBLIC_APP_URL || 'https://gov-watch.app'}/app?tab=settings\n\n🗳️ Gov Watch - Your Gateway to DAO Governance`;
+  text += `\n---\nView all discussions: ${process.env.NEXT_PUBLIC_APP_URL || 'https://discuss.watch'}/app\nManage preferences: ${process.env.NEXT_PUBLIC_APP_URL || 'https://discuss.watch'}/app?tab=settings\n\n📡 discuss.watch - All your forums, one feed`;
 
   return text;
 }

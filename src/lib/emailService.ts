@@ -33,7 +33,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<{ success: b
     return { success: false, error: 'Email service not configured' };
   }
 
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'Gov Watch <digest@gov-watch.app>';
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'discuss.watch <digest@discuss.watch>';
 
   try {
     const { data, error } = await resend.emails.send({
@@ -138,7 +138,7 @@ export async function sendTestDigestEmail(
 ): Promise<{ success: boolean; error?: string }> {
   return sendEmail({
     to: email,
-    subject: '🗳️ [TEST] Gov Watch Weekly Digest',
+    subject: '📡 [TEST] discuss.watch Weekly Digest',
     html: htmlContent,
     text: textContent,
     tags: [

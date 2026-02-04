@@ -11,16 +11,16 @@ interface OnboardingWizardProps {
 
 const STEPS = [
   {
-    title: 'Welcome to Gov Watch',
-    description: 'Your unified dashboard for governance discussions across DAOs and blockchain protocols.',
+    title: 'Welcome to discuss.watch',
+    description: 'Your unified feed for discussions across crypto, AI, and open source communities.',
   },
   {
-    title: 'Select Forums',
-    description: 'Choose the governance forums you want to follow. You can always add more later.',
+    title: 'Select Communities',
+    description: 'Choose the forums you want to follow. You can always add more later.',
   },
   {
     title: 'Quick Tips',
-    description: "Here's how to get the most out of Gov Watch:",
+    description: "Here's how to get the most out of your feed:",
   },
 ];
 
