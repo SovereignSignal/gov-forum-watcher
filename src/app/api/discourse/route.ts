@@ -107,11 +107,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch with manual redirect handling for security
+    // Longer cache (10 min) to reduce rate limiting from Discourse forums
     let response = await fetch(apiUrl, {
       headers: {
         'Accept': 'application/json',
+        'User-Agent': 'discuss.watch/1.0 (forum aggregator)',
       },
-      next: { revalidate: 120 },
+      next: { revalidate: 600 }, // 10 minute cache
       redirect: 'manual', // Don't follow redirects automatically - we validate them first
     });
 
@@ -134,8 +136,9 @@ export async function GET(request: NextRequest) {
         response = await fetch(redirectUrl, {
           headers: {
             'Accept': 'application/json',
+            'User-Agent': 'discuss.watch/1.0 (forum aggregator)',
           },
-          next: { revalidate: 120 },
+          next: { revalidate: 600 }, // 10 minute cache
           redirect: 'manual',
         });
 
@@ -147,6 +150,18 @@ export async function GET(request: NextRequest) {
         // Different domain - forum has actually moved
         throw new Error(`Forum has moved or shut down (redirects to ${redirectUrl})`);
       }
+    }
+
+    // Handle rate limiting from upstream Discourse forums
+    if (response.status === 429) {
+      const retryAfter = response.headers.get('retry-after') || '60';
+      return NextResponse.json(
+        { error: 'Forum is temporarily rate-limiting requests. Try again later.', retryAfter: parseInt(retryAfter, 10) },
+        { 
+          status: 429,
+          headers: { 'Retry-After': retryAfter }
+        }
+      );
     }
 
     if (!response.ok) {
