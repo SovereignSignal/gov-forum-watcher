@@ -312,6 +312,75 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* For Agents */}
+      <section className="py-20 border-t" style={{ borderColor: isDark ? '#27272a' : '#e4e4e7' }}>
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div 
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-6"
+                style={{
+                  backgroundColor: isDark ? 'rgba(34, 197, 94, 0.1)' : 'rgba(34, 197, 94, 0.1)',
+                  color: '#22c55e'
+                }}
+              >
+                <Bot className="w-3 h-3" />
+                Agent Friendly
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                Built for humans.<br />
+                <span style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>Ready for agents.</span>
+              </h2>
+              <p className="mb-6" style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>
+                AI agents can search, monitor, and subscribe to forum discussions. 
+                Full REST API, MCP tools, and RSS feeds available.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href="/skill.md"
+                  className="inline-flex items-center gap-2 px-4 py-2 font-medium rounded-lg transition-colors text-sm"
+                  style={{ 
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                  }}
+                >
+                  <Code2 className="w-4 h-4" />
+                  Read skill.md
+                </a>
+                <a
+                  href="/api/v1"
+                  className="inline-flex items-center gap-2 px-4 py-2 font-medium rounded-lg transition-colors text-sm"
+                  style={{ 
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                  }}
+                >
+                  API Docs
+                </a>
+              </div>
+            </div>
+            <div 
+              className="rounded-xl p-6 font-mono text-sm"
+              style={{ 
+                backgroundColor: isDark ? '#18181b' : '#ffffff',
+                border: `1px solid ${isDark ? '#27272a' : '#e4e4e7'}`
+              }}
+            >
+              <div className="mb-4" style={{ color: isDark ? '#52525b' : '#a1a1aa' }}># Search discussions</div>
+              <div style={{ color: isDark ? '#a1a1aa' : '#52525b' }}>
+                curl &quot;https://discuss.watch/api/v1/search?q=grants&quot;
+              </div>
+              <div className="mt-4 mb-4" style={{ color: isDark ? '#52525b' : '#a1a1aa' }}># Get hot topics</div>
+              <div style={{ color: isDark ? '#a1a1aa' : '#52525b' }}>
+                curl &quot;https://discuss.watch/api/v1/discussions?hot=true&quot;
+              </div>
+              <div className="mt-4 mb-4" style={{ color: isDark ? '#52525b' : '#a1a1aa' }}># Subscribe to feed</div>
+              <div style={{ color: isDark ? '#a1a1aa' : '#52525b' }}>
+                https://discuss.watch/feed/crypto.xml
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20 border-t" style={{ borderColor: isDark ? '#27272a' : '#e4e4e7' }}>
         <div className="max-w-2xl mx-auto px-6 text-center">
@@ -321,13 +390,25 @@ export default function LandingPage() {
           <p className="mb-8" style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>
             No signup required. Start aggregating forums in seconds.
           </p>
-          <Link
-            href="/app"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black hover:bg-gray-100 font-medium rounded-lg transition-colors"
-          >
-            Open App
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link
+              href="/app"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black hover:bg-gray-100 font-medium rounded-lg transition-colors"
+            >
+              Open App
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <a
+              href="/skill.md"
+              className="inline-flex items-center gap-2 px-8 py-4 font-medium rounded-lg transition-colors"
+              style={{ 
+                backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+              }}
+            >
+              <Bot className="w-4 h-4" />
+              I&apos;m an Agent
+            </a>
+          </div>
         </div>
       </section>
 
