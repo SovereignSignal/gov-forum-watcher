@@ -42,7 +42,7 @@ export default function AppPage() {
   const { alerts, addAlert, removeAlert, toggleAlert, importAlerts } = useAlerts();
   const { bookmarks, addBookmark, removeBookmark, isBookmarked, importBookmarks } = useBookmarks();
   const { isRead, markAsRead, markMultipleAsRead, getUnreadCount } = useReadState();
-  const { shouldShowOnboarding, completeOnboarding } = useOnboarding();
+  const { shouldShowOnboarding, completeOnboarding, resetOnboarding } = useOnboarding();
   const { theme, toggleTheme } = useTheme();
   const { toasts, dismissToast, success, error: showError, warning } = useToast();
 
@@ -95,6 +95,7 @@ export default function AppPage() {
         name: preset.name,
         cname: preset.name.toLowerCase().replace(/\s+/g, '-'),
         description: preset.description,
+        logoUrl: preset.logoUrl,
         token: preset.token,
         discourseForum: {
           url: preset.url,
@@ -374,6 +375,21 @@ export default function AppPage() {
                   </section>
                   <section className="p-4 rounded-lg" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)' }}>
                     <KeyboardShortcuts />
+                  </section>
+                  <section className="p-4 rounded-lg" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border)' }}>
+                    <h3 className="font-medium theme-text mb-2">Onboarding</h3>
+                    <p className="theme-text-secondary text-sm mb-3">
+                      Reset the onboarding wizard to see the welcome flow again.
+                    </p>
+                    <button
+                      onClick={() => {
+                        resetOnboarding();
+                        success('Onboarding reset. Refresh the page to see the wizard.');
+                      }}
+                      className="px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-neutral-700 hover:bg-neutral-600 theme-text"
+                    >
+                      Reset Onboarding
+                    </button>
                   </section>
                 </div>
               </div>

@@ -8,12 +8,23 @@ interface AuthGateProps {
   children: ReactNode;
 }
 
+const GUEST_MODE_KEY = 'discuss-watch-guest-mode';
+
 export function AuthGate({ children }: AuthGateProps) {
   const { isAuthenticated, isLoading, isConfigured, login } = useAuth();
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [isGuestMode, setIsGuestMode] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem(GUEST_MODE_KEY) === 'true';
+  });
+
+  const continueAsGuest = () => {
+    localStorage.setItem(GUEST_MODE_KEY, 'true');
+    setIsGuestMode(true);
+  };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('gov-watch-theme') as 'dark' | 'light' | null;
+    const savedTheme = localStorage.getItem('discuss-watch-theme') as 'dark' | 'light' | null;
     if (savedTheme) {
       setTheme(savedTheme);
     }
@@ -22,7 +33,7 @@ export function AuthGate({ children }: AuthGateProps) {
   const toggleTheme = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
-    localStorage.setItem('gov-watch-theme', newTheme);
+    localStorage.setItem('discuss-watch-theme', newTheme);
     document.documentElement.classList.toggle('light', newTheme === 'light');
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
     // Dispatch custom event so Privy can update its theme
@@ -60,8 +71,12 @@ export function AuthGate({ children }: AuthGateProps) {
     );
   }
 
-  // Not authenticated - show login
-  if (!isAuthenticated) {
+  // Allow access if authenticated OR in guest mode
+  if (isAuthenticated || isGuestMode) {
+    return <>{children}</>;
+  }
+
+  // Not authenticated and not guest - show login
     return (
       <div className="min-h-screen flex" style={{ backgroundColor: isDark ? '#0a0a0f' : '#f8f9fa' }}>
         {/* Left - Features (desktop only) */}
@@ -150,6 +165,18 @@ export function AuthGate({ children }: AuthGateProps) {
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
+                <button
+                  onClick={continueAsGuest}
+                  className="flex items-center justify-center gap-2 w-full px-6 py-3 mt-3 font-medium rounded-xl transition-colors"
+                  style={{
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                    color: isDark ? '#9ca3af' : '#6b7280'
+                  }}
+                >
+                  Continue as Guest
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
                 <div className="mt-6 pt-6" style={{ borderTop: `1px solid ${isDark ? '#262626' : '#e5e7eb'}` }}>
                   <p className="text-center text-xs mb-4" style={{ color: isDark ? '#6b7280' : '#9ca3af' }}>
                     Sign in with
@@ -180,9 +207,6 @@ export function AuthGate({ children }: AuthGateProps) {
         </div>
       </div>
     );
-  }
-
-  return <>{children}</>;
 }
 
 function FeatureItem({ icon, title, description, isDark }: { 

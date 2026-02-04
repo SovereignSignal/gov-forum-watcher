@@ -125,7 +125,7 @@ const ForumSchema = z.object({
   cname: z.string().min(1).max(200),
   name: z.string().min(1).max(200),
   description: z.string().max(1000).optional(),
-  logoUrl: z.string().url().optional().or(z.literal('')),
+  logoUrl: z.string().optional().nullable().transform(val => val || undefined),
   token: z.string().max(50).optional(),
   category: ForumCategoryIdSchema.optional(),
   discourseForum: z.object({
