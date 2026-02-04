@@ -8,7 +8,7 @@ This document provides essential context for AI assistants working with this cod
 
 **Three verticals:**
 - Crypto — DAO governance, protocol proposals, grants programs
-- AI/ML — AI safety funding, research communities, ML tooling  
+- AI/ML — AI safety funding, research communities, ML tooling
 - Open Source — Foundation governance, project funding, maintainer discussions
 
 ### Key Features
@@ -277,13 +277,13 @@ LocalStorage keys used by the application:
 
 | Key | Type | Description |
 |-----|------|-------------|
-| `gov-forum-watcher-forums` | `Forum[]` | User's forum configurations |
-| `gov-forum-watcher-alerts` | `KeywordAlert[]` | Keyword alert settings |
-| `gov-forum-watcher-bookmarks` | `Bookmark[]` | Saved discussion bookmarks |
-| `gov-forum-watcher-theme` | `'dark' \| 'light'` | User's theme preference |
-| `gov-forum-watcher-read-discussions` | `Record<string, number>` | Read discussion timestamps by refId |
-| `gov-forum-watcher-onboarding-completed` | `'true'` | Onboarding completion flag |
-| `gov-forum-watcher-bookmarks-migrated-v1` | `'true'` | Migration flag for bookmark URL fix |
+| `discuss-watch-forums` | `Forum[]` | User's forum configurations |
+| `discuss-watch-alerts` | `KeywordAlert[]` | Keyword alert settings |
+| `discuss-watch-bookmarks` | `Bookmark[]` | Saved discussion bookmarks |
+| `discuss-watch-theme` | `'dark' \| 'light'` | User's theme preference |
+| `discuss-watch-read-discussions` | `Record<string, number>` | Read discussion timestamps by refId |
+| `discuss-watch-onboarding-completed` | `'true'` | Onboarding completion flag |
+| `discuss-watch-bookmarks-migrated-v1` | `'true'` | Migration flag for bookmark URL fix |
 
 ## URL Utilities
 
@@ -501,7 +501,7 @@ No testing framework is currently configured. If adding tests:
 ## Deployment
 
 - **Platform**: Railway
-- **Production URL**: https://gov-forum-watcher-production.up.railway.app/
+- **Production URL**: https://discuss.watch/
 - **Build Command**: `npm run build`
 - **Start Command**: `npm start`
 

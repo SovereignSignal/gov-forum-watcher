@@ -4,8 +4,7 @@ import { useState, useCallback, useEffect } from 'react';
 
 type Theme = 'dark' | 'light';
 
-// Use consistent key across app and landing page
-const THEME_KEY = 'gov-watch-theme';
+const THEME_KEY = 'discuss-watch-theme';
 
 function getStoredTheme(): Theme {
   if (typeof window === 'undefined') return 'dark';

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useSyncExternalStore } from 'react';
 
-const STORAGE_KEY = 'gov-forum-watcher-onboarding-completed';
+const STORAGE_KEY = 'discuss-watch-onboarding-completed';
 
 // Use useSyncExternalStore for SSR-safe localStorage access
 function getSnapshot(): boolean {

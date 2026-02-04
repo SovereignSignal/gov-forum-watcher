@@ -4,7 +4,7 @@ Unified monitoring for community discussions across crypto, AI, and open source.
 
 **Part of the [Sovereign Signal](https://sovereignsignal.substack.com/) ecosystem.**
 
-**Live:** https://gov-forum-watcher-production.up.railway.app/ (rebranding in progress)
+**Live:** https://discuss.watch/
 
 ---
 

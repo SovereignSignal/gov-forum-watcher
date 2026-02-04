@@ -1,4 +1,4 @@
-# Gov Watch - Deployment Guide
+# discuss.watch - Deployment Guide
 
 > Instructions for deploying to Railway
 
@@ -33,7 +33,7 @@ The app works without these variables (localStorage-only mode):
 
 ```bash
 # Already done - project exists at:
-# https://gov-forum-watcher-production.up.railway.app/
+# https://discuss.watch/
 ```
 
 ### 2. Add Postgres Database
@@ -73,7 +73,7 @@ railway run psql -f src/lib/schema.sql
 2. Create new app (or use existing)
 3. **Settings** → Copy **App ID**
 4. **Allowed Origins** → Add:
-   - `https://gov-forum-watcher-production.up.railway.app`
+   - `https://discuss.watch`
    - `http://localhost:3000` (for local dev)
 5. In Railway, add variable:
    - `NEXT_PUBLIC_PRIVY_APP_ID` = your app ID
@@ -116,7 +116,7 @@ git commit --allow-empty -m "Trigger redeploy" && git push
 
 ### Check Application
 
-1. Visit https://gov-forum-watcher-production.up.railway.app/
+1. Visit https://discuss.watch/
 2. Verify:
    - [ ] Landing page loads
    - [ ] "Launch App" button works
@@ -171,8 +171,8 @@ nixPkgs = ["nodejs_22", "npm"]
 
 ```bash
 # Clone repo
-git clone https://github.com/SovereignSignal/gov-forum-watcher.git
-cd gov-forum-watcher
+git clone https://github.com/SovereignSignal/discuss-dot-watch.git
+cd discuss-dot-watch
 
 # Install dependencies
 npm install

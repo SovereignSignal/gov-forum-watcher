@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 
-const STORAGE_KEY = 'gov-forum-watcher-read-discussions';
+const STORAGE_KEY = 'discuss-watch-read-discussions';
 const MAX_STORED_ITEMS = 1000; // Limit storage size
 
 interface ReadState {

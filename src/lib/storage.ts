@@ -1,10 +1,16 @@
 import { Forum, KeywordAlert, Bookmark } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
+import { migrateStorageKeys } from './storageMigration';
 
-const FORUMS_KEY = 'gov-forum-watcher-forums';
-const ALERTS_KEY = 'gov-forum-watcher-alerts';
-const BOOKMARKS_KEY = 'gov-forum-watcher-bookmarks';
+// Run migration on module load (before any storage reads)
+if (typeof window !== 'undefined') {
+  migrateStorageKeys();
+}
+
+const FORUMS_KEY = 'discuss-watch-forums';
+const ALERTS_KEY = 'discuss-watch-alerts';
+const BOOKMARKS_KEY = 'discuss-watch-bookmarks';
 
 // Storage quota monitoring
 export interface StorageQuota {

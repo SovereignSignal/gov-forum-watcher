@@ -190,12 +190,12 @@ export function DataSyncProvider({ children }: { children: ReactNode }) {
     if (!userId) return;
 
     // Get localStorage data
-    const localForums = localStorage.getItem('gov-forum-watcher-forums');
-    const localAlerts = localStorage.getItem('gov-forum-watcher-alerts');
-    const localBookmarks = localStorage.getItem('gov-forum-watcher-bookmarks');
-    const localReadState = localStorage.getItem('gov-forum-watcher-read-discussions');
-    const localTheme = localStorage.getItem('gov-forum-watcher-theme');
-    const localOnboarding = localStorage.getItem('gov-forum-watcher-onboarding-completed');
+    const localForums = localStorage.getItem('discuss-watch-forums');
+    const localAlerts = localStorage.getItem('discuss-watch-alerts');
+    const localBookmarks = localStorage.getItem('discuss-watch-bookmarks');
+    const localReadState = localStorage.getItem('discuss-watch-read-discussions');
+    const localTheme = localStorage.getItem('discuss-watch-theme');
+    const localOnboarding = localStorage.getItem('discuss-watch-onboarding-completed');
 
     const promises: Promise<Response>[] = [];
 

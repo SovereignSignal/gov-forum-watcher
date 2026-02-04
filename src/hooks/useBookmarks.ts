@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { Bookmark } from '@/types';
 import { getBookmarks, saveBookmarks as saveBookmarksToStorage } from '@/lib/storage';
 
-const MIGRATION_KEY = 'gov-forum-watcher-bookmarks-migrated-v1';
+const MIGRATION_KEY = 'discuss-watch-bookmarks-migrated-v1';
 
 // Helper to create a slug from title
 function slugify(title: string): string {
