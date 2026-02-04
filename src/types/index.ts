@@ -9,7 +9,11 @@ export type ForumCategoryId =
   | 'infrastructure'
   | 'privacy'
   | 'ai-crypto'
+  | 'ai-safety'
   | 'ai-developer'
+  | 'oss-languages'
+  | 'oss-frameworks'
+  | 'oss-infrastructure'
   | 'governance-meta'
   | 'custom';
 
