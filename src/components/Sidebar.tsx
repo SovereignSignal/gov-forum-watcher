@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutGrid, FolderOpen, Settings, Bookmark, Sun, Moon, Menu, X, Rss } from 'lucide-react';
+import { LayoutGrid, FolderOpen, Settings, Bookmark, Sun, Moon, Menu, X } from 'lucide-react';
 import { UserButton } from './UserButton';
 
 interface SidebarProps {
@@ -41,9 +41,7 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
           {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0" style={{ backgroundColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }}>
-            <Rss className="w-3 h-3" />
-          </div>
+          <span className="text-lg flex-shrink-0">👁️‍🗨️</span>
           <span className="font-medium theme-text text-sm tracking-tight truncate">discuss.watch</span>
         </div>
         <button
@@ -77,9 +75,7 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
         <div className="p-4 border-b" style={{ borderColor: 'var(--card-border)' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }}>
-                <Rss className="w-4 h-4" />
-              </div>
+              <span className="text-2xl">👁️‍🗨️</span>
               <h1 className="text-base font-semibold theme-text tracking-tight">discuss.watch</h1>
             </div>
             <button

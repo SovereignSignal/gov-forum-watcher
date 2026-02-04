@@ -13,7 +13,6 @@ import {
   CheckCircle2,
   Zap,
   Shield,
-  Rss,
   TrendingUp,
   Eye,
   MessageSquare,
@@ -68,9 +67,7 @@ export default function LandingPage() {
           {/* Nav */}
           <nav className="flex items-center justify-between mb-20">
             <div className="flex items-center gap-2.5">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-white/10' : 'bg-black/5'}`}>
-                <Rss className="w-4 h-4" />
-              </div>
+              <span className="text-2xl">👁️‍🗨️</span>
               <span className="font-semibold text-lg tracking-tight">discuss.watch</span>
             </div>
             <div className="flex items-center gap-3">
@@ -417,9 +414,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className={`w-6 h-6 rounded flex items-center justify-center ${isDark ? 'bg-white/10' : 'bg-black/5'}`}>
-                <Rss className="w-3 h-3" />
-              </div>
+              <span className="text-lg">👁️‍🗨️</span>
               <span className="text-sm font-medium">discuss.watch</span>
             </div>
             <p className="text-sm" style={{ color: isDark ? '#52525b' : '#a1a1aa' }}>
