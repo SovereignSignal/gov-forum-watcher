@@ -355,89 +355,114 @@ export function ForumManager({
             />
           </div>
 
-          {/* Tier Legend */}
-          <div className="flex items-center gap-4 mb-4 text-xs theme-text-muted">
-            <span className="flex items-center gap-1.5">
-              {renderTierBadge(1)} Highest activity
-            </span>
-            <span className="flex items-center gap-1.5">
-              {renderTierBadge(2)} Active
-            </span>
-            <span className="flex items-center gap-1.5">
-              {renderTierBadge(3)} Moderate
-            </span>
-          </div>
-
-          {/* Categories */}
-          <div className="flex-1 overflow-y-auto space-y-2 pr-2">
-            {filteredCategories.map((category) => {
-              const isExpanded = expandedCategories.has(category.id);
-              const addedInCategory = category.forums.filter((f) =>
-                urlExists(f.url)
-              ).length;
-              const totalInCategory = category.forums.length;
-
-              return (
-                <div
-                  key={category.id}
-                  className="bg-neutral-900/50 rounded-lg overflow-hidden"
-                >
-                  <button
-                    onClick={() => toggleCategory(category.id)}
-                    className="flex items-center justify-between w-full p-4 min-h-[56px] text-left hover:bg-neutral-800/50 transition-colors rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
-                    aria-expanded={isExpanded}
-                    aria-controls={`category-${category.id}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      {isExpanded ? (
-                        <ChevronDown className="w-4 h-4 theme-text-muted" />
-                      ) : (
-                        <ChevronRight className="w-4 h-4 theme-text-muted" />
-                      )}
-                      <div>
-                        <h3 className="font-medium theme-text">
-                          {category.name}
-                        </h3>
-                        <p className="text-xs theme-text-muted">
-                          {category.description}
-                        </p>
-                      </div>
+          {/* Search Results - show flat list when searching */}
+          {searchQuery.trim() ? (
+            <div className="flex-1 overflow-y-auto pr-2">
+              {(() => {
+                const matchingForums = searchForums(searchQuery);
+                if (matchingForums.length === 0) {
+                  return (
+                    <div className="text-center py-8 theme-text-muted">
+                      No forums found matching &quot;{searchQuery}&quot;
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm theme-text-muted">
-                        {addedInCategory}/{totalInCategory}
-                      </span>
-                      {addedInCategory < totalInCategory && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleAddAllInCategory(category.id);
-                          }}
-                          className="px-2 py-1 text-xs bg-indigo-600/20 text-indigo-400 rounded-lg hover:bg-indigo-600/30 transition-colors"
-                          aria-label={`Add all forums in ${category.name}`}
-                        >
-                          Add All
-                        </button>
-                      )}
-                    </div>
-                  </button>
-                  {isExpanded && (
-                    <div id={`category-${category.id}`} className="px-4 pb-4 space-y-2">
-                      {category.forums.map((preset) =>
-                        renderForumPreset(preset, category.id)
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
-            {filteredCategories.length === 0 && searchQuery && (
-              <div className="text-center py-8 theme-text-muted">
-                No forums found matching &quot;{searchQuery}&quot;
+                  );
+                }
+                return (
+                  <div className="space-y-2">
+                    <p className="text-xs theme-text-muted mb-3">
+                      {matchingForums.length} forum{matchingForums.length !== 1 ? 's' : ''} found
+                    </p>
+                    {matchingForums.map((preset) => {
+                      const category = FORUM_CATEGORIES.find(c => 
+                        c.forums.some(f => f.url === preset.url)
+                      );
+                      return renderForumPreset(preset, category?.id || 'custom');
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+          ) : (
+            <>
+              {/* Tier Legend */}
+              <div className="flex items-center gap-4 mb-4 text-xs theme-text-muted">
+                <span className="flex items-center gap-1.5">
+                  {renderTierBadge(1)} Highest activity
+                </span>
+                <span className="flex items-center gap-1.5">
+                  {renderTierBadge(2)} Active
+                </span>
+                <span className="flex items-center gap-1.5">
+                  {renderTierBadge(3)} Moderate
+                </span>
               </div>
-            )}
-          </div>
+
+              {/* Categories */}
+              <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+                {filteredCategories.map((category) => {
+                  const isExpanded = expandedCategories.has(category.id);
+                  const addedInCategory = category.forums.filter((f) =>
+                    urlExists(f.url)
+                  ).length;
+                  const totalInCategory = category.forums.length;
+
+                  return (
+                    <div
+                      key={category.id}
+                      className="bg-neutral-900/50 rounded-lg overflow-hidden"
+                    >
+                      <button
+                        onClick={() => toggleCategory(category.id)}
+                        className="flex items-center justify-between w-full p-4 min-h-[56px] text-left hover:bg-neutral-800/50 transition-colors rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
+                        aria-expanded={isExpanded}
+                        aria-controls={`category-${category.id}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          {isExpanded ? (
+                            <ChevronDown className="w-4 h-4 theme-text-muted" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4 theme-text-muted" />
+                          )}
+                          <div>
+                            <h3 className="font-medium theme-text">
+                              {category.name}
+                            </h3>
+                            <p className="text-xs theme-text-muted">
+                              {category.description}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm theme-text-muted">
+                            {addedInCategory}/{totalInCategory}
+                          </span>
+                          {addedInCategory < totalInCategory && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddAllInCategory(category.id);
+                              }}
+                              className="px-2 py-1 text-xs bg-indigo-600/20 text-indigo-400 rounded-lg hover:bg-indigo-600/30 transition-colors"
+                              aria-label={`Add all forums in ${category.name}`}
+                            >
+                              Add All
+                            </button>
+                          )}
+                        </div>
+                      </button>
+                      {isExpanded && (
+                        <div id={`category-${category.id}`} className="px-4 pb-4 space-y-2">
+                          {category.forums.map((preset) =>
+                            renderForumPreset(preset, category.id)
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
 
           {/* Custom Forum */}
           <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--card-border)' }}>
