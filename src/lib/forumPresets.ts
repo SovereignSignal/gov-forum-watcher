@@ -508,14 +508,6 @@ export const FORUM_CATEGORIES: ForumCategory[] = [
         tier: 2,
       },
       {
-        name: 'SushiSwap',
-        url: 'https://forum.sushi.com/',
-        description: 'Multi-chain DEX',
-        token: 'SUSHI',
-        logoUrl: 'https://assets.coingecko.com/coins/images/12271/small/sushi.jpg',
-        tier: 2,
-      },
-      {
         name: 'dYdX',
         url: 'https://dydx.forum/',
         description: 'Decentralized perpetuals exchange',
@@ -672,13 +664,6 @@ export const FORUM_CATEGORIES: ForumCategory[] = [
     name: 'AI - Research & Safety',
     description: 'AI safety, alignment, and ML research communities',
     forums: [
-      {
-        name: 'EA Forum',
-        url: 'https://forum.effectivealtruism.org/',
-        description: 'Primary hub for AI safety funding; grants, career, grantmaking',
-        logoUrl: 'https://forum.effectivealtruism.org/images/ea-logo-square-1024x1024.png',
-        tier: 1,
-      },
       {
         name: 'Hugging Face',
         url: 'https://discuss.huggingface.co/',
