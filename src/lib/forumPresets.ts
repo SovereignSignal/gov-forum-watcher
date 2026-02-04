@@ -418,6 +418,22 @@ export const FORUM_CATEGORIES: ForumCategory[] = [
         logoUrl: 'https://assets.coingecko.com/coins/images/14205/small/inverse.png',
         tier: 3,
       },
+      {
+        name: 'Venus Protocol',
+        url: 'https://community.venus.io/',
+        description: 'BNB Chain money market',
+        token: 'XVS',
+        logoUrl: 'https://assets.coingecko.com/coins/images/12677/small/venus.png',
+        tier: 2,
+      },
+      {
+        name: 'Maple Finance',
+        url: 'https://community.maple.finance/',
+        description: 'Institutional lending',
+        token: 'MPL',
+        logoUrl: 'https://assets.coingecko.com/coins/images/14097/small/maple.png',
+        tier: 3,
+      },
       // DEX
       {
         name: 'Uniswap',
@@ -563,6 +579,13 @@ export const FORUM_CATEGORIES: ForumCategory[] = [
         description: 'Privacy-preserving smart contracts',
         token: 'SCRT',
         logoUrl: 'https://assets.coingecko.com/coins/images/11871/small/secret.png',
+        tier: 2,
+      },
+      {
+        name: 'Aztec',
+        url: 'https://forum.aztec.network/',
+        description: 'ZK privacy layer for Ethereum',
+        logoUrl: 'https://assets.coingecko.com/coins/images/26116/small/aztec.jpeg',
         tier: 2,
       },
       // AI-Crypto
