@@ -233,27 +233,11 @@ export const FORUM_CATEGORIES: ForumCategory[] = [
         tier: 1,
       },
       {
-        name: 'GnosisDAO',
-        url: 'https://forum.gnosis.io/',
-        description: 'Gnosis Chain and Safe ecosystem',
-        token: 'GNO',
-        logoUrl: 'https://assets.coingecko.com/coins/images/662/small/logo_square_simple_300px.png',
-        tier: 1,
-      },
-      {
         name: 'ApeCoin DAO',
         url: 'https://forum.apecoin.com/',
         description: 'BAYC ecosystem governance',
         token: 'APE',
         logoUrl: 'https://assets.coingecko.com/coins/images/24383/small/apecoin.jpg',
-        tier: 2,
-      },
-      {
-        name: 'Nouns DAO',
-        url: 'https://discourse.nouns.wtf/',
-        description: 'Prop House and small grants',
-        token: 'NOUNS',
-        logoUrl: 'https://assets.coingecko.com/coins/images/28571/small/nouns.jpg',
         tier: 2,
       },
       {
@@ -272,14 +256,6 @@ export const FORUM_CATEGORIES: ForumCategory[] = [
         logoUrl: 'https://assets.coingecko.com/coins/images/18623/small/magic.png',
         tier: 3,
       },
-      {
-        name: 'BanklessDAO',
-        url: 'https://forum.bankless.community/',
-        description: 'Media DAO; rebranded to Black Flag',
-        token: 'BANK',
-        logoUrl: 'https://assets.coingecko.com/coins/images/15227/small/bankless.jpg',
-        tier: 3,
-      },
       // Infrastructure
       {
         name: 'The Graph',
@@ -295,14 +271,6 @@ export const FORUM_CATEGORIES: ForumCategory[] = [
         description: 'Multisig infrastructure governance',
         token: 'SAFE',
         logoUrl: 'https://assets.coingecko.com/coins/images/28032/small/safe.png',
-        tier: 2,
-      },
-      {
-        name: 'Aragon',
-        url: 'https://forum.aragon.org/',
-        description: 'DAO infrastructure and tooling',
-        token: 'ANT',
-        logoUrl: 'https://assets.coingecko.com/coins/images/681/small/Avatar_Circle_Orange.png',
         tier: 2,
       },
       {
