@@ -14,7 +14,6 @@ export type ForumCategoryId =
   | 'oss-languages'
   | 'oss-frameworks'
   | 'oss-infrastructure'
-  | 'governance-meta'
   | 'custom';
 
 export interface Forum {
