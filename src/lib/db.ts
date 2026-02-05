@@ -89,6 +89,22 @@ export async function initializeSchema() {
     )
   `;
   
+  // Backfill jobs table - tracks historical indexing progress
+  await db`
+    CREATE TABLE IF NOT EXISTS backfill_jobs (
+      id SERIAL PRIMARY KEY,
+      forum_id INTEGER REFERENCES forums(id) ON DELETE CASCADE UNIQUE,
+      status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'running', 'complete', 'paused', 'failed')),
+      current_page INTEGER DEFAULT 0,
+      topics_fetched INTEGER DEFAULT 0,
+      total_pages INTEGER,
+      last_run_at TIMESTAMP WITH TIME ZONE,
+      error TEXT,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    )
+  `;
+  
   // Create indexes for common queries
   await db`CREATE INDEX IF NOT EXISTS idx_topics_forum_id ON topics(forum_id)`;
   await db`CREATE INDEX IF NOT EXISTS idx_topics_created_at ON topics(created_at DESC)`;
@@ -96,6 +112,7 @@ export async function initializeSchema() {
   await db`CREATE INDEX IF NOT EXISTS idx_topics_first_seen ON topics(first_seen_at DESC)`;
   await db`CREATE INDEX IF NOT EXISTS idx_topic_snapshots_topic_id ON topic_snapshots(topic_id)`;
   await db`CREATE INDEX IF NOT EXISTS idx_forums_category ON forums(category)`;
+  await db`CREATE INDEX IF NOT EXISTS idx_backfill_status ON backfill_jobs(status)`;
   
   console.log('[DB] Schema initialized');
 }
