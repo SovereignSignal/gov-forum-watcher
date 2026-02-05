@@ -100,9 +100,14 @@ export function DiscussionItem({
             style={{ backgroundColor: badgeBg }}>
             {isValidImageUrl(forumLogoUrl) ? (
               <img src={forumLogoUrl} alt="" className="w-5 h-5 object-contain" referrerPolicy="no-referrer"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; if ((e.target as HTMLImageElement).nextElementSibling) ((e.target as HTMLImageElement).nextElementSibling as HTMLElement).style.display = ''; }} />
+                onError={(e) => {
+                  const img = e.target as HTMLImageElement;
+                  img.style.display = 'none';
+                  const fallback = img.parentElement?.querySelector('[data-fallback]') as HTMLElement;
+                  if (fallback) fallback.style.display = '';
+                }} />
             ) : null}
-            <span className="text-xs font-bold" style={{ color: fg, display: isValidImageUrl(forumLogoUrl) ? 'none' : '' }}>
+            <span data-fallback className="text-xs font-bold" style={{ color: fg, display: isValidImageUrl(forumLogoUrl) ? 'none' : '' }}>
               {topic.protocol.slice(0, 2).toUpperCase()}
             </span>
           </div>

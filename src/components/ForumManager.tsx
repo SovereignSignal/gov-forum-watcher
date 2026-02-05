@@ -28,12 +28,14 @@ interface ForumManagerProps {
   forums: Forum[];
   onAddForum: (forum: Omit<Forum, 'id' | 'createdAt'>) => void;
   onRemoveForum: (id: string) => void;
+  onToggleForum: (id: string) => void;
 }
 
 export function ForumManager({
   forums,
   onAddForum,
   onRemoveForum,
+  onToggleForum,
 }: ForumManagerProps) {
   const [newUrl, setNewUrl] = useState('');
   const [newName, setNewName] = useState('');
@@ -122,7 +124,14 @@ export function ForumManager({
   };
 
   const handleQuickAdd = (preset: ForumPreset, categoryId: string) => {
-    if (urlExists(preset.url)) return;
+    // If forum exists but is disabled, re-enable it
+    const existing = findForumByUrl(preset.url);
+    if (existing) {
+      if (!existing.isEnabled) {
+        onToggleForum(existing.id);
+      }
+      return;
+    }
     onAddForum({
       cname: preset.name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
       name: preset.name,
@@ -150,9 +159,11 @@ export function ForumManager({
   };
 
   const renderForumPreset = (preset: ForumPreset, categoryId: string) => {
-    const isAdded = urlExists(preset.url);
+    const existingForum = findForumByUrl(preset.url);
+    const isEnabled = existingForum?.isEnabled ?? false;
+    const isAdded = !!existingForum && isEnabled;
+    const isDisabled = !!existingForum && !isEnabled;
     const logoUrl = preset.logoUrl || getProtocolLogo(preset.name);
-    const existingForum = isAdded ? findForumByUrl(preset.url) : null;
 
     return (
       <div key={preset.url} className="group flex items-center gap-3 w-full p-3 rounded-lg transition-all"
@@ -164,11 +175,17 @@ export function ForumManager({
           style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }}>
           {logoUrl ? (
             <img src={logoUrl} alt="" className="w-5 h-5 object-contain" referrerPolicy="no-referrer"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              onError={(e) => {
+                const img = e.target as HTMLImageElement;
+                img.style.display = 'none';
+                const fallback = img.parentElement?.querySelector('[data-fallback]') as HTMLElement;
+                if (fallback) fallback.style.display = '';
+              }}
             />
-          ) : (
-            <span className="text-xs font-bold" style={{ color: fg }}>{preset.name.slice(0, 2).toUpperCase()}</span>
-          )}
+          ) : null}
+          <span data-fallback className="text-xs font-bold" style={{ color: fg, display: logoUrl ? 'none' : '' }}>
+            {preset.name.slice(0, 2).toUpperCase()}
+          </span>
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -186,12 +203,12 @@ export function ForumManager({
             style={{ color: fgDim }}>
             <X className="w-4 h-4" />
           </button>
-        ) : !isAdded ? (
+        ) : (
           <button onClick={() => handleQuickAdd(preset, categoryId)}
             className="p-2 rounded-lg transition-colors" style={{ color: fgDim }}>
             <Plus className="w-4 h-4" />
           </button>
-        ) : null}
+        )}
       </div>
     );
   };
@@ -249,10 +266,16 @@ export function ForumManager({
                         style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }}>
                         {logoUrl ? (
                           <img src={logoUrl} alt="" className="w-5 h-5 object-contain" referrerPolicy="no-referrer"
-                            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                        ) : (
-                          <span className="text-xs font-bold" style={{ color: fg }}>{forum.name.slice(0, 2).toUpperCase()}</span>
-                        )}
+                            onError={(e) => {
+                              const img = e.target as HTMLImageElement;
+                              img.style.display = 'none';
+                              const fallback = img.parentElement?.querySelector('[data-fallback]') as HTMLElement;
+                              if (fallback) fallback.style.display = '';
+                            }} />
+                        ) : null}
+                        <span data-fallback className="text-xs font-bold" style={{ color: fg, display: logoUrl ? 'none' : '' }}>
+                          {forum.name.slice(0, 2).toUpperCase()}
+                        </span>
                       </div>
                       <div className="min-w-0">
                         <p className="font-medium text-sm truncate" style={{ color: fg }}>
