@@ -1,7 +1,9 @@
 'use client';
 
-import { LayoutGrid, FolderOpen, Settings, Bookmark, Sun, Moon, Menu, X } from 'lucide-react';
+import { LayoutGrid, FolderOpen, Settings, Bookmark, Sun, Moon, Menu, X, Shield } from 'lucide-react';
 import { UserButton } from './UserButton';
+import { useAuth } from './AuthProvider';
+import { isAdminEmail } from '@/lib/admin';
 
 interface SidebarProps {
   activeView: 'feed' | 'projects' | 'saved' | 'settings';
@@ -18,6 +20,8 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
   const borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
   const textPrimary = isDark ? '#e4e4e7' : '#18181b';
   const textMuted = isDark ? '#52525b' : '#a1a1aa';
+  const { user } = useAuth();
+  const userIsAdmin = isAdminEmail(user?.email);
   
   const navItems = [
     { id: 'feed' as const, label: 'Feed', icon: LayoutGrid },
@@ -121,6 +125,21 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
             })}
           </ul>
         </nav>
+
+        {/* Admin */}
+        {userIsAdmin && (
+          <div className="px-2 pb-2">
+            <a href="/admin"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              style={{ color: textMuted }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+            >
+              <Shield className="w-4 h-4" />
+              <span>Admin</span>
+            </a>
+          </div>
+        )}
 
         {/* User */}
         <div className="px-3 py-3 border-t" style={{ borderColor }}>

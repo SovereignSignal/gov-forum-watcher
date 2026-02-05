@@ -50,7 +50,7 @@ export default function LandingPage() {
     <div 
       className="min-h-screen transition-colors duration-200"
       style={{ 
-        backgroundColor: isDark ? '#09090b' : '#fafafa',
+        backgroundColor: isDark ? '#09090b' : '#f5f5f5',
         color: isDark ? '#fafafa' : '#09090b'
       }}
     >
@@ -81,7 +81,11 @@ export default function LandingPage() {
               </button>
               <Link
                 href="/app"
-                className="px-4 py-2 bg-white text-black hover:bg-gray-100 rounded-lg text-sm font-medium transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                style={{
+                  backgroundColor: isDark ? '#fafafa' : '#09090b',
+                  color: isDark ? '#09090b' : '#fafafa',
+                }}
               >
                 Open App
               </Link>
@@ -118,7 +122,11 @@ export default function LandingPage() {
             <div className="flex flex-wrap justify-center gap-3 mb-12">
               <Link
                 href="/app"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black hover:bg-gray-100 font-medium rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 font-medium rounded-lg transition-colors"
+                style={{
+                  backgroundColor: isDark ? '#fafafa' : '#09090b',
+                  color: isDark ? '#09090b' : '#fafafa',
+                }}
               >
                 Start Reading
                 <ArrowRight className="w-4 h-4" />
@@ -390,7 +398,11 @@ export default function LandingPage() {
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/app"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black hover:bg-gray-100 font-medium rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-4 font-medium rounded-lg transition-colors"
+              style={{
+                backgroundColor: isDark ? '#fafafa' : '#09090b',
+                color: isDark ? '#09090b' : '#fafafa',
+              }}
             >
               Open App
               <ArrowRight className="w-4 h-4" />
