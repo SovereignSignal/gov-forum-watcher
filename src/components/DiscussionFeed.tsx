@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, memo } from 'react';
+import { useState, useMemo, memo, useEffect } from 'react';
 import { RefreshCw, CheckCheck, MessageSquare } from 'lucide-react';
 import { DiscussionTopic, KeywordAlert, DateRangeFilter, DateFilterMode, Forum, SortOption } from '@/types';
 import { getProtocolLogo } from '@/lib/logoUtils';
@@ -55,6 +55,21 @@ export function DiscussionFeed({
   const [selectedForumId, setSelectedForumId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>('recent');
+
+  // Listen for command menu events
+  useEffect(() => {
+    const handleSelectForum = (e: Event) => setSelectedForumId((e as CustomEvent).detail);
+    const handleSelectCategory = (e: Event) => setSelectedCategory((e as CustomEvent).detail);
+    const handleSelectSort = (e: Event) => setSortBy((e as CustomEvent).detail as SortOption);
+    window.addEventListener('selectForum', handleSelectForum);
+    window.addEventListener('selectCategory', handleSelectCategory);
+    window.addEventListener('selectSort', handleSelectSort);
+    return () => {
+      window.removeEventListener('selectForum', handleSelectForum);
+      window.removeEventListener('selectCategory', handleSelectCategory);
+      window.removeEventListener('selectSort', handleSelectSort);
+    };
+  }, []);
 
   const borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
   const textPrimary = isDark ? '#e4e4e7' : '#09090b';
@@ -193,7 +208,7 @@ export function DiscussionFeed({
       {/* Discussion list */}
       <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-3">
         {isLoading && discussions.length === 0 ? (
-          <DiscussionSkeletonList count={8} />
+          <DiscussionSkeletonList count={8} isDark={isDark} />
         ) : displayedDiscussions.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center"
             style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' }}>

@@ -1,29 +1,39 @@
 'use client';
 
-export function DiscussionSkeleton() {
+const animationStyle = `
+  @keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+`;
+
+export function DiscussionSkeleton({ isDark = true }: { isDark?: boolean }) {
+  const shimmer = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const border = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const s: React.CSSProperties = {
+    backgroundColor: shimmer,
+    borderRadius: '4px',
+    animation: 'skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+  };
+
   return (
-    <div className="p-4 border-b animate-pulse" style={{ borderColor: 'var(--card-border)' }} aria-hidden="true">
+    <div
+      className="rounded-lg border"
+      style={{ borderColor: border, padding: '10px 16px' }}
+      aria-hidden="true"
+    >
       <div className="flex items-start gap-3">
-        {/* Avatar skeleton */}
-        <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-neutral-700" />
-
-        <div className="flex-1 min-w-0">
-          {/* Meta info skeleton */}
-          <div className="flex items-center gap-2 mb-2">
-            <div className="h-3 w-16 bg-neutral-700 rounded" />
-            <div className="h-3 w-2 bg-neutral-700 rounded" />
-            <div className="h-3 w-20 bg-neutral-700 rounded" />
+        <div className="hidden sm:block mt-0.5" style={{ ...s, width: 32, height: 32, borderRadius: 6, flexShrink: 0 }} />
+        <div className="flex-1 min-w-0" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className="flex items-center gap-2">
+            <div style={{ ...s, width: 64, height: 16 }} />
+            <div style={{ ...s, width: '55%', height: 16 }} />
           </div>
-
-          {/* Title skeleton */}
-          <div className="h-5 w-full bg-neutral-700 rounded mb-2" />
-          <div className="h-5 w-2/3 bg-neutral-700 rounded mb-3" />
-
-          {/* Stats skeleton */}
           <div className="flex items-center gap-4">
-            <div className="h-3 w-12 bg-neutral-700 rounded" />
-            <div className="h-3 w-12 bg-neutral-700 rounded" />
-            <div className="h-3 w-12 bg-neutral-700 rounded" />
+            <div style={{ ...s, width: 40, height: 12 }} />
+            <div style={{ ...s, width: 48, height: 12 }} />
+            <div style={{ ...s, width: 36, height: 12 }} />
+            <div style={{ ...s, width: 56, height: 12 }} />
           </div>
         </div>
       </div>
@@ -31,12 +41,13 @@ export function DiscussionSkeleton() {
   );
 }
 
-export function DiscussionSkeletonList({ count = 5 }: { count?: number }) {
+export function DiscussionSkeletonList({ count = 8, isDark = true }: { count?: number; isDark?: boolean }) {
   return (
-    <div role="status" aria-label="Loading discussions">
+    <div role="status" aria-label="Loading discussions" className="space-y-1">
+      <style>{animationStyle}</style>
       <span className="sr-only">Loading discussions...</span>
-      {Array.from({ length: count }).map((_, i) => (
-        <DiscussionSkeleton key={i} />
+      {Array.from({ length: count }, (_, i) => (
+        <DiscussionSkeleton key={i} isDark={isDark} />
       ))}
     </div>
   );

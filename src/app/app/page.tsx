@@ -13,6 +13,7 @@ import { ConfigExportImport } from '@/components/ConfigExportImport';
 import { EmailPreferences } from '@/components/EmailPreferences';
 import { OfflineBanner } from '@/components/OfflineBanner';
 import { KeyboardShortcuts } from '@/components/KeyboardShortcuts';
+import { CommandMenu } from '@/components/CommandMenu';
 import { SkipLinks } from '@/components/SkipLinks';
 import { AuthGate } from '@/components/AuthGate';
 import { useForums } from '@/hooks/useForums';
@@ -37,6 +38,7 @@ export default function AppPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileAlertsOpen, setIsMobileAlertsOpen] = useState(false);
   const [activeKeywordFilter, setActiveKeywordFilter] = useState<string | null>(null);
+  const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
 
   const { forums, enabledForums, addForum, removeForum, toggleForum, importForums } = useForums();
   const { discussions, isLoading, error, lastUpdated, forumStates, refresh } = useDiscussions(enabledForums);
@@ -143,6 +145,14 @@ export default function AppPage() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // ⌘K / Ctrl+K for command menu (works even in inputs)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsCommandMenuOpen(prev => !prev);
+        return;
+      }
+
+      // Skip other shortcuts when in input fields
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
@@ -161,6 +171,7 @@ export default function AppPage() {
         case 'Escape':
           setIsMobileMenuOpen(false);
           setIsMobileAlertsOpen(false);
+          setIsCommandMenuOpen(false);
           break;
       }
     };
@@ -174,6 +185,43 @@ export default function AppPage() {
       <ErrorBoundary>
         <SkipLinks />
         <OfflineBanner />
+        <CommandMenu
+          isOpen={isCommandMenuOpen}
+          onClose={() => setIsCommandMenuOpen(false)}
+          forums={enabledForums.map(f => ({ id: f.id, name: f.name, category: f.category || 'crypto' }))}
+          onSelectForum={(forumId) => {
+            setActiveView('feed');
+            // The feed filters handle forum selection via FeedFilters component
+            // Dispatch a custom event that FeedFilters can listen for
+            window.dispatchEvent(new CustomEvent('selectForum', { detail: forumId }));
+          }}
+          onSelectCategory={(category) => {
+            setActiveView('feed');
+            window.dispatchEvent(new CustomEvent('selectCategory', { detail: category }));
+          }}
+          onSearch={(query) => {
+            setActiveView('feed');
+            setSearchQuery(query);
+          }}
+          onSort={(sort) => {
+            window.dispatchEvent(new CustomEvent('selectSort', { detail: sort }));
+          }}
+          onAction={(action) => {
+            switch (action) {
+              case 'markAllRead':
+                markMultipleAsRead(discussions.map(d => d.refId));
+                success('All discussions marked as read');
+                break;
+              case 'refresh':
+                refresh();
+                break;
+              case 'toggleTheme':
+                toggleTheme();
+                break;
+            }
+          }}
+          isDark={isDark}
+        />
         <div 
           className="flex h-screen overflow-hidden pt-14 md:pt-0"
           style={{ 
