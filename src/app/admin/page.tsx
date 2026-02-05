@@ -184,19 +184,19 @@ export default function AdminPage() {
   };
 
   // Theme tokens
-  const bg = isDark ? '#111111' : '#f5f5f5';
-  const cardBg = isDark ? '#171717' : '#ffffff';
-  const cardBorder = isDark ? '#262626' : 'rgba(0,0,0,0.08)';
-  const textPrimary = isDark ? '#fafafa' : '#09090b';
-  const textSecondary = isDark ? '#a1a1aa' : '#3f3f46';
-  const textMuted = isDark ? '#71717a' : '#52525b';
+  const bg = isDark ? '#000000' : '#f5f5f5';
+  const cardBg = isDark ? '#18181b' : '#ffffff';
+  const cardBorder = isDark ? '#27272a' : 'rgba(0,0,0,0.08)';
+  const textPrimary = isDark ? '#ffffff' : '#09090b';
+  const textSecondary = isDark ? '#e5e5e5' : '#3f3f46';
+  const textMuted = isDark ? '#a3a3a3' : '#52525b';
   const textDim = isDark ? '#52525b' : '#a1a1aa';
-  const btnBg = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.05)';
+  const btnBg = isDark ? '#1f1f23' : 'rgba(0,0,0,0.05)';
   const btnBorder = isDark ? '#2a2a2a' : 'rgba(0,0,0,0.1)';
   const btnHover = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
-  const inputBg = isDark ? '#1a1a1a' : 'rgba(0,0,0,0.03)';
-  const statusOk = isDark ? '#a1a1aa' : '#52525b';
-  const statusWarn = isDark ? '#a1a1aa' : '#71717a';
+  const inputBg = isDark ? '#18181b' : 'rgba(0,0,0,0.03)';
+  const statusOk = isDark ? '#e5e5e5' : '#52525b';
+  const statusWarn = isDark ? '#e5e5e5' : '#71717a';
 
   if (!ready || loading) {
     return (
@@ -233,7 +233,7 @@ export default function AdminPage() {
   }) => {
     const styles: Record<string, React.CSSProperties> = {
       default: { backgroundColor: btnBg, border: `1px solid ${btnBorder}`, color: textPrimary },
-      primary: { backgroundColor: isDark ? '#fafafa' : '#18181b', color: isDark ? '#09090b' : '#fafafa' },
+      primary: { backgroundColor: isDark ? '#ffffff' : '#18181b', color: isDark ? '#09090b' : '#fafafa' },
       danger: { backgroundColor: 'transparent', border: `1px solid ${btnBorder}`, color: textMuted },
     };
     return (
@@ -247,7 +247,7 @@ export default function AdminPage() {
 
   const StatusBadge = ({ connected }: { connected: boolean }) => (
     <span className="ml-auto flex items-center gap-1.5 text-xs font-medium" style={{ color: textMuted }}>
-      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: connected ? (isDark ? '#a1a1aa' : '#52525b') : '#ef4444' }} />
+      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: connected ? (isDark ? '#e5e5e5' : '#52525b') : '#ef4444' }} />
       {connected ? 'Connected' : 'Down'}
     </span>
   );
@@ -448,15 +448,15 @@ function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum
     );
   }, [allForums, search]);
 
-  const cardBg = isDark ? '#171717' : '#ffffff';
-  const cardBorder = isDark ? '#262626' : 'rgba(0,0,0,0.08)';
-  const textPrimary = isDark ? '#fafafa' : '#09090b';
-  const textSecondary = isDark ? '#a1a1aa' : '#3f3f46';
-  const textMuted = isDark ? '#71717a' : '#52525b';
+  const cardBg = isDark ? '#18181b' : '#ffffff';
+  const cardBorder = isDark ? '#27272a' : 'rgba(0,0,0,0.08)';
+  const textPrimary = isDark ? '#ffffff' : '#09090b';
+  const textSecondary = isDark ? '#e5e5e5' : '#3f3f46';
+  const textMuted = isDark ? '#a3a3a3' : '#52525b';
   const textDim = isDark ? '#52525b' : '#a1a1aa';
-  const btnBg = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.05)';
+  const btnBg = isDark ? '#1f1f23' : 'rgba(0,0,0,0.05)';
   const btnBorder = isDark ? '#2a2a2a' : 'rgba(0,0,0,0.1)';
-  const inputBg = isDark ? '#1a1a1a' : 'rgba(0,0,0,0.03)';
+  const inputBg = isDark ? '#18181b' : 'rgba(0,0,0,0.03)';
 
   return (
     <div className="rounded-xl" style={{ backgroundColor: cardBg, border: `1px solid ${cardBorder}` }}>
@@ -499,7 +499,7 @@ function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum
         </button>
         <button onClick={() => onAction('run-cycle')} disabled={actionLoading !== null}
           className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-opacity disabled:opacity-40"
-          style={{ backgroundColor: isDark ? '#fafafa' : '#18181b', color: isDark ? '#09090b' : '#fafafa' }}>
+          style={{ backgroundColor: isDark ? '#ffffff' : '#18181b', color: isDark ? '#09090b' : '#fafafa' }}>
           <Play className="w-3 h-3" />
           Run Cycle
         </button>
@@ -639,12 +639,12 @@ function ForumHealthSection({ adminEmail, isDark = true }: { adminEmail: string;
   const [testing, setTesting] = useState(false);
   const [filter, setFilter] = useState<'all' | 'issues'>('issues');
 
-  const fhCardBg = isDark ? '#171717' : '#ffffff';
-  const fhCardBorder = isDark ? '#262626' : 'rgba(0,0,0,0.08)';
-  const fhTextPrimary = isDark ? '#fafafa' : '#09090b';
-  const fhTextMuted = isDark ? '#71717a' : '#52525b';
+  const fhCardBg = isDark ? '#18181b' : '#ffffff';
+  const fhCardBorder = isDark ? '#27272a' : 'rgba(0,0,0,0.08)';
+  const fhTextPrimary = isDark ? '#ffffff' : '#09090b';
+  const fhTextMuted = isDark ? '#a3a3a3' : '#52525b';
   const fhTextDim = isDark ? '#52525b' : '#a1a1aa';
-  const fhBtnBg = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.05)';
+  const fhBtnBg = isDark ? '#1f1f23' : 'rgba(0,0,0,0.05)';
   const fhBtnBorder = isDark ? '#2a2a2a' : 'rgba(0,0,0,0.1)';
 
   const allForums = useMemo(() => {

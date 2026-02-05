@@ -8,8 +8,8 @@ const animationStyle = `
 `;
 
 export function DiscussionSkeleton({ isDark = true }: { isDark?: boolean }) {
-  const shimmer = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.06)';
-  const border = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.06)';
+  const shimmer = isDark ? '#1f1f23' : 'rgba(0,0,0,0.06)';
+  const border = isDark ? '#1f1f23' : 'rgba(0,0,0,0.06)';
   const s: React.CSSProperties = {
     backgroundColor: shimmer,
     borderRadius: '4px',

@@ -73,12 +73,12 @@ export function DiscussionItem({
   const topicUrl = `${topic.forumUrl}/t/${topic.slug}/${topic.id}`;
   const activity = getActivityLevel(topic);
 
-  const fg = isDark ? '#fafafa' : '#09090b';
-  const fgMuted = isDark ? '#a1a1aa' : '#3f3f46';
-  const fgDim = isDark ? '#71717a' : '#52525b';
-  const border = isDark ? '#262626' : 'rgba(0,0,0,0.08)';
-  const cardBg = isDark ? '#171717' : 'rgba(0,0,0,0.02)';
-  const badgeBg = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.05)';
+  const fg = isDark ? '#ffffff' : '#09090b';
+  const fgMuted = isDark ? '#e5e5e5' : '#3f3f46';
+  const fgDim = isDark ? '#a3a3a3' : '#52525b';
+  const border = isDark ? '#27272a' : 'rgba(0,0,0,0.08)';
+  const cardBg = isDark ? '#18181b' : 'rgba(0,0,0,0.02)';
+  const badgeBg = isDark ? '#1f1f23' : 'rgba(0,0,0,0.05)';
 
   return (
     <article

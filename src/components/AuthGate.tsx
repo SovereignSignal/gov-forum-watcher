@@ -75,7 +75,7 @@ export function AuthGate({ children }: AuthGateProps) {
             background: isDark 
               ? 'linear-gradient(135deg, rgba(49,46,129,0.3) 0%, #171717 50%, #171717 100%)' 
               : 'linear-gradient(135deg, rgba(199,210,254,0.5) 0%, #ffffff 50%, #ffffff 100%)',
-            borderColor: isDark ? '#262626' : '#e5e7eb'
+            borderColor: isDark ? '#27272a' : '#e5e7eb'
           }}
         >
           <div>
@@ -134,8 +134,8 @@ export function AuthGate({ children }: AuthGateProps) {
               <div 
                 className="rounded-2xl p-8"
                 style={{
-                  backgroundColor: isDark ? '#171717' : '#ffffff',
-                  border: `1px solid ${isDark ? '#262626' : '#e5e7eb'}`
+                  backgroundColor: isDark ? '#18181b' : '#ffffff',
+                  border: `1px solid ${isDark ? '#27272a' : '#e5e7eb'}`
                 }}
               >
                 <div className="text-center mb-8">
@@ -154,7 +154,7 @@ export function AuthGate({ children }: AuthGateProps) {
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
-                <div className="mt-6 pt-6" style={{ borderTop: `1px solid ${isDark ? '#262626' : '#e5e7eb'}` }}>
+                <div className="mt-6 pt-6" style={{ borderTop: `1px solid ${isDark ? '#27272a' : '#e5e7eb'}` }}>
                   <p className="text-center text-xs mb-4" style={{ color: isDark ? '#6b7280' : '#9ca3af' }}>
                     Sign in with
                   </p>

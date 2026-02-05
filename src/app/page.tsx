@@ -51,7 +51,7 @@ export default function LandingPage() {
       className="min-h-screen transition-colors duration-200"
       style={{ 
         backgroundColor: isDark ? '#09090b' : '#f5f5f5',
-        color: isDark ? '#fafafa' : '#09090b'
+        color: isDark ? '#ffffff' : '#09090b'
       }}
     >
       {/* Hero Section */}
@@ -83,7 +83,7 @@ export default function LandingPage() {
                 href="/app"
                 className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 style={{
-                  backgroundColor: isDark ? '#fafafa' : '#09090b',
+                  backgroundColor: isDark ? '#ffffff' : '#09090b',
                   color: isDark ? '#09090b' : '#fafafa',
                 }}
               >
@@ -99,7 +99,7 @@ export default function LandingPage() {
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-8"
               style={{
                 backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-                color: isDark ? '#a1a1aa' : '#52525b'
+                color: isDark ? '#e5e5e5' : '#52525b'
               }}
             >
               <span className="flex items-center gap-1.5">
@@ -111,10 +111,10 @@ export default function LandingPage() {
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">
               All your forums.
               <br />
-              <span style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>One feed.</span>
+              <span style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>One feed.</span>
             </h1>
             
-            <p className="text-lg mb-10 leading-relaxed max-w-xl mx-auto" style={{ color: isDark ? '#a1a1aa' : '#52525b' }}>
+            <p className="text-lg mb-10 leading-relaxed max-w-xl mx-auto" style={{ color: isDark ? '#e5e5e5' : '#52525b' }}>
               Stop tab-hopping between Discourse forums. Aggregate discussions from 
               crypto, AI, and open source communities into a single stream.
             </p>
@@ -124,7 +124,7 @@ export default function LandingPage() {
                 href="/app"
                 className="inline-flex items-center gap-2 px-6 py-3 font-medium rounded-lg transition-colors"
                 style={{
-                  backgroundColor: isDark ? '#fafafa' : '#09090b',
+                  backgroundColor: isDark ? '#ffffff' : '#09090b',
                   color: isDark ? '#09090b' : '#fafafa',
                 }}
               >
@@ -141,7 +141,7 @@ export default function LandingPage() {
             </div>
 
             {/* Trust badges */}
-            <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm" style={{ color: isDark ? '#71717a' : '#a1a1aa' }}>
+            <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm" style={{ color: isDark ? '#a3a3a3' : '#a1a1aa' }}>
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                 Free forever
@@ -164,7 +164,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Three verticals. One inbox.</h2>
-            <p style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>
+            <p style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>
               The communities shaping technology, all in one place.
             </p>
           </div>
@@ -203,7 +203,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold mb-3">A feed that actually works</h2>
-            <p style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>
+            <p style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>
               Filter by community, search across everything, track what you&apos;ve read.
             </p>
           </div>
@@ -275,7 +275,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Built for power readers</h2>
-            <p style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>
+            <p style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>
               The features you need to stay on top of fast-moving communities.
             </p>
           </div>
@@ -334,9 +334,9 @@ export default function LandingPage() {
               </div>
               <h2 className="text-2xl md:text-3xl font-bold mb-4">
                 Built for humans.<br />
-                <span style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>Ready for agents.</span>
+                <span style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>Ready for agents.</span>
               </h2>
-              <p className="mb-6" style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>
+              <p className="mb-6" style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>
                 AI agents can search, monitor, and subscribe to forum discussions. 
                 Full REST API, MCP tools, and RSS feeds available.
               </p>
@@ -370,15 +370,15 @@ export default function LandingPage() {
               }}
             >
               <div className="mb-4" style={{ color: isDark ? '#52525b' : '#a1a1aa' }}># Search discussions</div>
-              <div style={{ color: isDark ? '#a1a1aa' : '#52525b' }}>
+              <div style={{ color: isDark ? '#e5e5e5' : '#52525b' }}>
                 curl &quot;https://discuss.watch/api/v1/search?q=grants&quot;
               </div>
               <div className="mt-4 mb-4" style={{ color: isDark ? '#52525b' : '#a1a1aa' }}># Get hot topics</div>
-              <div style={{ color: isDark ? '#a1a1aa' : '#52525b' }}>
+              <div style={{ color: isDark ? '#e5e5e5' : '#52525b' }}>
                 curl &quot;https://discuss.watch/api/v1/discussions?hot=true&quot;
               </div>
               <div className="mt-4 mb-4" style={{ color: isDark ? '#52525b' : '#a1a1aa' }}># Subscribe to feed</div>
-              <div style={{ color: isDark ? '#a1a1aa' : '#52525b' }}>
+              <div style={{ color: isDark ? '#e5e5e5' : '#52525b' }}>
                 https://discuss.watch/feed/crypto.xml
               </div>
             </div>
@@ -392,7 +392,7 @@ export default function LandingPage() {
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
             Ready to simplify your reading?
           </h2>
-          <p className="mb-8" style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>
+          <p className="mb-8" style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>
             No signup required. Start aggregating forums in seconds.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
@@ -400,7 +400,7 @@ export default function LandingPage() {
               href="/app"
               className="inline-flex items-center gap-2 px-8 py-4 font-medium rounded-lg transition-colors"
               style={{
-                backgroundColor: isDark ? '#fafafa' : '#09090b',
+                backgroundColor: isDark ? '#ffffff' : '#09090b',
                 color: isDark ? '#09090b' : '#fafafa',
               }}
             >
@@ -481,7 +481,7 @@ function VerticalCard({ icon, title, count, examples, color, isDark }: {
             className="px-2 py-1 text-xs rounded-md"
             style={{ 
               backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-              color: isDark ? '#a1a1aa' : '#52525b'
+              color: isDark ? '#e5e5e5' : '#52525b'
             }}
           >
             {name}
@@ -519,7 +519,7 @@ function MockFeedItem({ protocol, title, category, replies, views, isHot, isNew,
         className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold"
         style={{ 
           backgroundColor: isDark ? '#27272a' : '#e4e4e7',
-          color: isDark ? '#a1a1aa' : '#52525b'
+          color: isDark ? '#e5e5e5' : '#52525b'
         }}
       >
         {protocol.slice(0, 2).toUpperCase()}
@@ -528,8 +528,8 @@ function MockFeedItem({ protocol, title, category, replies, views, isHot, isNew,
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium mb-1.5 leading-snug">{title}</p>
         
-        <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-xs" style={{ color: isDark ? '#71717a' : '#a1a1aa' }}>
-          <span className="font-medium" style={{ color: isDark ? '#a1a1aa' : '#52525b' }}>{protocol}</span>
+        <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-xs" style={{ color: isDark ? '#a3a3a3' : '#a1a1aa' }}>
+          <span className="font-medium" style={{ color: isDark ? '#e5e5e5' : '#52525b' }}>{protocol}</span>
           <span>·</span>
           <span className={categoryColors[category]}>{category}</span>
           
@@ -579,13 +579,13 @@ function FeatureCard({ icon, title, description, isDark }: {
         className="inline-flex items-center justify-center w-9 h-9 rounded-lg mb-3"
         style={{ 
           backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-          color: isDark ? '#a1a1aa' : '#52525b'
+          color: isDark ? '#e5e5e5' : '#52525b'
         }}
       >
         {icon}
       </div>
       <h3 className="font-medium mb-1">{title}</h3>
-      <p className="text-sm" style={{ color: isDark ? '#71717a' : '#a1a1aa' }}>{description}</p>
+      <p className="text-sm" style={{ color: isDark ? '#a3a3a3' : '#a1a1aa' }}>{description}</p>
     </div>
   );
 }
@@ -602,13 +602,13 @@ function WhyCard({ icon, title, description, isDark }: {
         className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4"
         style={{ 
           backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-          color: isDark ? '#fafafa' : '#09090b'
+          color: isDark ? '#ffffff' : '#09090b'
         }}
       >
         {icon}
       </div>
       <h3 className="font-semibold mb-2">{title}</h3>
-      <p className="text-sm" style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>{description}</p>
+      <p className="text-sm" style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>{description}</p>
     </div>
   );
 }

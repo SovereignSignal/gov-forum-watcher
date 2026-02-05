@@ -28,11 +28,11 @@ export function RightSidebar({
 }: RightSidebarProps) {
   const [newKeyword, setNewKeyword] = useState('');
 
-  const borderColor = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.06)';
+  const borderColor = isDark ? '#1f1f23' : 'rgba(0,0,0,0.06)';
   const textPrimary = isDark ? '#e4e4e7' : '#09090b';
-  const textSecondary = isDark ? '#a1a1aa' : '#3f3f46';
-  const textMuted = isDark ? '#71717a' : '#52525b';
-  const inputBg = isDark ? '#1a1a1a' : 'rgba(0,0,0,0.03)';
+  const textSecondary = isDark ? '#e5e5e5' : '#3f3f46';
+  const textMuted = isDark ? '#a3a3a3' : '#52525b';
+  const inputBg = isDark ? '#18181b' : 'rgba(0,0,0,0.03)';
   const activeBg = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
 
   const handleAddAlert = () => {
@@ -61,7 +61,7 @@ export function RightSidebar({
         transition-transform duration-200
         ${isMobileOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}
         right-0 top-14 md:top-0 max-h-[calc(100vh-3.5rem)] md:max-h-full border-l
-      `} style={{ backgroundColor: isDark ? '#0a0a0a' : '#ffffff', borderColor }}>
+      `} style={{ backgroundColor: isDark ? '#111111' : '#ffffff', borderColor }}>
         {/* Search */}
         <div className="p-4 border-b" style={{ borderColor }}>
           <div className="relative">

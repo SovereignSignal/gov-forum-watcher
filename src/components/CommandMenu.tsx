@@ -44,13 +44,13 @@ export function CommandMenu({
   const menuBg = isDark ? '#18181b' : '#ffffff';
   const menuBorder = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)';
   const inputBg = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)';
-  const textPrimary = isDark ? '#fafafa' : '#09090b';
-  const textMuted = isDark ? '#71717a' : '#52525b';
+  const textPrimary = isDark ? '#ffffff' : '#09090b';
+  const textMuted = isDark ? '#a3a3a3' : '#52525b';
   const textDim = isDark ? '#52525b' : '#a1a1aa';
   const hoverBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)';
   const activeBg = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)';
   const sectionColor = isDark ? '#52525b' : '#a1a1aa';
-  const separatorColor = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.06)';
+  const separatorColor = isDark ? '#1f1f23' : 'rgba(0,0,0,0.06)';
 
   // Build command list
   const allItems: CommandItem[] = useMemo(() => {

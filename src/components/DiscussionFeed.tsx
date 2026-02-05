@@ -71,10 +71,10 @@ export function DiscussionFeed({
     };
   }, []);
 
-  const borderColor = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.06)';
+  const borderColor = isDark ? '#1f1f23' : 'rgba(0,0,0,0.06)';
   const textPrimary = isDark ? '#e4e4e7' : '#09090b';
-  const textSecondary = isDark ? '#a1a1aa' : '#3f3f46';
-  const textMuted = isDark ? '#71717a' : '#52525b';
+  const textSecondary = isDark ? '#e5e5e5' : '#3f3f46';
+  const textMuted = isDark ? '#a3a3a3' : '#52525b';
 
   // Map cname → category for filtering
   const forumCategoryMap = useMemo(() => {
@@ -176,7 +176,7 @@ export function DiscussionFeed({
             )}
             <button onClick={onRefresh} disabled={isLoading}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
-              style={{ backgroundColor: isDark ? '#1c1c1e' : 'rgba(0,0,0,0.05)', color: textSecondary }}>
+              style={{ backgroundColor: isDark ? '#1f1f23' : 'rgba(0,0,0,0.05)', color: textSecondary }}>
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
               {isLoading ? 'Loading...' : 'Refresh'}
             </button>
@@ -211,7 +211,7 @@ export function DiscussionFeed({
           <DiscussionSkeletonList count={8} isDark={isDark} />
         ) : displayedDiscussions.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center"
-            style={{ borderColor: isDark ? '#262626' : 'rgba(0,0,0,0.08)' }}>
+            style={{ borderColor: isDark ? '#27272a' : 'rgba(0,0,0,0.08)' }}>
             <MessageSquare className="h-8 w-8 mb-4" style={{ color: textMuted }} />
             <h3 className="font-semibold" style={{ color: textPrimary }}>No discussions found</h3>
             <p className="mt-1 text-sm" style={{ color: textMuted }}>

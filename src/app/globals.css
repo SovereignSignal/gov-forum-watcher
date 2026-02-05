@@ -2,15 +2,15 @@
 
 /* ===== ADMIN PAGE THEME ===== */
 .admin-bg {
-  background-color: #111111;
+  background-color: #000000;
 }
 html.light .admin-bg {
   background-color: #f5f5f5;
 }
 .admin-card {
-  background-color: #171717;
+  background-color: #18181b;
   backdrop-filter: blur(12px);
-  border: 1px solid #262626;
+  border: 1px solid #27272a;
 }
 html.light .admin-card {
   background-color: #ffffff;

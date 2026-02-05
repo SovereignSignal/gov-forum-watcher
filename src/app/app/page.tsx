@@ -225,8 +225,8 @@ export default function AppPage() {
         <div 
           className="flex h-screen overflow-hidden pt-14 md:pt-0"
           style={{ 
-            backgroundColor: isDark ? '#111111' : '#fafafa',
-            color: isDark ? '#fafafa' : '#18181b'
+            backgroundColor: isDark ? '#000000' : '#fafafa',
+            color: isDark ? '#ffffff' : '#18181b'
           }}
         >
           <Sidebar
@@ -309,14 +309,14 @@ export default function AppPage() {
                 <div className="flex-1 overflow-y-auto p-6">
                   <h2 
                     className="text-xl font-semibold mb-6 flex items-center gap-2"
-                    style={{ color: isDark ? '#fafafa' : '#18181b' }}
+                    style={{ color: isDark ? '#ffffff' : '#18181b' }}
                   >
                     <BookmarkIcon className="w-5 h-5" />
                     Saved Discussions
                   </h2>
                   {bookmarks.length === 0 ? (
                     <div className="text-center py-16">
-                      <p className="text-[13px] mb-1" style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>
+                      <p className="text-[13px] mb-1" style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>
                         No saved discussions yet
                       </p>
                       <p className="text-[12px]" style={{ color: isDark ? '#52525b' : '#a1a1aa' }}>
@@ -383,14 +383,14 @@ export default function AppPage() {
                   </h2>
                   <div className="max-w-2xl space-y-6">
                     <section className="pb-6 border-b" style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}>
-                      <h3 className="text-[13px] font-medium mb-2" style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>About</h3>
+                      <h3 className="text-[13px] font-medium mb-2" style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>About</h3>
                       <p className="text-[13px]" style={{ color: isDark ? '#52525b' : '#a1a1aa' }}>
                         discuss.watch — Unified view of Discourse forums across crypto, AI, and open source communities.
                       </p>
                     </section>
 
                     <section className="pb-6 border-b" style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}>
-                      <h3 className="text-[13px] font-medium mb-2" style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>Data</h3>
+                      <h3 className="text-[13px] font-medium mb-2" style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>Data</h3>
                       <p className="text-[13px] mb-2" style={{ color: isDark ? '#52525b' : '#a1a1aa' }}>
                         All data stored locally in your browser.
                       </p>
@@ -402,7 +402,7 @@ export default function AppPage() {
                     </section>
 
                     <section className="pb-6 border-b" style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}>
-                      <h3 className="text-[13px] font-medium mb-3" style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>Import / Export</h3>
+                      <h3 className="text-[13px] font-medium mb-3" style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>Import / Export</h3>
                       <ConfigExportImport
                         forums={forums}
                         alerts={alerts}
@@ -412,12 +412,12 @@ export default function AppPage() {
                     </section>
 
                     <section className="pb-6 border-b" style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}>
-                      <h3 className="text-[13px] font-medium mb-3" style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>Email Preferences</h3>
+                      <h3 className="text-[13px] font-medium mb-3" style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>Email Preferences</h3>
                       <EmailPreferences />
                     </section>
 
                     <section className="pb-6 border-b" style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}>
-                      <h3 className="text-[13px] font-medium mb-3" style={{ color: isDark ? '#a1a1aa' : '#71717a' }}>Keyboard Shortcuts</h3>
+                      <h3 className="text-[13px] font-medium mb-3" style={{ color: isDark ? '#e5e5e5' : '#71717a' }}>Keyboard Shortcuts</h3>
                       <KeyboardShortcuts />
                     </section>
 
@@ -427,7 +427,7 @@ export default function AppPage() {
                         className="px-3 py-1.5 rounded-md text-[12px] font-medium transition-colors"
                         style={{ 
                           backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-                          color: isDark ? '#a1a1aa' : '#71717a'
+                          color: isDark ? '#e5e5e5' : '#71717a'
                         }}
                       >
                         Show Onboarding
