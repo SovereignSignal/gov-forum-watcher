@@ -96,6 +96,54 @@ export function getAllCachedForums(): CachedForum[] {
 /**
  * Get cache stats
  */
+/**
+ * Get discussions from cache for a list of forum URLs (for digest generation)
+ */
+export async function getCachedDiscussions(forumUrls: string[]): Promise<Array<{
+  title: string;
+  url: string;
+  forumName: string;
+  replies: number;
+  views: number;
+  likes: number;
+  tags: string[];
+  createdAt: string;
+  bumpedAt: string;
+}>> {
+  const results: Array<{
+    title: string;
+    url: string;
+    forumName: string;
+    replies: number;
+    views: number;
+    likes: number;
+    tags: string[];
+    createdAt: string;
+    bumpedAt: string;
+  }> = [];
+  
+  for (const forumUrl of forumUrls) {
+    const cached = await getCachedForum(forumUrl);
+    if (cached && cached.topics) {
+      for (const topic of cached.topics) {
+        results.push({
+          title: topic.title,
+          url: `${forumUrl}/t/${topic.slug}/${topic.id}`,
+          forumName: topic.protocol || forumUrl,
+          replies: topic.replyCount || topic.postsCount - 1 || 0,
+          views: topic.views || 0,
+          likes: topic.likeCount || 0,
+          tags: topic.tags || [],
+          createdAt: topic.createdAt,
+          bumpedAt: topic.bumpedAt,
+        });
+      }
+    }
+  }
+  
+  return results;
+}
+
 export function getCacheStats() {
   const forums = Array.from(memoryCache.values());
   const successful = forums.filter(f => !f.error).length;

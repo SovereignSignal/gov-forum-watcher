@@ -91,7 +91,7 @@ export function EmailPreferences({ onSave }: EmailPreferencesProps) {
           Email Digests
         </h3>
         <p className="text-sm" style={{ color: fgDim }}>
-          Get AI-powered summaries of governance activity delivered to your inbox
+          Get AI-powered summaries of forum activity delivered to your inbox
         </p>
       </div>
 

@@ -1,6 +1,6 @@
 /**
  * Email Digest Service
- * Generates AI-powered governance summaries and sends via Resend
+ * Generates AI-powered forum summaries and sends via Resend
  */
 
 import Anthropic from '@anthropic-ai/sdk';
@@ -53,7 +53,7 @@ function getAnthropicClient(): Anthropic | null {
 }
 
 /**
- * Generate AI summary of governance discussions
+ * Generate AI summary of forum discussions
  */
 export async function generateDiscussionSummary(
   discussions: Array<{
@@ -83,12 +83,12 @@ export async function generateDiscussionSummary(
       messages: [
         {
           role: 'user',
-          content: `You are a DAO governance analyst. Summarize the following governance discussions into a concise 2-3 paragraph overview. Highlight the most important proposals, any contentious debates, and key themes across protocols. Be specific about proposal names and protocols.
+          content: `You are a community discussion analyst. Summarize the following forum discussions into a concise 2-3 paragraph overview. Highlight the most important topics, any active debates, and key themes across communities. Be specific about topic names and which forum they're from.
 
 Discussions:
 ${discussionList}
 
-Provide a brief, insightful summary focused on what governance participants need to know.`
+Provide a brief, insightful summary focused on what community members need to know.`
         }
       ]
     });
@@ -115,7 +115,7 @@ export async function generateTopicInsight(
     // Fallback: generate a simple insight without AI
     if (replies > 50) return 'Highly discussed topic generating significant community engagement.';
     if (views > 1000) return 'Popular topic attracting wide attention from the community.';
-    return 'Active governance discussion in progress.';
+    return 'Active discussion in progress.';
   }
 
   try {
@@ -125,9 +125,9 @@ export async function generateTopicInsight(
       messages: [
         {
           role: 'user',
-          content: `Write ONE short sentence (max 15 words) explaining what this DAO governance discussion is about based on its title. Be specific and informative.
+          content: `Write ONE short sentence (max 15 words) explaining what this forum discussion is about based on its title. Be specific and informative.
 
-Protocol: ${protocol}
+Forum: ${protocol}
 Title: "${title}"
 Engagement: ${replies} replies, ${views} views
 
@@ -137,10 +137,10 @@ Just respond with the sentence, no quotes or explanation.`
     });
 
     const textBlock = response.content.find(block => block.type === 'text');
-    return textBlock?.text?.trim() || 'Active governance discussion.';
+    return textBlock?.text?.trim() || 'Active discussion.';
   } catch (error) {
     console.error('Error generating topic insight:', error);
-    return 'Active governance discussion.';
+    return 'Active discussion.';
   }
 }
 
@@ -209,7 +209,7 @@ export function formatDigestEmail(digest: DigestContent, userName?: string): str
 
   <!-- Greeting -->
   <p style="font-size: 16px; margin-bottom: 24px;">
-    ${greeting}! Here's your governance roundup.
+    ${greeting}! Here's your community roundup.
   </p>
 
   <!-- Quick Stats -->
@@ -311,7 +311,7 @@ export function formatDigestPlainText(digest: DigestContent, userName?: string):
   let text = `👁️‍🗨️ GOV WATCH ${periodLabel.toUpperCase()} DIGEST
 ${digest.startDate.toLocaleDateString()} - ${digest.endDate.toLocaleDateString()}
 
-${greeting}! Here's your governance roundup.
+${greeting}! Here's your community roundup.
 
 📊 QUICK STATS
 ${digest.stats.totalDiscussions} active discussions · ${digest.stats.totalReplies} replies · Most active: ${digest.stats.mostActiveProtocol}

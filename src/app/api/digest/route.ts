@@ -1,8 +1,10 @@
 /**
  * Digest Generation API
  * 
+ * GET /api/digest - Preview digest content (add ?format=html for email preview)
  * POST /api/digest - Generate and send digest emails
- * GET /api/digest/preview - Preview digest content
+ *   - { testEmail: "x@y.com" } sends simple test email
+ *   - { testEmail: "x@y.com", simple: false } sends full digest
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -14,16 +16,8 @@ import {
   generateTopicInsight,
 } from '@/lib/emailDigest';
 import { sendTestDigestEmail } from '@/lib/emailService';
-
-// Forum presets to fetch from (same as app uses)
-const DIGEST_FORUMS = [
-  { name: 'Uniswap', url: 'https://gov.uniswap.org' },
-  { name: 'Arbitrum', url: 'https://forum.arbitrum.foundation' },
-  { name: 'Aave', url: 'https://governance.aave.com' },
-  { name: 'Optimism', url: 'https://gov.optimism.io' },
-  { name: 'Compound', url: 'https://www.comp.xyz' },
-  { name: 'ENS', url: 'https://discuss.ens.domains' },
-];
+import { getCachedDiscussions } from '@/lib/forumCache';
+import { FORUM_CATEGORIES } from '@/lib/forumPresets';
 
 // Helper to validate cron secret
 function validateCronSecret(request: NextRequest): boolean {
@@ -38,60 +32,17 @@ function validateCronSecret(request: NextRequest): boolean {
   return authHeader === `Bearer ${cronSecret}`;
 }
 
-interface DiscourseTopicResponse {
-  topic_list?: {
-    topics?: Array<{
-      id: number;
-      title: string;
-      posts_count: number;
-      views: number;
-      like_count: number;
-      created_at: string;
-      bumped_at: string;
-      slug: string;
-      tags?: string[];
-    }>;
-  };
-}
-
-// Fetch REAL discussions from Discourse forums
-async function fetchForumDiscussions(forumUrl: string, forumName: string): Promise<Array<{
-  title: string;
-  protocol: string;
-  url: string;
-  replies: number;
-  views: number;
-  likes: number;
-  tags: string[];
-  createdAt: Date;
-  bumpedAt: Date;
-}>> {
-  try {
-    const response = await fetch(`${forumUrl}/latest.json?order=activity`, {
-      headers: { 'Accept': 'application/json' },
-      next: { revalidate: 300 }, // Cache for 5 min
-    });
-    
-    if (!response.ok) return [];
-    
-    const data: DiscourseTopicResponse = await response.json();
-    const topics = data.topic_list?.topics || [];
-    
-    return topics.slice(0, 20).map(topic => ({
-      title: topic.title,
-      protocol: forumName,
-      url: `${forumUrl}/t/${topic.slug}/${topic.id}`,
-      replies: Math.max(0, topic.posts_count - 1),
-      views: topic.views,
-      likes: topic.like_count,
-      tags: topic.tags || [],
-      createdAt: new Date(topic.created_at),
-      bumpedAt: new Date(topic.bumped_at),
-    }));
-  } catch (error) {
-    console.error(`Failed to fetch from ${forumName}:`, error);
-    return [];
+// Get all tier 1 forums for digest (most important forums across all categories)
+function getDigestForums(): Array<{ name: string; url: string }> {
+  const forums: Array<{ name: string; url: string }> = [];
+  for (const category of FORUM_CATEGORIES) {
+    for (const forum of category.forums) {
+      if (forum.tier === 1) {
+        forums.push({ name: forum.name, url: forum.url });
+      }
+    }
   }
+  return forums.slice(0, 30); // Cap at 30 forums for digest
 }
 
 // Detect if a discussion is delegate-related
@@ -126,7 +77,7 @@ function isDelegateThread(title: string, tags: string[]): boolean {
   return false;
 }
 
-// Get discussions from all forums
+// Get discussions from cached data
 async function getTopDiscussions(period: 'daily' | 'weekly'): Promise<{
   discussions: Array<{
     title: string;
@@ -141,15 +92,24 @@ async function getTopDiscussions(period: 'daily' | 'weekly'): Promise<{
     isDelegate: boolean;
   }>;
 }> {
-  // Fetch from all forums in parallel
-  const results = await Promise.all(
-    DIGEST_FORUMS.map(forum => fetchForumDiscussions(forum.url, forum.name))
-  );
+  const digestForums = getDigestForums();
+  const forumUrls = digestForums.map(f => f.url);
   
-  // Flatten and tag delegate threads
-  const all = results.flat().map(d => ({
-    ...d,
-    isDelegate: isDelegateThread(d.title, d.tags),
+  // Use the cached discussions from forum cache
+  const cached = await getCachedDiscussions(forumUrls);
+  
+  // Map to our format and tag delegate threads
+  const all = cached.map(d => ({
+    title: d.title,
+    protocol: d.forumName || 'Unknown',
+    url: d.url,
+    replies: d.replies || 0,
+    views: d.views || 0,
+    likes: d.likes || 0,
+    tags: d.tags || [],
+    createdAt: new Date(d.createdAt || Date.now()),
+    bumpedAt: new Date(d.bumpedAt || d.createdAt || Date.now()),
+    isDelegate: isDelegateThread(d.title, d.tags || []),
   }));
   
   return { discussions: all };
@@ -246,7 +206,7 @@ async function generateDigestContent(period: 'daily' | 'weekly'): Promise<Digest
     .sort(([, a], [, b]) => b - a)[0]?.[0] || 'Various';
 
   // Quick stats summary
-  const overallSummary = `${regularDiscussions.length} governance discussions + ${delegateThreads.length} delegate threads active.`;
+  const overallSummary = `${regularDiscussions.length} discussions + ${delegateThreads.length} delegate threads active across ${new Set(recentlyActive.map(d => d.protocol)).size} communities.`;
 
   return {
     period,
@@ -386,7 +346,7 @@ export async function POST(request: NextRequest) {
 
     // Production: generate digest and send to subscribers
     const digest = await generateDigestContent(period);
-    const subject = `🗳️ Your ${period === 'daily' ? 'Daily' : 'Weekly'} Governance Digest`;
+    const subject = `👁️‍🗨️ Your ${period === 'daily' ? 'Daily' : 'Weekly'} Community Digest`;
 
     // TODO: fetch users with this digest preference from DB and send
     return NextResponse.json({
