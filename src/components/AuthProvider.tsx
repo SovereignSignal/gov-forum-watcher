@@ -51,6 +51,21 @@ function PrivyAuthInner({ children }: { children: ReactNode }) {
       }
     : null;
 
+  // Sync user to database on login
+  useEffect(() => {
+    if (authenticated && privyUser) {
+      fetch('/api/user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          privyDid: privyUser.id,
+          email: privyUser.email?.address,
+          walletAddress: privyUser.wallet?.address,
+        }),
+      }).catch(() => {}); // Silent fail — DB might not be configured
+    }
+  }, [authenticated, privyUser]);
+
   const login = useCallback(() => {
     privyLogin();
   }, [privyLogin]);
