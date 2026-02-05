@@ -94,7 +94,7 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
                 <li key={item.id}>
                   <button
                     onClick={() => handleNavClick(item.id)}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] font-medium transition-colors"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                     style={{
                       backgroundColor: isActive 
                         ? (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)') 

@@ -96,7 +96,7 @@ export function RightSidebar({
 
         {/* Alerts */}
         <div className="flex-1 p-4 overflow-y-auto">
-          <h3 className="flex items-center gap-2 text-[12px] font-medium mb-3" style={{ color: textMuted }}>
+          <h3 className="flex items-center gap-2 text-xs font-medium mb-3" style={{ color: textMuted }}>
             <Bell className="w-3.5 h-3.5" />
             Keyword Alerts
           </h3>
@@ -161,7 +161,7 @@ export function RightSidebar({
           )}
 
           <div className="mt-6 pt-4 border-t" style={{ borderColor }}>
-            <p className="text-[11px] leading-relaxed" style={{ color: textMuted }}>
+            <p className="text-xs leading-relaxed" style={{ color: textMuted }}>
               Keywords highlight matching discussion titles. Use search to filter the feed.
             </p>
           </div>
