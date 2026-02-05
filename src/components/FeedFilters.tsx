@@ -56,8 +56,8 @@ export function FeedFilters({
   isDark = true,
 }: FeedFiltersProps) {
   const borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-  const textMuted = isDark ? '#71717a' : '#a1a1aa';
-  const textSecondary = isDark ? '#a1a1aa' : '#71717a';
+  const textMuted = isDark ? '#71717a' : '#52525b';
+  const textSecondary = isDark ? '#a1a1aa' : '#3f3f46';
   const activeBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
   const selectBg = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)';
 

@@ -31,9 +31,9 @@ export function RightSidebar({
   const [newKeyword, setNewKeyword] = useState('');
 
   const borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-  const textPrimary = isDark ? '#e4e4e7' : '#18181b';
-  const textSecondary = isDark ? '#a1a1aa' : '#71717a';
-  const textMuted = isDark ? '#71717a' : '#a1a1aa';
+  const textPrimary = isDark ? '#e4e4e7' : '#09090b';
+  const textSecondary = isDark ? '#a1a1aa' : '#3f3f46';
+  const textMuted = isDark ? '#71717a' : '#52525b';
   const inputBg = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)';
 
   const handleAddAlert = () => {

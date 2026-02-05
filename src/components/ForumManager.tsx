@@ -54,8 +54,8 @@ export function ForumManager({
   // Theme detection from document
   const isDark = typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') || !document.documentElement.classList.contains('light') : true;
   const fg = isDark ? '#fafafa' : '#09090b';
-  const fgMuted = isDark ? '#a1a1aa' : '#71717a';
-  const fgDim = isDark ? '#71717a' : '#a1a1aa';
+  const fgMuted = isDark ? '#a1a1aa' : '#3f3f46';
+  const fgDim = isDark ? '#71717a' : '#52525b';
   const border = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
   const cardBg = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
   const activeBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
