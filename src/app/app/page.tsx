@@ -36,6 +36,7 @@ export default function AppPage() {
   const [filterMode, setFilterMode] = useState<'all' | 'your'>('your');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileAlertsOpen, setIsMobileAlertsOpen] = useState(false);
+  const [activeKeywordFilter, setActiveKeywordFilter] = useState<string | null>(null);
 
   const { forums, enabledForums, addForum, removeForum, toggleForum, importForums } = useForums();
   const { discussions, isLoading, error, lastUpdated, forumStates, refresh } = useDiscussions(enabledForums);
@@ -226,6 +227,7 @@ export default function AppPage() {
                     onMarkAllAsRead={handleMarkAllAsRead}
                     unreadCount={unreadCount}
                     onRemoveForum={handleRemoveForum}
+                    activeKeywordFilter={activeKeywordFilter}
                     isDark={isDark}
                   />
                   <RightSidebar
@@ -235,6 +237,8 @@ export default function AppPage() {
                     onAddAlert={addAlert}
                     onRemoveAlert={removeAlert}
                     onToggleAlert={toggleAlert}
+                    activeKeywordFilter={activeKeywordFilter}
+                    onKeywordFilterChange={setActiveKeywordFilter}
                     isMobileOpen={isMobileAlertsOpen}
                     onMobileToggle={() => setIsMobileAlertsOpen(!isMobileAlertsOpen)}
                     isDark={isDark}

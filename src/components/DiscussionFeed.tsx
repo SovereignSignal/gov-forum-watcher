@@ -39,6 +39,7 @@ interface DiscussionFeedProps {
   onMarkAllAsRead: (refIds: string[]) => void;
   unreadCount: number;
   onRemoveForum?: (forumId: string) => void;
+  activeKeywordFilter?: string | null;
   isDark?: boolean;
 }
 
@@ -46,7 +47,7 @@ export function DiscussionFeed({
   discussions, isLoading, error: _error, lastUpdated, onRefresh,
   alerts, searchQuery, enabledForumIds, forumStates, forums,
   isBookmarked, isRead, onToggleBookmark, onMarkAsRead, onMarkAllAsRead,
-  unreadCount, onRemoveForum, isDark = true,
+  unreadCount, onRemoveForum, activeKeywordFilter, isDark = true,
 }: DiscussionFeedProps) {
   const [displayCount, setDisplayCount] = useState(20);
   const [dateRange, setDateRange] = useState<DateRangeFilter>('all');
@@ -78,6 +79,16 @@ export function DiscussionFeed({
 
   const filteredAndSortedDiscussions = useMemo(() => {
     const filtered = discussions.filter((topic) => {
+      // Keyword filter
+      if (activeKeywordFilter) {
+        const title = topic.title.toLowerCase();
+        if (activeKeywordFilter === 'all') {
+          const enabledKeywords = alerts.filter(a => a.isEnabled).map(a => a.keyword.toLowerCase());
+          if (enabledKeywords.length > 0 && !enabledKeywords.some(kw => title.includes(kw))) return false;
+        } else {
+          if (!title.includes(activeKeywordFilter.toLowerCase())) return false;
+        }
+      }
       // Category filter
       if (selectedCategory) {
         const topicCat = forumCategoryMap.get(topic.protocol.toLowerCase());
@@ -114,7 +125,7 @@ export function DiscussionFeed({
         default: return new Date(b.bumpedAt).getTime() - new Date(a.bumpedAt).getTime();
       }
     });
-  }, [discussions, searchQuery, dateRange, dateFilterMode, selectedForumId, selectedCategory, forums, forumCategoryMap, sortBy]);
+  }, [discussions, searchQuery, dateRange, dateFilterMode, selectedForumId, selectedCategory, forums, forumCategoryMap, sortBy, activeKeywordFilter, alerts]);
 
   const displayedDiscussions = filteredAndSortedDiscussions.slice(0, displayCount);
   const hasMore = displayCount < filteredAndSortedDiscussions.length;
