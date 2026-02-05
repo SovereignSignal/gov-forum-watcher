@@ -24,12 +24,18 @@ interface BackfillJob {
   forum_name?: string;
 }
 
+interface DiscourseTag {
+  id?: number;
+  name: string;
+  slug?: string;
+}
+
 interface DiscourseTopicBasic {
   id: number;
   title: string;
   slug?: string;
   category_id?: number;
-  tags?: string[];
+  tags?: (string | DiscourseTag)[];  // Can be strings or objects
   posts_count?: number;
   views?: number;
   reply_count?: number;
@@ -39,6 +45,18 @@ interface DiscourseTopicBasic {
   archived?: boolean;
   created_at?: string;
   bumped_at?: string;
+}
+
+/**
+ * Normalize tags to string array (handles both string[] and object[] from Discourse)
+ */
+function normalizeTags(tags?: (string | DiscourseTag)[]): string[] {
+  if (!tags || !Array.isArray(tags)) return [];
+  return tags.map(tag => {
+    if (typeof tag === 'string') return tag;
+    if (typeof tag === 'object' && tag.name) return tag.name;
+    return '';
+  }).filter(Boolean);
 }
 
 interface DiscourseTopicListResponse {
@@ -228,7 +246,7 @@ export async function processJob(job: BackfillJob): Promise<{
           title: topic.title,
           slug: topic.slug,
           categoryId: topic.category_id,
-          tags: topic.tags,
+          tags: normalizeTags(topic.tags),  // Normalize tags to string[]
           postsCount: topic.posts_count,
           views: topic.views,
           replyCount: topic.reply_count,
