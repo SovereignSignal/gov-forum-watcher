@@ -183,32 +183,36 @@ export default function AdminPage() {
     }
   };
 
+  // Theme tokens
+  const bg = isDark ? '#09090b' : '#f5f5f5';
+  const cardBg = isDark ? 'rgba(255,255,255,0.03)' : '#ffffff';
+  const cardBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const textPrimary = isDark ? '#fafafa' : '#09090b';
+  const textSecondary = isDark ? '#a1a1aa' : '#3f3f46';
+  const textMuted = isDark ? '#71717a' : '#52525b';
+  const textDim = isDark ? '#52525b' : '#a1a1aa';
+  const btnBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+  const btnBorder = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+  const btnHover = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+  const inputBg = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)';
+  const statusOk = isDark ? '#a1a1aa' : '#52525b';
+  const statusWarn = isDark ? '#a1a1aa' : '#71717a';
+
   if (!ready || loading) {
     return (
-      <div className="min-h-screen admin-bg admin-page flex items-center justify-center">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full blur-3xl bg-violet-600/10" />
-          <div className="absolute top-20 -left-20 w-60 h-60 rounded-full blur-3xl bg-cyan-600/10" />
-        </div>
-        <Loader2 className="w-8 h-8 animate-spin text-violet-500" />
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: bg }}>
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: textMuted }} />
       </div>
     );
   }
 
   if (error === 'Unauthorized - not an admin' || error === 'Please log in to access admin panel') {
     return (
-      <div className="min-h-screen admin-bg admin-page flex items-center justify-center">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full blur-3xl bg-violet-600/10" />
-          <div className="absolute top-20 -left-20 w-60 h-60 rounded-full blur-3xl bg-cyan-600/10" />
-        </div>
-        <div className="relative admin-card rounded-2xl p-8 max-w-md text-center">
-          <h1 className="text-xl font-semibold text-white mb-4">Access Denied</h1>
-          <p className="text-zinc-400">{error}</p>
-          <Link 
-            href="/"
-            className="inline-flex items-center gap-2 mt-6 text-violet-400 hover:text-violet-300 transition-colors"
-          >
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: bg }}>
+        <div className="rounded-xl p-8 max-w-md text-center" style={{ backgroundColor: cardBg, border: `1px solid ${cardBorder}` }}>
+          <h1 className="text-xl font-semibold mb-4" style={{ color: textPrimary }}>Access Denied</h1>
+          <p style={{ color: textSecondary }}>{error}</p>
+          <Link href="/" className="inline-flex items-center gap-2 mt-6 transition-colors" style={{ color: textMuted }}>
             <ArrowLeft className="w-4 h-4" />
             Back to home
           </Link>
@@ -217,174 +221,132 @@ export default function AdminPage() {
     );
   }
 
-  return (
-    <div className="min-h-screen admin-bg admin-text admin-page">
-      {/* Ambient gradient background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full blur-3xl bg-violet-600/10" />
-        <div className="absolute top-1/3 -left-20 w-72 h-72 rounded-full blur-3xl bg-cyan-600/8" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-60 rounded-full blur-3xl bg-indigo-600/8" />
-      </div>
+  const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+    <div className={`rounded-xl ${className}`} style={{ backgroundColor: cardBg, border: `1px solid ${cardBorder}` }}>
+      {children}
+    </div>
+  );
 
-      <div className="relative max-w-7xl mx-auto px-6 py-8 space-y-8">
+  const Btn = ({ children, onClick, disabled, variant = 'default', className = '' }: {
+    children: React.ReactNode; onClick: () => void; disabled?: boolean;
+    variant?: 'default' | 'primary' | 'danger'; className?: string;
+  }) => {
+    const styles: Record<string, React.CSSProperties> = {
+      default: { backgroundColor: btnBg, border: `1px solid ${btnBorder}`, color: textPrimary },
+      primary: { backgroundColor: isDark ? '#fafafa' : '#18181b', color: isDark ? '#09090b' : '#fafafa' },
+      danger: { backgroundColor: 'transparent', border: `1px solid ${btnBorder}`, color: textMuted },
+    };
+    return (
+      <button onClick={onClick} disabled={disabled}
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-opacity disabled:opacity-40 ${className}`}
+        style={styles[variant]}>
+        {children}
+      </button>
+    );
+  };
+
+  const StatusBadge = ({ connected }: { connected: boolean }) => (
+    <span className="ml-auto flex items-center gap-1.5 text-xs font-medium" style={{ color: textMuted }}>
+      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: connected ? (isDark ? '#a1a1aa' : '#52525b') : '#ef4444' }} />
+      {connected ? 'Connected' : 'Down'}
+    </span>
+  );
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: bg, color: textPrimary }}>
+      <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link 
-              href="/app"
-              className="p-2 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
+            <Link href="/app" className="p-2 rounded-lg transition-colors" style={{ backgroundColor: btnBg, border: `1px solid ${btnBorder}` }}>
+              <ArrowLeft className="w-4 h-4" style={{ color: textSecondary }} />
             </Link>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
-                <span className="text-2xl">👁️‍🗨️</span>
-                Admin Dashboard
+              <h1 className="text-xl font-semibold tracking-tight flex items-center gap-2" style={{ color: textPrimary }}>
+                <span>👁️‍🗨️</span> Admin
               </h1>
-              <p className="text-sm text-zinc-500 mt-1">
-                {lastRefresh && `Last updated ${lastRefresh.toLocaleTimeString()}`}
+              <p className="text-xs mt-0.5" style={{ color: textDim }}>
+                {lastRefresh && `Updated ${lastRefresh.toLocaleTimeString()}`}
               </p>
             </div>
           </div>
-          <button
-            onClick={fetchData}
-            className="flex items-center gap-2 px-4 py-2 bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 rounded-xl transition-all"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Refresh
-          </button>
+          <Btn onClick={fetchData} disabled={false}>
+            <RefreshCw className="w-3.5 h-3.5" /> Refresh
+          </Btn>
         </div>
 
         {error && error !== 'Unauthorized - not an admin' && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-red-400 backdrop-blur-sm">
+          <div className="rounded-lg p-3 text-sm" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)', border: `1px solid ${cardBorder}`, color: textSecondary }}>
             {error}
           </div>
         )}
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Database */}
-          <div className="admin-card rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="p-2.5 rounded-xl bg-violet-500/10">
-                <Database className="w-5 h-5 text-violet-400" />
-              </div>
-              <h2 className="font-semibold text-white">Database</h2>
-              <span className={`ml-auto px-2.5 py-1 rounded-full text-xs font-medium ${
-                stats?.database?.connected 
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                  : 'bg-red-500/10 text-red-400 border border-red-500/20'
-              }`}>
-                {stats?.database?.connected ? 'Connected' : 'Disconnected'}
-              </span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <Database className="w-4 h-4" style={{ color: textMuted }} />
+              <span className="text-sm font-medium" style={{ color: textPrimary }}>Database</span>
+              <StatusBadge connected={!!stats?.database?.connected} />
             </div>
             {stats?.database?.connected ? (
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-zinc-500 text-sm">Forums</span>
-                  <span className="text-white font-mono text-lg">{stats.database.forums}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-zinc-500 text-sm">Topics</span>
-                  <span className="text-white font-mono text-lg">{stats.database.topics?.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-zinc-500 text-sm">New (24h)</span>
-                  <span className="text-emerald-400 font-mono text-lg">+{stats.database.newTopicsLast24h?.toLocaleString()}</span>
-                </div>
+              <div className="space-y-2">
+                <div className="flex justify-between"><span className="text-sm" style={{ color: textMuted }}>Forums</span><span className="font-mono text-sm" style={{ color: textPrimary }}>{stats.database.forums}</span></div>
+                <div className="flex justify-between"><span className="text-sm" style={{ color: textMuted }}>Topics</span><span className="font-mono text-sm" style={{ color: textPrimary }}>{stats.database.topics?.toLocaleString()}</span></div>
+                <div className="flex justify-between"><span className="text-sm" style={{ color: textMuted }}>New (24h)</span><span className="font-mono text-sm" style={{ color: textPrimary }}>+{stats.database.newTopicsLast24h?.toLocaleString()}</span></div>
               </div>
             ) : (
-              <p className="text-sm text-red-400">{stats?.database?.error}</p>
+              <p className="text-sm" style={{ color: textMuted }}>{stats?.database?.error}</p>
             )}
-          </div>
+          </Card>
 
-          {/* Redis */}
-          <div className="admin-card rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="p-2.5 rounded-xl bg-cyan-500/10">
-                <Server className="w-5 h-5 text-cyan-400" />
-              </div>
-              <h2 className="font-semibold text-white">Redis Cache</h2>
-              <span className={`ml-auto px-2.5 py-1 rounded-full text-xs font-medium ${
-                stats?.redis?.connected 
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                  : 'bg-red-500/10 text-red-400 border border-red-500/20'
-              }`}>
-                {stats?.redis?.connected ? 'Connected' : 'Disconnected'}
-              </span>
+          <Card className="p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <Server className="w-4 h-4" style={{ color: textMuted }} />
+              <span className="text-sm font-medium" style={{ color: textPrimary }}>Redis</span>
+              <StatusBadge connected={!!stats?.redis?.connected} />
             </div>
             {stats?.redis?.connected && (
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-zinc-500 text-sm">Cached Forums</span>
-                  <span className="text-white font-mono text-lg">{stats.redis.cachedForums}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-zinc-500 text-sm">Last Refresh</span>
-                  <span className="text-zinc-300 text-sm">
-                    {stats.redis.lastRefresh ? new Date(stats.redis.lastRefresh).toLocaleTimeString() : 'Never'}
-                  </span>
-                </div>
+              <div className="space-y-2">
+                <div className="flex justify-between"><span className="text-sm" style={{ color: textMuted }}>Cached</span><span className="font-mono text-sm" style={{ color: textPrimary }}>{stats.redis.cachedForums}</span></div>
+                <div className="flex justify-between"><span className="text-sm" style={{ color: textMuted }}>Refreshed</span><span className="text-sm" style={{ color: textSecondary }}>{stats.redis.lastRefresh ? new Date(stats.redis.lastRefresh).toLocaleTimeString() : '—'}</span></div>
               </div>
             )}
-          </div>
+          </Card>
 
-          {/* Memory Cache */}
-          <div className="admin-card rounded-2xl p-6">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="p-2.5 rounded-xl bg-amber-500/10">
-                <RefreshCw className={`w-5 h-5 text-amber-400 ${stats?.memoryCache?.isRefreshing ? 'animate-spin' : ''}`} />
-              </div>
-              <h2 className="font-semibold text-white">Memory Cache</h2>
+          <Card className="p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <RefreshCw className={`w-4 h-4 ${stats?.memoryCache?.isRefreshing ? 'animate-spin' : ''}`} style={{ color: textMuted }} />
+              <span className="text-sm font-medium" style={{ color: textPrimary }}>Memory</span>
             </div>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-zinc-500 text-sm">Cached</span>
-                <span className="text-white font-mono text-lg">{stats?.memoryCache?.size || 0}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-zinc-500 text-sm">Status</span>
-                <span className={`text-sm ${stats?.memoryCache?.isRefreshing ? 'text-amber-400' : 'text-emerald-400'}`}>
-                  {stats?.memoryCache?.isRefreshing ? '🔄 Refreshing...' : '✓ Idle'}
-                </span>
-              </div>
+            <div className="space-y-2">
+              <div className="flex justify-between"><span className="text-sm" style={{ color: textMuted }}>Cached</span><span className="font-mono text-sm" style={{ color: textPrimary }}>{stats?.memoryCache?.size || 0}</span></div>
+              <div className="flex justify-between"><span className="text-sm" style={{ color: textMuted }}>Status</span><span className="text-sm" style={{ color: textSecondary }}>{stats?.memoryCache?.isRefreshing ? 'Refreshing…' : 'Idle'}</span></div>
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Quick Actions */}
-        <div className="admin-card rounded-2xl p-6">
-          <h2 className="font-semibold text-white mb-4">Quick Actions</h2>
-          <div className="flex flex-wrap gap-3">
-            <button
-              onClick={() => handleAction('init-schema')}
-              disabled={actionLoading !== null}
-              className="flex items-center gap-2 px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {actionLoading === 'init-schema' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
+        <Card className="p-5">
+          <h2 className="text-sm font-medium mb-3" style={{ color: textPrimary }}>Actions</h2>
+          <div className="flex flex-wrap gap-2">
+            <Btn onClick={() => handleAction('init-schema')} disabled={actionLoading !== null}>
+              {actionLoading === 'init-schema' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Database className="w-3.5 h-3.5" />}
               Init Schema
-            </button>
-            <button
-              onClick={() => handleAction('refresh-cache')}
-              disabled={actionLoading !== null}
-              className="flex items-center gap-2 px-4 py-2.5 bg-violet-600 hover:bg-violet-500 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {actionLoading === 'refresh-cache' ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+            </Btn>
+            <Btn onClick={() => handleAction('refresh-cache')} disabled={actionLoading !== null} variant="primary">
+              {actionLoading === 'refresh-cache' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
               Refresh Cache
-            </button>
-            <button
-              onClick={() => handleAction('clear-redis-cache')}
-              disabled={actionLoading !== null}
-              className="flex items-center gap-2 px-4 py-2.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {actionLoading === 'clear-redis-cache' ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+            </Btn>
+            <Btn onClick={() => handleAction('clear-redis-cache')} disabled={actionLoading !== null} variant="danger">
+              {actionLoading === 'clear-redis-cache' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RotateCcw className="w-3.5 h-3.5" />}
               Clear Redis
-            </button>
+            </Btn>
           </div>
-        </div>
+        </Card>
 
         {/* Forum Health */}
-        <ForumHealthSection adminEmail={adminEmail} />
+        <ForumHealthSection adminEmail={adminEmail} isDark={isDark} />
 
         {/* Backfill Status */}
         <BackfillSection
@@ -405,60 +367,56 @@ export default function AdminPage() {
             }
           }}
           adminEmail={adminEmail}
+          isDark={isDark}
         />
 
         {/* Users */}
-        <div className="admin-card rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2.5 rounded-xl bg-indigo-500/10">
-              <Users className="w-5 h-5 text-indigo-400" />
-            </div>
-            <h2 className="font-semibold text-white">Users</h2>
-            <span className="ml-2 px-2.5 py-1 rounded-full text-xs font-medium bg-zinc-800 text-zinc-400">
-              {users.length}
-            </span>
+        <Card className="p-5">
+          <div className="flex items-center gap-2.5 mb-4">
+            <Users className="w-4 h-4" style={{ color: textMuted }} />
+            <span className="text-sm font-medium" style={{ color: textPrimary }}>Users</span>
+            <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: btnBg, color: textMuted }}>{users.length}</span>
           </div>
           
           {users.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-zinc-500 border-b border-zinc-800">
-                    <th className="pb-3 pr-4 font-medium">Email</th>
-                    <th className="pb-3 pr-4 font-medium">Alerts</th>
-                    <th className="pb-3 pr-4 font-medium">Bookmarks</th>
-                    <th className="pb-3 font-medium">Joined</th>
+                  <tr style={{ borderBottom: `1px solid ${cardBorder}` }}>
+                    <th className="pb-2 pr-4 text-left text-xs font-medium" style={{ color: textDim }}>Email</th>
+                    <th className="pb-2 pr-4 text-left text-xs font-medium" style={{ color: textDim }}>Alerts</th>
+                    <th className="pb-2 pr-4 text-left text-xs font-medium" style={{ color: textDim }}>Bookmarks</th>
+                    <th className="pb-2 text-left text-xs font-medium" style={{ color: textDim }}>Joined</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map((u) => (
-                    <tr key={u.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors">
-                      <td className="py-3 pr-4 text-white">{u.email || u.privy_did.slice(0, 20) + '...'}</td>
-                      <td className="py-3 pr-4 font-mono text-zinc-400">{u.alert_count}</td>
-                      <td className="py-3 pr-4 font-mono text-zinc-400">{u.bookmark_count}</td>
-                      <td className="py-3 text-zinc-500">
-                        {new Date(u.created_at).toLocaleDateString()}
-                      </td>
+                    <tr key={u.id} style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'}` }}>
+                      <td className="py-2.5 pr-4" style={{ color: textPrimary }}>{u.email || u.privy_did.slice(0, 20) + '…'}</td>
+                      <td className="py-2.5 pr-4 font-mono" style={{ color: textSecondary }}>{u.alert_count}</td>
+                      <td className="py-2.5 pr-4 font-mono" style={{ color: textSecondary }}>{u.bookmark_count}</td>
+                      <td className="py-2.5" style={{ color: textMuted }}>{new Date(u.created_at).toLocaleDateString()}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           ) : (
-            <p className="text-zinc-500">No users yet</p>
+            <p className="text-sm" style={{ color: textMuted }}>No users yet — click Init Schema if tables haven&apos;t been created.</p>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   );
 }
 
-function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum, adminEmail }: {
+function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum, adminEmail, isDark = true }: {
   backfillStatus: BackfillStatus | null;
   actionLoading: string | null;
   onAction: (action: string, jobId?: number) => void;
   onQueueForum: (url: string) => Promise<void>;
   adminEmail: string;
+  isDark?: boolean;
 }) {
   const [search, setSearch] = useState('');
   const [showForumPicker, setShowForumPicker] = useState(false);
@@ -490,17 +448,27 @@ function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum
     );
   }, [allForums, search]);
 
+  const cardBg = isDark ? 'rgba(255,255,255,0.03)' : '#ffffff';
+  const cardBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const textPrimary = isDark ? '#fafafa' : '#09090b';
+  const textSecondary = isDark ? '#a1a1aa' : '#3f3f46';
+  const textMuted = isDark ? '#71717a' : '#52525b';
+  const textDim = isDark ? '#52525b' : '#a1a1aa';
+  const btnBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+  const btnBorder = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+  const inputBg = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)';
+
   return (
-    <div className="admin-card rounded-2xl p-6">
+    <div className="rounded-xl" style={{ backgroundColor: cardBg, border: `1px solid ${cardBorder}` }}>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="font-semibold text-white">Historical Backfill</h2>
+        <h2 className="font-semibold text-current">Historical Backfill</h2>
         <div className="flex items-center gap-4 text-sm">
-          <span className="flex items-center gap-1.5 text-emerald-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+          <span className="flex items-center gap-1.5 text-current">
+            <span className="w-2 h-2 rounded-full bg-current" />
             {backfillStatus?.complete || 0} complete
           </span>
-          <span className="flex items-center gap-1.5 text-amber-400">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+          <span className="flex items-center gap-1.5 text-current">
+            <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
             {backfillStatus?.running || 0} running
           </span>
           <span className="flex items-center gap-1.5 text-zinc-500">
@@ -508,8 +476,8 @@ function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum
             {backfillStatus?.pending || 0} pending
           </span>
           {(backfillStatus?.failed || 0) > 0 && (
-            <span className="flex items-center gap-1.5 text-red-400">
-              <span className="w-2 h-2 rounded-full bg-red-400" />
+            <span className="flex items-center gap-1.5 text-current">
+              <span className="w-2 h-2 rounded-full bg-current" />
               {backfillStatus?.failed} failed
             </span>
           )}
@@ -542,7 +510,7 @@ function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
               <input type="text" value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Search forums..."
-                className="w-full pl-10 pr-4 py-2 bg-zinc-800 text-white rounded-lg text-sm focus:outline-none"
+                className="w-full pl-10 pr-4 py-2 bg-zinc-800 text-current rounded-lg text-sm focus:outline-none"
               />
             </div>
           </div>
@@ -556,7 +524,7 @@ function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum
                 <div key={forum.url} className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-800/50 hover:bg-zinc-800/30">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-white font-medium truncate">{forum.name}</span>
+                      <span className="text-sm text-current font-medium truncate">{forum.name}</span>
                       {forum.token && <span className="text-xs text-zinc-500 font-mono">${forum.token}</span>}
                       <span className="text-[11px] text-zinc-600">{forum.categoryName}</span>
                     </div>
@@ -565,10 +533,10 @@ function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum
                   <div className="flex-shrink-0 ml-3">
                     {isQueued && job ? (
                       <span className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
-                        job.status === 'complete' ? 'bg-emerald-500/10 text-emerald-400' :
-                        job.status === 'running' ? 'bg-amber-500/10 text-amber-400' :
-                        job.status === 'failed' ? 'bg-red-500/10 text-red-400' :
-                        'bg-blue-500/10 text-blue-400'
+                        job.status === 'complete' ? 'bg-transparent text-current' :
+                        job.status === 'running' ? 'bg-transparent text-current' :
+                        job.status === 'failed' ? 'bg-transparent text-current' :
+                        'bg-transparent text-current'
                       }`}>
                         {job.status} {job.topics_fetched > 0 ? `(${job.topics_fetched.toLocaleString()})` : ''}
                       </span>
@@ -608,23 +576,23 @@ function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum
                 <tr key={job.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors">
                   <td className="py-3 pr-4">
                     <a href={job.forum_url} target="_blank" rel="noopener noreferrer"
-                      className="text-zinc-300 hover:text-white transition-colors">
+                      className="text-zinc-300 hover:text-current transition-colors">
                       {job.forum_name}
                     </a>
                   </td>
                   <td className="py-3 pr-4">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                      job.status === 'complete' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                      job.status === 'running' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-                      job.status === 'failed' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
-                      job.status === 'paused' ? 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/20' :
-                      'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                      job.status === 'complete' ? 'px-2 py-0.5' :
+                      job.status === 'running' ? 'px-2 py-0.5' :
+                      job.status === 'failed' ? 'px-2 py-0.5' :
+                      job.status === 'paused' ? 'px-2 py-0.5' :
+                      'px-2 py-0.5'
                     }`}>{job.status}</span>
                   </td>
                   <td className="py-3 pr-4 font-mono text-zinc-400">
                     Page {job.current_page}{job.total_pages ? ` / ${job.total_pages}` : ''}
                   </td>
-                  <td className="py-3 pr-4 font-mono text-white">{job.topics_fetched.toLocaleString()}</td>
+                  <td className="py-3 pr-4 font-mono text-current">{job.topics_fetched.toLocaleString()}</td>
                   <td className="py-3">
                     <div className="flex gap-1">
                       {job.status === 'running' && (
@@ -666,10 +634,18 @@ interface ForumHealth {
   error?: string;
 }
 
-function ForumHealthSection({ adminEmail }: { adminEmail: string }) {
+function ForumHealthSection({ adminEmail, isDark = true }: { adminEmail: string; isDark?: boolean }) {
   const [results, setResults] = useState<ForumHealth[]>([]);
   const [testing, setTesting] = useState(false);
   const [filter, setFilter] = useState<'all' | 'issues'>('issues');
+
+  const fhCardBg = isDark ? 'rgba(255,255,255,0.03)' : '#ffffff';
+  const fhCardBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const fhTextPrimary = isDark ? '#fafafa' : '#09090b';
+  const fhTextMuted = isDark ? '#71717a' : '#52525b';
+  const fhTextDim = isDark ? '#52525b' : '#a1a1aa';
+  const fhBtnBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+  const fhBtnBorder = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
 
   const allForums = useMemo(() => {
     const forums: { name: string; url: string }[] = [];
@@ -712,14 +688,14 @@ function ForumHealthSection({ adminEmail }: { adminEmail: string }) {
   const displayResults = filter === 'issues' ? issues : results.filter(r => r.status !== 'pending');
 
   return (
-    <div className="admin-card rounded-2xl p-6">
+    <div className="rounded-xl p-5" style={{ backgroundColor: fhCardBg, border: `1px solid ${fhCardBorder}` }}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold text-white">Forum Health</h2>
+        <h2 className="text-sm font-medium" style={{ color: fhTextPrimary }}>Forum Health</h2>
         <div className="flex items-center gap-3">
           {results.length > 0 && (
             <div className="flex items-center gap-3 text-sm">
-              <span className="text-emerald-400">{results.filter(r => r.status === 'ok').length} ok</span>
-              {issues.length > 0 && <span className="text-red-400">{issues.length} issues</span>}
+              <span className="text-current">{results.filter(r => r.status === 'ok').length} ok</span>
+              {issues.length > 0 && <span className="text-current">{issues.length} issues</span>}
               {results.filter(r => r.status === 'pending' || r.status === 'testing').length > 0 && (
                 <span className="text-zinc-500">{results.filter(r => r.status === 'pending' || r.status === 'testing').length} remaining</span>
               )}
@@ -737,11 +713,11 @@ function ForumHealthSection({ adminEmail }: { adminEmail: string }) {
         <>
           <div className="flex gap-2 mb-4">
             <button onClick={() => setFilter('issues')}
-              className={`px-2.5 py-1 text-xs rounded-md ${filter === 'issues' ? 'bg-zinc-700 text-white' : 'text-zinc-500'}`}>
+              className={`px-2.5 py-1 text-xs rounded-md ${filter === 'issues' ? 'bg-zinc-700 text-current' : 'text-zinc-500'}`}>
               Issues Only ({issues.length})
             </button>
             <button onClick={() => setFilter('all')}
-              className={`px-2.5 py-1 text-xs rounded-md ${filter === 'all' ? 'bg-zinc-700 text-white' : 'text-zinc-500'}`}>
+              className={`px-2.5 py-1 text-xs rounded-md ${filter === 'all' ? 'bg-zinc-700 text-current' : 'text-zinc-500'}`}>
               All Tested
             </button>
           </div>
@@ -753,14 +729,14 @@ function ForumHealthSection({ adminEmail }: { adminEmail: string }) {
               {displayResults.map(r => (
                 <div key={r.url} className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-zinc-800/30">
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm text-white">{r.name}</span>
+                    <span className="text-sm text-current">{r.name}</span>
                     <span className="text-xs text-zinc-600 ml-2">{r.url}</span>
                   </div>
                   <span className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
-                    r.status === 'ok' ? 'bg-emerald-500/10 text-emerald-400' :
-                    r.status === 'redirect' ? 'bg-amber-500/10 text-amber-400' :
-                    r.status === 'error' ? 'bg-red-500/10 text-red-400' :
-                    r.status === 'testing' ? 'bg-blue-500/10 text-blue-400' :
+                    r.status === 'ok' ? 'bg-transparent text-current' :
+                    r.status === 'redirect' ? 'bg-transparent text-current' :
+                    r.status === 'error' ? 'bg-transparent text-current' :
+                    r.status === 'testing' ? 'bg-transparent text-current' :
                     'bg-zinc-800 text-zinc-500'
                   }`}>
                     {r.status === 'testing' ? 'testing...' : r.status}
