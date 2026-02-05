@@ -56,8 +56,8 @@ export function ForumManager({
   const fg = isDark ? '#fafafa' : '#09090b';
   const fgMuted = isDark ? '#a1a1aa' : '#3f3f46';
   const fgDim = isDark ? '#71717a' : '#52525b';
-  const border = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-  const cardBg = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
+  const border = isDark ? '#262626' : 'rgba(0,0,0,0.08)';
+  const cardBg = isDark ? '#171717' : 'rgba(0,0,0,0.02)';
   const activeBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
 
   const addedForumUrls = useMemo(
@@ -172,7 +172,7 @@ export function ForumManager({
         onMouseLeave={(e) => { if (!isAdded) e.currentTarget.style.backgroundColor = 'transparent'; }}
       >
         <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden"
-          style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }}>
+          style={{ backgroundColor: isDark ? '#1c1c1e' : 'rgba(0,0,0,0.05)' }}>
           {logoUrl ? (
             <img src={logoUrl} alt="" className="w-5 h-5 object-contain" referrerPolicy="no-referrer"
               onError={(e) => {
@@ -225,7 +225,7 @@ export function ForumManager({
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-0.5 p-1 rounded-lg mb-5" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)' }}>
+      <div className="flex gap-0.5 p-1 rounded-lg mb-5" style={{ backgroundColor: isDark ? '#1a1a1a' : 'rgba(0,0,0,0.03)' }}>
         <button onClick={() => setActiveTab('added')}
           className="flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors"
           style={{ backgroundColor: activeTab === 'added' ? activeBg : 'transparent', color: activeTab === 'added' ? fg : fgDim }}>
@@ -263,7 +263,7 @@ export function ForumManager({
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden"
-                        style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)' }}>
+                        style={{ backgroundColor: isDark ? '#1c1c1e' : 'rgba(0,0,0,0.05)' }}>
                         {logoUrl ? (
                           <img src={logoUrl} alt="" className="w-5 h-5 object-contain" referrerPolicy="no-referrer"
                             onError={(e) => {
@@ -402,7 +402,7 @@ export function ForumManager({
                 <div className="flex gap-2">
                   <button onClick={handleValidateAndAdd} disabled={!newUrl.trim() || isValidating}
                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
-                    style={{ backgroundColor: fg, color: isDark ? '#09090b' : '#fafafa' }}>
+                    style={{ backgroundColor: fg, color: isDark ? '#111111' : '#fafafa' }}>
                     {isValidating && <Loader2 className="w-4 h-4 animate-spin" />}
                     {isValidating ? 'Validating...' : 'Add Forum'}
                   </button>

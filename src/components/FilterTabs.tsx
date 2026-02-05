@@ -20,7 +20,7 @@ export function FilterTabs({
   const activeBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
 
   return (
-    <div className="flex items-center gap-0.5 p-1 rounded-lg" style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)' }}>
+    <div className="flex items-center gap-0.5 p-1 rounded-lg" style={{ backgroundColor: isDark ? '#1a1a1a' : 'rgba(0,0,0,0.03)' }}>
       <button
         onClick={() => onFilterChange('your')}
         className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"

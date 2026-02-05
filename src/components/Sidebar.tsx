@@ -17,7 +17,7 @@ interface SidebarProps {
 
 export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedCount = 0, isMobileOpen, onMobileToggle }: SidebarProps) {
   const isDark = theme === 'dark';
-  const borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const borderColor = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.06)';
   const textPrimary = isDark ? '#e4e4e7' : '#09090b';
   const textMuted = isDark ? '#71717a' : '#52525b';
   const { user } = useAuth();
@@ -41,7 +41,7 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
       <div 
         className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-14 border-b"
         style={{ 
-          backgroundColor: isDark ? '#09090b' : '#ffffff',
+          backgroundColor: isDark ? '#0a0a0a' : '#ffffff',
           borderColor
         }}
       >
@@ -71,7 +71,7 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
           top-0 md:top-auto pt-14 md:pt-0 border-r
         `}
         style={{ 
-          backgroundColor: isDark ? '#09090b' : '#ffffff',
+          backgroundColor: isDark ? '#0a0a0a' : '#ffffff',
           borderColor
         }}
       >
@@ -106,7 +106,7 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
                       color: isActive ? textPrimary : textMuted
                     }}
                     onMouseEnter={(e) => {
-                      if (!isActive) e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
+                      if (!isActive) e.currentTarget.style.backgroundColor = isDark ? '#171717' : 'rgba(0,0,0,0.02)';
                     }}
                     onMouseLeave={(e) => {
                       if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
@@ -132,7 +132,7 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
             <a href="/admin"
               className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               style={{ color: textMuted }}
-              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = isDark ? '#171717' : 'rgba(0,0,0,0.02)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
             >
               <Shield className="w-4 h-4" />

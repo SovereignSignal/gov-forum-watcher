@@ -76,9 +76,9 @@ export function DiscussionItem({
   const fg = isDark ? '#fafafa' : '#09090b';
   const fgMuted = isDark ? '#a1a1aa' : '#3f3f46';
   const fgDim = isDark ? '#71717a' : '#52525b';
-  const border = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-  const cardBg = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
-  const badgeBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+  const border = isDark ? '#262626' : 'rgba(0,0,0,0.08)';
+  const cardBg = isDark ? '#171717' : 'rgba(0,0,0,0.02)';
+  const badgeBg = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.05)';
 
   return (
     <article
@@ -87,7 +87,7 @@ export function DiscussionItem({
         borderColor: isRead ? (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)') : border,
         backgroundColor: isRead ? 'transparent' : cardBg,
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'; }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = isDark ? '#333333' : 'rgba(0,0,0,0.12)'; }}
       onMouseLeave={(e) => { e.currentTarget.style.borderColor = isRead ? (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)') : border; }}
     >
       {/* Unread indicator */}

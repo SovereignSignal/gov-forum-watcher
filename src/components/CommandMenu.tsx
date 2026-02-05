@@ -50,7 +50,7 @@ export function CommandMenu({
   const hoverBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)';
   const activeBg = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)';
   const sectionColor = isDark ? '#52525b' : '#a1a1aa';
-  const separatorColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const separatorColor = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.06)';
 
   // Build command list
   const allItems: CommandItem[] = useMemo(() => {

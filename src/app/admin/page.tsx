@@ -184,17 +184,17 @@ export default function AdminPage() {
   };
 
   // Theme tokens
-  const bg = isDark ? '#09090b' : '#f5f5f5';
-  const cardBg = isDark ? 'rgba(255,255,255,0.03)' : '#ffffff';
-  const cardBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const bg = isDark ? '#111111' : '#f5f5f5';
+  const cardBg = isDark ? '#171717' : '#ffffff';
+  const cardBorder = isDark ? '#262626' : 'rgba(0,0,0,0.08)';
   const textPrimary = isDark ? '#fafafa' : '#09090b';
   const textSecondary = isDark ? '#a1a1aa' : '#3f3f46';
   const textMuted = isDark ? '#71717a' : '#52525b';
   const textDim = isDark ? '#52525b' : '#a1a1aa';
-  const btnBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
-  const btnBorder = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+  const btnBg = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.05)';
+  const btnBorder = isDark ? '#2a2a2a' : 'rgba(0,0,0,0.1)';
   const btnHover = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
-  const inputBg = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)';
+  const inputBg = isDark ? '#1a1a1a' : 'rgba(0,0,0,0.03)';
   const statusOk = isDark ? '#a1a1aa' : '#52525b';
   const statusWarn = isDark ? '#a1a1aa' : '#71717a';
 
@@ -448,15 +448,15 @@ function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum
     );
   }, [allForums, search]);
 
-  const cardBg = isDark ? 'rgba(255,255,255,0.03)' : '#ffffff';
-  const cardBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const cardBg = isDark ? '#171717' : '#ffffff';
+  const cardBorder = isDark ? '#262626' : 'rgba(0,0,0,0.08)';
   const textPrimary = isDark ? '#fafafa' : '#09090b';
   const textSecondary = isDark ? '#a1a1aa' : '#3f3f46';
   const textMuted = isDark ? '#71717a' : '#52525b';
   const textDim = isDark ? '#52525b' : '#a1a1aa';
-  const btnBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
-  const btnBorder = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-  const inputBg = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)';
+  const btnBg = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.05)';
+  const btnBorder = isDark ? '#2a2a2a' : 'rgba(0,0,0,0.1)';
+  const inputBg = isDark ? '#1a1a1a' : 'rgba(0,0,0,0.03)';
 
   return (
     <div className="rounded-xl" style={{ backgroundColor: cardBg, border: `1px solid ${cardBorder}` }}>
@@ -639,13 +639,13 @@ function ForumHealthSection({ adminEmail, isDark = true }: { adminEmail: string;
   const [testing, setTesting] = useState(false);
   const [filter, setFilter] = useState<'all' | 'issues'>('issues');
 
-  const fhCardBg = isDark ? 'rgba(255,255,255,0.03)' : '#ffffff';
-  const fhCardBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const fhCardBg = isDark ? '#171717' : '#ffffff';
+  const fhCardBorder = isDark ? '#262626' : 'rgba(0,0,0,0.08)';
   const fhTextPrimary = isDark ? '#fafafa' : '#09090b';
   const fhTextMuted = isDark ? '#71717a' : '#52525b';
   const fhTextDim = isDark ? '#52525b' : '#a1a1aa';
-  const fhBtnBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
-  const fhBtnBorder = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+  const fhBtnBg = isDark ? '#1c1c1e' : 'rgba(0,0,0,0.05)';
+  const fhBtnBorder = isDark ? '#2a2a2a' : 'rgba(0,0,0,0.1)';
 
   const allForums = useMemo(() => {
     const forums: { name: string; url: string }[] = [];

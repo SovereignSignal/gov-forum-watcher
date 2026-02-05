@@ -35,10 +35,10 @@ export function OnboardingWizard({ onComplete, onSkip }: OnboardingWizardProps) 
   const textSecondary = isDark ? '#a1a1aa' : '#3f3f46';
   const textMuted = isDark ? '#71717a' : '#52525b';
   const cardBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)';
-  const cardBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const cardBorder = isDark ? '#262626' : 'rgba(0,0,0,0.08)';
   const iconBg = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const btnPrimaryBg = isDark ? '#fafafa' : '#18181b';
-  const btnPrimaryFg = isDark ? '#09090b' : '#fafafa';
+  const btnPrimaryFg = isDark ? '#111111' : '#fafafa';
   const stepActive = isDark ? '#a1a1aa' : '#3f3f46';
   const stepInactive = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
 

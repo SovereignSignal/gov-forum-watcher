@@ -225,7 +225,7 @@ export default function AppPage() {
         <div 
           className="flex h-screen overflow-hidden pt-14 md:pt-0"
           style={{ 
-            backgroundColor: isDark ? '#09090b' : '#fafafa',
+            backgroundColor: isDark ? '#111111' : '#fafafa',
             color: isDark ? '#fafafa' : '#18181b'
           }}
         >

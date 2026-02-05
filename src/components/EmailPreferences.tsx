@@ -28,8 +28,8 @@ export function EmailPreferences({ onSave }: EmailPreferencesProps) {
   const fg = isDark ? '#fafafa' : '#09090b';
   const fgMuted = isDark ? '#a1a1aa' : '#3f3f46';
   const fgDim = isDark ? '#71717a' : '#52525b';
-  const border = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-  const cardBg = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
+  const border = isDark ? '#262626' : 'rgba(0,0,0,0.08)';
+  const cardBg = isDark ? '#171717' : 'rgba(0,0,0,0.02)';
   const activeBg = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
 
   useEffect(() => {
@@ -146,7 +146,7 @@ export function EmailPreferences({ onSave }: EmailPreferencesProps) {
       <div className="flex flex-wrap gap-3 pt-4 border-t" style={{ borderColor: border }}>
         <button onClick={handleSave} disabled={isSaving}
           className="flex items-center gap-2 px-4 py-2 font-medium rounded-lg transition-colors disabled:opacity-50"
-          style={{ backgroundColor: fg, color: isDark ? '#09090b' : '#fafafa' }}>
+          style={{ backgroundColor: fg, color: isDark ? '#111111' : '#fafafa' }}>
           {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
           Save Preferences
         </button>
@@ -202,7 +202,7 @@ function ToggleOption({ checked, onChange, icon, label, description, fg, fgDim, 
           backgroundColor: checked ? fg : 'transparent',
           borderColor: checked ? fg : border,
         }}>
-        {checked && <Check className="w-3 h-3" style={{ color: isDark ? '#09090b' : '#fafafa' }} />}
+        {checked && <Check className="w-3 h-3" style={{ color: isDark ? '#111111' : '#fafafa' }} />}
       </div>
       <div className="flex-1">
         <div className="flex items-center gap-2">
