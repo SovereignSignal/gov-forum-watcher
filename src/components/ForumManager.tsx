@@ -289,14 +289,14 @@ export function ForumManager({
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
                       <a href={forum.discourseForum.url} target="_blank" rel="noopener noreferrer"
-                        className="p-2 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                        className="p-2 rounded-lg transition-colors"
                         style={{ color: fgDim }}>
                         <ExternalLink className="w-4 h-4" />
                       </a>
                       <button onClick={() => setDeleteConfirm({ id: forum.id, name: forum.name })}
-                        className="p-2 rounded-lg transition-colors opacity-0 group-hover:opacity-100 hover:text-red-500"
+                        className="p-2 rounded-lg transition-colors hover:text-red-500"
                         style={{ color: fgDim }}>
-                        <Trash2 className="w-4 h-4" />
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
