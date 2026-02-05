@@ -7,7 +7,6 @@
 // Admin emails - add your email here
 const ADMIN_EMAILS = [
   'sov@sovereignsignal.com',
-  'jenson@sovereignsignal.com',
   // Add more admin emails as needed
 ];
 
