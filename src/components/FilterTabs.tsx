@@ -16,7 +16,7 @@ export function FilterTabs({
   isDark = true,
 }: FilterTabsProps) {
   const fg = isDark ? '#fafafa' : '#09090b';
-  const fgMuted = isDark ? '#52525b' : '#a1a1aa';
+  const fgMuted = isDark ? '#71717a' : '#a1a1aa';
   const activeBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
 
   return (

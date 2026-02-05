@@ -58,7 +58,7 @@ export function DiscussionFeed({
   const borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
   const textPrimary = isDark ? '#e4e4e7' : '#18181b';
   const textSecondary = isDark ? '#a1a1aa' : '#71717a';
-  const textMuted = isDark ? '#52525b' : '#a1a1aa';
+  const textMuted = isDark ? '#71717a' : '#a1a1aa';
 
   // Map cname → category for filtering
   const forumCategoryMap = useMemo(() => {

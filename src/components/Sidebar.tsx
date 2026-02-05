@@ -19,7 +19,7 @@ export function Sidebar({ activeView, onViewChange, theme, onToggleTheme, savedC
   const isDark = theme === 'dark';
   const borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
   const textPrimary = isDark ? '#e4e4e7' : '#18181b';
-  const textMuted = isDark ? '#52525b' : '#a1a1aa';
+  const textMuted = isDark ? '#71717a' : '#a1a1aa';
   const { user } = useAuth();
   const userIsAdmin = isAdminEmail(user?.email);
   
