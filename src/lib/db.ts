@@ -1,40 +1,32 @@
 /**
  * Database connection and schema for historical forum data
  * 
- * Uses Neon's serverless Postgres driver for edge compatibility
+ * Uses postgres.js for Railway Postgres compatibility
  */
 
-import { neon, NeonQueryFunction } from '@neondatabase/serverless';
+import postgres from 'postgres';
 
 // Lazy initialization
-let sql: NeonQueryFunction<false, false> | null = null;
+let sql: ReturnType<typeof postgres> | null = null;
 
-export function getDb(): NeonQueryFunction<false, false> {
+export function getDb() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
     throw new Error('DATABASE_URL environment variable is not set');
   }
   
   if (!sql) {
-    sql = neon(connectionString);
+    sql = postgres(connectionString, {
+      max: 10,
+      idle_timeout: 20,
+      connect_timeout: 10,
+    });
   }
   return sql;
 }
 
 export function isDatabaseConfigured(): boolean {
   return !!process.env.DATABASE_URL;
-}
-
-/**
- * Type-safe query helper that always returns an array
- */
-export async function query<T = Record<string, unknown>>(
-  sqlQuery: TemplateStringsArray,
-  ...params: unknown[]
-): Promise<T[]> {
-  const db = getDb();
-  const result = await db(sqlQuery, ...params);
-  return result as T[];
 }
 
 /**
@@ -228,24 +220,53 @@ export async function getRecentTopics(options: {
   const { limit = 50, offset = 0, forumId, category, since } = options;
   
   if (forumId) {
+    if (since) {
+      return db`
+        SELECT t.*, f.name as forum_name, f.url as forum_url, f.logo_url as forum_logo
+        FROM topics t
+        JOIN forums f ON t.forum_id = f.id
+        WHERE t.forum_id = ${forumId} AND t.bumped_at >= ${since}
+        ORDER BY t.bumped_at DESC NULLS LAST
+        LIMIT ${limit} OFFSET ${offset}
+      `;
+    }
     return db`
       SELECT t.*, f.name as forum_name, f.url as forum_url, f.logo_url as forum_logo
       FROM topics t
       JOIN forums f ON t.forum_id = f.id
       WHERE t.forum_id = ${forumId}
-      ${since ? db`AND t.bumped_at >= ${since}` : db``}
       ORDER BY t.bumped_at DESC NULLS LAST
       LIMIT ${limit} OFFSET ${offset}
     `;
   }
   
   if (category) {
+    if (since) {
+      return db`
+        SELECT t.*, f.name as forum_name, f.url as forum_url, f.logo_url as forum_logo
+        FROM topics t
+        JOIN forums f ON t.forum_id = f.id
+        WHERE f.category = ${category} AND t.bumped_at >= ${since}
+        ORDER BY t.bumped_at DESC NULLS LAST
+        LIMIT ${limit} OFFSET ${offset}
+      `;
+    }
     return db`
       SELECT t.*, f.name as forum_name, f.url as forum_url, f.logo_url as forum_logo
       FROM topics t
       JOIN forums f ON t.forum_id = f.id
       WHERE f.category = ${category}
-      ${since ? db`AND t.bumped_at >= ${since}` : db``}
+      ORDER BY t.bumped_at DESC NULLS LAST
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+  }
+  
+  if (since) {
+    return db`
+      SELECT t.*, f.name as forum_name, f.url as forum_url, f.logo_url as forum_logo
+      FROM topics t
+      JOIN forums f ON t.forum_id = f.id
+      WHERE t.bumped_at >= ${since}
       ORDER BY t.bumped_at DESC NULLS LAST
       LIMIT ${limit} OFFSET ${offset}
     `;
@@ -255,7 +276,6 @@ export async function getRecentTopics(options: {
     SELECT t.*, f.name as forum_name, f.url as forum_url, f.logo_url as forum_logo
     FROM topics t
     JOIN forums f ON t.forum_id = f.id
-    ${since ? db`WHERE t.bumped_at >= ${since}` : db``}
     ORDER BY t.bumped_at DESC NULLS LAST
     LIMIT ${limit} OFFSET ${offset}
   `;
@@ -306,8 +326,8 @@ export async function getDbStats() {
   `;
   
   return {
-    forums: parseInt(forumCount?.count || '0'),
-    topics: parseInt(topicCount?.count || '0'),
-    newTopicsLast24h: parseInt(recentTopics?.count || '0'),
+    forums: parseInt(String(forumCount?.count || '0')),
+    topics: parseInt(String(topicCount?.count || '0')),
+    newTopicsLast24h: parseInt(String(recentTopics?.count || '0')),
   };
 }
