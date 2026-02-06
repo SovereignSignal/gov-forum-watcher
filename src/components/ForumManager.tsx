@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Plus,
   Trash2,
@@ -59,11 +59,26 @@ export function ForumManager({
   const [selectedForumIds, setSelectedForumIds] = useState<Set<string>>(new Set());
   const [selectedBrowseUrls, setSelectedBrowseUrls] = useState<Set<string>>(new Set());
 
-  // Theme detection from document
-  const isDark = typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') || !document.documentElement.classList.contains('light') : true;
-  const fg = isDark ? '#ffffff' : '#09090b';
-  const fgMuted = isDark ? '#e5e5e5' : '#3f3f46';
-  const fgDim = isDark ? '#a3a3a3' : '#52525b';
+  // Theme detection - sync with localStorage
+  const [isDark, setIsDark] = useState(true);
+  
+  useEffect(() => {
+    const checkTheme = () => {
+      const saved = localStorage.getItem('gov-watch-theme') || localStorage.getItem('discuss-watch-theme');
+      setIsDark(saved !== 'light');
+    };
+    checkTheme();
+    window.addEventListener('themechange', checkTheme);
+    window.addEventListener('storage', checkTheme);
+    return () => {
+      window.removeEventListener('themechange', checkTheme);
+      window.removeEventListener('storage', checkTheme);
+    };
+  }, []);
+
+  const fg = isDark ? '#fafafa' : '#09090b';
+  const fgMuted = isDark ? '#e4e4e7' : '#3f3f46';
+  const fgDim = isDark ? '#a1a1aa' : '#52525b';
   const border = isDark ? '#27272a' : 'rgba(0,0,0,0.08)';
   const cardBg = isDark ? '#18181b' : 'rgba(0,0,0,0.02)';
   const activeBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
