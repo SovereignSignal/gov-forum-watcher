@@ -12,6 +12,9 @@ import {
   CheckCircle,
   XCircle,
   X,
+  Square,
+  CheckSquare,
+  MinusSquare,
 } from 'lucide-react';
 import { Forum, ForumCategoryId } from '@/types';
 import { getProtocolLogo } from '@/lib/logoUtils';
@@ -51,6 +54,10 @@ export function ForumManager({
   const [validationError, setValidationError] = useState<string | null>(null);
   const [validationSuccess, setValidationSuccess] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string } | null>(null);
+  
+  // Multi-select state
+  const [selectedForumIds, setSelectedForumIds] = useState<Set<string>>(new Set());
+  const [selectedBrowseUrls, setSelectedBrowseUrls] = useState<Set<string>>(new Set());
 
   // Theme detection from document
   const isDark = typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') || !document.documentElement.classList.contains('light') : true;
@@ -151,6 +158,68 @@ export function ForumManager({
     category.forums.forEach((preset) => { if (!urlExists(preset.url)) handleQuickAdd(preset, categoryId); });
   };
 
+  // Multi-select helpers
+  const toggleForumSelection = (id: string) => {
+    setSelectedForumIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const toggleBrowseSelection = (url: string) => {
+    setSelectedBrowseUrls(prev => {
+      const next = new Set(prev);
+      next.has(url) ? next.delete(url) : next.add(url);
+      return next;
+    });
+  };
+
+  const enabledForums = forums.filter(f => f.isEnabled);
+  const filteredEnabledForums = enabledForums.filter(f => {
+    if (!categoryFilter) return true;
+    const cat = (f.category || 'crypto').toLowerCase()
+      .replace('crypto-governance', 'crypto').replace('ai-ml', 'ai').replace('open-source', 'oss');
+    const mapped = cat.includes('ai') ? 'ai' : cat.includes('oss') || cat.includes('open') ? 'oss' : 'crypto';
+    return mapped === categoryFilter;
+  });
+
+  const selectAllForums = () => {
+    const allIds = new Set(filteredEnabledForums.map(f => f.id));
+    setSelectedForumIds(allIds);
+  };
+
+  const deselectAllForums = () => {
+    setSelectedForumIds(new Set());
+  };
+
+  const handleBulkRemove = () => {
+    selectedForumIds.forEach(id => onRemoveForum(id));
+    setSelectedForumIds(new Set());
+  };
+
+  const handleBulkAdd = () => {
+    selectedBrowseUrls.forEach(url => {
+      // Find the preset for this URL
+      for (const category of FORUM_CATEGORIES) {
+        const preset = category.forums.find(f => f.url === url);
+        if (preset && !urlExists(preset.url)) {
+          handleQuickAdd(preset, category.id);
+        }
+      }
+    });
+    setSelectedBrowseUrls(new Set());
+  };
+
+  const selectAllBrowse = (forums: ForumPreset[]) => {
+    const urls = forums.filter(f => !urlExists(f.url)).map(f => f.url);
+    setSelectedBrowseUrls(new Set(urls));
+  };
+
+  const deselectAllBrowse = () => {
+    setSelectedBrowseUrls(new Set());
+  };
+
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories((prev) => {
       const next = new Set(prev);
@@ -159,19 +228,24 @@ export function ForumManager({
     });
   };
 
-  const renderForumPreset = (preset: ForumPreset, categoryId: string) => {
+  const renderForumPreset = (preset: ForumPreset, categoryId: string, showCheckbox = false) => {
     const existingForum = findForumByUrl(preset.url);
     const isEnabled = existingForum?.isEnabled ?? false;
     const isAdded = !!existingForum && isEnabled;
-    const isDisabled = !!existingForum && !isEnabled;
+    const isSelected = selectedBrowseUrls.has(preset.url);
     const logoUrl = preset.logoUrl || getProtocolLogo(preset.name);
 
     return (
       <div key={preset.url} className="group flex items-center gap-3 w-full p-3 rounded-lg transition-all"
-        style={{ backgroundColor: isAdded ? cardBg : 'transparent', border: `1px solid ${isAdded ? border : 'transparent'}` }}
-        onMouseEnter={(e) => { if (!isAdded) e.currentTarget.style.backgroundColor = cardBg; }}
-        onMouseLeave={(e) => { if (!isAdded) e.currentTarget.style.backgroundColor = 'transparent'; }}
+        style={{ backgroundColor: isAdded || isSelected ? cardBg : 'transparent', border: `1px solid ${isAdded || isSelected ? border : 'transparent'}` }}
+        onMouseEnter={(e) => { if (!isAdded && !isSelected) e.currentTarget.style.backgroundColor = cardBg; }}
+        onMouseLeave={(e) => { if (!isAdded && !isSelected) e.currentTarget.style.backgroundColor = 'transparent'; }}
       >
+        {showCheckbox && !isAdded && (
+          <button onClick={() => toggleBrowseSelection(preset.url)} className="flex-shrink-0" style={{ color: fgDim }}>
+            {isSelected ? <CheckSquare className="w-5 h-5" /> : <Square className="w-5 h-5" />}
+          </button>
+        )}
         <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden"
           style={{ backgroundColor: isDark ? '#1f1f23' : 'rgba(0,0,0,0.05)' }}>
           {logoUrl ? (
@@ -204,12 +278,12 @@ export function ForumManager({
             style={{ color: fgDim }}>
             <X className="w-4 h-4" />
           </button>
-        ) : (
+        ) : !showCheckbox ? (
           <button onClick={() => handleQuickAdd(preset, categoryId)}
             className="p-2 rounded-lg transition-colors" style={{ color: fgDim }}>
             <Plus className="w-4 h-4" />
           </button>
-        )}
+        ) : null}
       </div>
     );
   };
@@ -275,7 +349,7 @@ export function ForumManager({
               </div>
             );
           })()}
-          {forums.filter(f => f.isEnabled).length === 0 ? (
+          {filteredEnabledForums.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center"
               style={{ borderColor: border }}>
               <p className="font-semibold" style={{ color: fg }}>No forums added yet</p>
@@ -286,64 +360,90 @@ export function ForumManager({
               </button>
             </div>
           ) : (
-            <div className="space-y-1">
-              {forums.filter(f => f.isEnabled).filter(f => {
-                if (!categoryFilter) return true;
-                const cat = (f.category || 'crypto').toLowerCase()
-                  .replace('crypto-governance', 'crypto').replace('ai-ml', 'ai').replace('open-source', 'oss');
-                const mapped = cat.includes('ai') ? 'ai' : cat.includes('oss') || cat.includes('open') ? 'oss' : 'crypto';
-                return mapped === categoryFilter;
-              }).map((forum) => {
-                const logoUrl = forum.logoUrl || getProtocolLogo(forum.name);
-                return (
-                  <div key={forum.id}
-                    className="group flex items-center justify-between p-3 rounded-lg transition-colors"
-                    style={{ backgroundColor: cardBg, border: `1px solid ${border}` }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = border; }}
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden"
-                        style={{ backgroundColor: isDark ? '#1f1f23' : 'rgba(0,0,0,0.05)' }}>
-                        {logoUrl ? (
-                          <img src={logoUrl} alt="" className="w-5 h-5 object-contain" referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              const img = e.target as HTMLImageElement;
-                              img.style.display = 'none';
-                              const fallback = img.parentElement?.querySelector('[data-fallback]') as HTMLElement;
-                              if (fallback) fallback.style.display = '';
-                            }} />
-                        ) : null}
-                        <span data-fallback className="text-xs font-bold" style={{ color: fg, display: logoUrl ? 'none' : '' }}>
-                          {forum.name.slice(0, 2).toUpperCase()}
-                        </span>
+            <>
+              {/* Bulk action bar */}
+              <div className="flex items-center justify-between mb-3 pb-3" style={{ borderBottom: `1px solid ${border}` }}>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => {
+                    const allSelected = filteredEnabledForums.every(f => selectedForumIds.has(f.id));
+                    allSelected ? deselectAllForums() : selectAllForums();
+                  }} className="flex items-center gap-2 text-sm" style={{ color: fgDim }}>
+                    {filteredEnabledForums.length > 0 && filteredEnabledForums.every(f => selectedForumIds.has(f.id)) ? (
+                      <CheckSquare className="w-5 h-5" />
+                    ) : selectedForumIds.size > 0 ? (
+                      <MinusSquare className="w-5 h-5" />
+                    ) : (
+                      <Square className="w-5 h-5" />
+                    )}
+                    {selectedForumIds.size > 0 ? `${selectedForumIds.size} selected` : 'Select all'}
+                  </button>
+                </div>
+                {selectedForumIds.size > 0 && (
+                  <button onClick={handleBulkRemove}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors hover:bg-red-500/10"
+                    style={{ color: '#ef4444' }}>
+                    <Trash2 className="w-4 h-4" />
+                    Remove {selectedForumIds.size}
+                  </button>
+                )}
+              </div>
+              <div className="space-y-1">
+                {filteredEnabledForums.map((forum) => {
+                  const logoUrl = forum.logoUrl || getProtocolLogo(forum.name);
+                  const isSelected = selectedForumIds.has(forum.id);
+                  return (
+                    <div key={forum.id}
+                      className="group flex items-center justify-between p-3 rounded-lg transition-colors"
+                      style={{ backgroundColor: isSelected ? activeBg : cardBg, border: `1px solid ${isSelected ? fg : border}` }}
+                      onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'; }}
+                      onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.borderColor = border; }}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <button onClick={() => toggleForumSelection(forum.id)} className="flex-shrink-0" style={{ color: fgDim }}>
+                          {isSelected ? <CheckSquare className="w-5 h-5" /> : <Square className="w-5 h-5" />}
+                        </button>
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden"
+                          style={{ backgroundColor: isDark ? '#1f1f23' : 'rgba(0,0,0,0.05)' }}>
+                          {logoUrl ? (
+                            <img src={logoUrl} alt="" className="w-5 h-5 object-contain" referrerPolicy="no-referrer"
+                              onError={(e) => {
+                                const img = e.target as HTMLImageElement;
+                                img.style.display = 'none';
+                                const fallback = img.parentElement?.querySelector('[data-fallback]') as HTMLElement;
+                                if (fallback) fallback.style.display = '';
+                              }} />
+                          ) : null}
+                          <span data-fallback className="text-xs font-bold" style={{ color: fg, display: logoUrl ? 'none' : '' }}>
+                            {forum.name.slice(0, 2).toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm truncate" style={{ color: fg }}>
+                            {forum.name}
+                            {forum.token && <span className="ml-2 font-mono text-xs" style={{ color: fgDim }}>${forum.token}</span>}
+                          </p>
+                          <p className="text-xs truncate" style={{ color: fgDim }}>
+                            {forum.discourseForum.url}
+                          </p>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <p className="font-medium text-sm truncate" style={{ color: fg }}>
-                          {forum.name}
-                          {forum.token && <span className="ml-2 font-mono text-xs" style={{ color: fgDim }}>${forum.token}</span>}
-                        </p>
-                        <p className="text-xs truncate" style={{ color: fgDim }}>
-                          {forum.discourseForum.url}
-                        </p>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <a href={forum.discourseForum.url} target="_blank" rel="noopener noreferrer"
+                          className="p-2 rounded-lg transition-colors"
+                          style={{ color: fgDim }}>
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                        <button onClick={() => setDeleteConfirm({ id: forum.id, name: forum.name })}
+                          className="p-2 rounded-lg transition-colors hover:text-red-500"
+                          style={{ color: fgDim }}>
+                          <X className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      <a href={forum.discourseForum.url} target="_blank" rel="noopener noreferrer"
-                        className="p-2 rounded-lg transition-colors"
-                        style={{ color: fgDim }}>
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                      <button onClick={() => setDeleteConfirm({ id: forum.id, name: forum.name })}
-                        className="p-2 rounded-lg transition-colors hover:text-red-500"
-                        style={{ color: fgDim }}>
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
       ) : (
@@ -358,19 +458,46 @@ export function ForumManager({
             />
           </div>
 
+          {/* Bulk add action bar */}
+          {selectedBrowseUrls.size > 0 && (
+            <div className="flex items-center justify-between mb-3 pb-3" style={{ borderBottom: `1px solid ${border}` }}>
+              <div className="flex items-center gap-3">
+                <button onClick={deselectAllBrowse} className="flex items-center gap-2 text-sm" style={{ color: fgDim }}>
+                  <CheckSquare className="w-5 h-5" />
+                  {selectedBrowseUrls.size} selected
+                </button>
+              </div>
+              <button onClick={handleBulkAdd}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium"
+                style={{ backgroundColor: fg, color: isDark ? '#000' : '#fff' }}>
+                <Plus className="w-4 h-4" />
+                Add {selectedBrowseUrls.size} forums
+              </button>
+            </div>
+          )}
+
           {searchQuery.trim() ? (
             <div className="flex-1 overflow-y-auto">
               {(() => {
                 const matchingForums = searchForums(searchQuery);
+                const notAddedForums = matchingForums.filter(f => !urlExists(f.url));
                 if (matchingForums.length === 0) {
                   return <div className="text-center py-8 text-sm" style={{ color: fgDim }}>No forums found</div>;
                 }
                 return (
                   <div className="space-y-1">
-                    <p className="text-xs mb-3" style={{ color: fgDim }}>{matchingForums.length} results</p>
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-xs" style={{ color: fgDim }}>{matchingForums.length} results</p>
+                      {notAddedForums.length > 0 && (
+                        <button onClick={() => selectAllBrowse(matchingForums)}
+                          className="text-xs font-medium" style={{ color: fgMuted }}>
+                          Select all not added
+                        </button>
+                      )}
+                    </div>
                     {matchingForums.map((preset) => {
                       const category = FORUM_CATEGORIES.find(c => c.forums.some(f => f.url === preset.url));
-                      return renderForumPreset(preset, category?.id || 'custom');
+                      return renderForumPreset(preset, category?.id || 'custom', true);
                     })}
                   </div>
                 );
@@ -381,6 +508,7 @@ export function ForumManager({
               {filteredCategories.map((category) => {
                 const isExpanded = expandedCategories.has(category.id);
                 const addedCount = category.forums.filter((f) => urlExists(f.url)).length;
+                const notAddedInCategory = category.forums.filter(f => !urlExists(f.url));
                 return (
                   <div key={category.id}>
                     <button onClick={() => toggleCategory(category.id)}
@@ -397,7 +525,7 @@ export function ForumManager({
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="text-xs" style={{ color: fgDim }}>{addedCount}/{category.forums.length}</span>
-                        {addedCount < category.forums.length && (
+                        {notAddedInCategory.length > 0 && (
                           <button onClick={(e) => { e.stopPropagation(); handleAddAllInCategory(category.id); }}
                             className="px-2 py-1 text-xs font-medium rounded-md transition-colors"
                             style={{ backgroundColor: activeBg, color: fgMuted }}>
@@ -408,7 +536,14 @@ export function ForumManager({
                     </button>
                     {isExpanded && (
                       <div className="pl-6 space-y-0.5">
-                        {category.forums.map((preset) => renderForumPreset(preset, category.id))}
+                        {notAddedInCategory.length > 1 && (
+                          <button onClick={() => selectAllBrowse(notAddedInCategory)}
+                            className="flex items-center gap-2 text-xs font-medium py-2 px-3" style={{ color: fgMuted }}>
+                            <Square className="w-4 h-4" />
+                            Select all in {category.name}
+                          </button>
+                        )}
+                        {category.forums.map((preset) => renderForumPreset(preset, category.id, true))}
                       </div>
                     )}
                   </div>
