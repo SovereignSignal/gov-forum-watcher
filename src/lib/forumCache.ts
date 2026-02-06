@@ -109,6 +109,7 @@ export async function getCachedDiscussions(forumUrls: string[]): Promise<Array<{
   tags: string[];
   createdAt: string;
   bumpedAt: string;
+  pinned: boolean;
 }>> {
   const results: Array<{
     title: string;
@@ -120,6 +121,7 @@ export async function getCachedDiscussions(forumUrls: string[]): Promise<Array<{
     tags: string[];
     createdAt: string;
     bumpedAt: string;
+    pinned: boolean;
   }> = [];
   
   for (const forumUrl of forumUrls) {
@@ -136,6 +138,7 @@ export async function getCachedDiscussions(forumUrls: string[]): Promise<Array<{
           tags: topic.tags || [],
           createdAt: topic.createdAt,
           bumpedAt: topic.bumpedAt,
+          pinned: topic.pinned || false,
         });
       }
     }

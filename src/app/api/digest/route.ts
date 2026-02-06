@@ -77,6 +77,35 @@ function isDelegateThread(title: string, tags: string[]): boolean {
   return false;
 }
 
+// Patterns for meta/intro threads to exclude from digest
+const META_TITLE_PATTERNS = [
+  /introduce yourself/i,
+  /introductions?$/i,
+  /welcome.*thread/i,
+  /read this before/i,
+  /posting guidelines/i,
+  /forum rules/i,
+  /^about the/i,
+  /^how to use/i,
+  /community guidelines/i,
+  /code of conduct/i,
+  /faq$/i,
+  /getting started/i,
+];
+
+function isMetaThread(title: string, tags: string[]): boolean {
+  // Check title patterns
+  if (META_TITLE_PATTERNS.some(pattern => pattern.test(title))) {
+    return true;
+  }
+  // Check tags
+  const metaTags = ['meta', 'guidelines', 'introductions', 'welcome', 'faq', 'rules'];
+  if (tags.some(tag => metaTags.includes(tag.toLowerCase()))) {
+    return true;
+  }
+  return false;
+}
+
 // Get discussions from cached data
 async function getTopDiscussions(period: 'daily' | 'weekly'): Promise<{
   discussions: Array<{
@@ -90,6 +119,7 @@ async function getTopDiscussions(period: 'daily' | 'weekly'): Promise<{
     createdAt: Date;
     bumpedAt: Date;
     isDelegate: boolean;
+    pinned: boolean;
   }>;
 }> {
   const digestForums = getDigestForums();
@@ -110,6 +140,7 @@ async function getTopDiscussions(period: 'daily' | 'weekly'): Promise<{
     createdAt: new Date(d.createdAt || Date.now()),
     bumpedAt: new Date(d.bumpedAt || d.createdAt || Date.now()),
     isDelegate: isDelegateThread(d.title, d.tags || []),
+    pinned: d.pinned || false,
   }));
   
   return { discussions: all };
@@ -124,15 +155,32 @@ async function generateDigestContent(period: 'daily' | 'weekly'): Promise<Digest
   const startDate = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000);
 
   // Filter discussions that had activity within the period
-  const recentlyActive = discussions.filter(d => d.bumpedAt > startDate);
+  // Exclude: pinned threads, meta/intro threads
+  const recentlyActive = discussions.filter(d => 
+    d.bumpedAt > startDate && 
+    !d.pinned && 
+    !isMetaThread(d.title, d.tags)
+  );
   
   // Separate delegate threads from regular discussions
   const regularDiscussions = recentlyActive.filter(d => !d.isDelegate);
   const delegateThreads = recentlyActive.filter(d => d.isDelegate);
   
-  // Hot topics: Most engaged NON-DELEGATE discussions
+  // Hot topics: Weight by RECENT engagement, not all-time stats
+  // Boost newer threads and recent activity
+  const now = Date.now();
   const hotTopicsRaw = regularDiscussions
-    .sort((a, b) => (b.replies + b.likes + b.views/100) - (a.replies + a.likes + a.views/100))
+    .map(d => {
+      // Recency boost: threads created/bumped recently get higher scores
+      const ageHours = (now - d.bumpedAt.getTime()) / (1000 * 60 * 60);
+      const recencyMultiplier = Math.max(0.5, 1 - (ageHours / (periodDays * 24 * 2))); // Decay over 2x period
+      
+      // Base engagement score (replies matter most, then likes, views are just awareness)
+      const engagementScore = (d.replies * 10) + (d.likes * 3) + (d.views / 500);
+      
+      return { ...d, score: engagementScore * recencyMultiplier };
+    })
+    .sort((a, b) => b.score - a.score)
     .slice(0, 5);
   
   // Generate AI insights for hot topics

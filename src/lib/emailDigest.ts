@@ -145,7 +145,7 @@ Just respond with the sentence, no quotes or explanation.`
 }
 
 /**
- * Format digest content into HTML email
+ * Format digest content into HTML email (monochrome design)
  */
 export function formatDigestEmail(digest: DigestContent, userName?: string): string {
   const greeting = userName ? `Hi ${userName}` : 'Hi there';
@@ -156,32 +156,33 @@ export function formatDigestEmail(digest: DigestContent, userName?: string): str
     
     const items = topics.map(t => `
       <tr>
-        <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
-          <div style="margin-bottom: 4px;">
-            <span style="color: #6366f1; font-size: 12px; font-weight: 500;">${t.protocol}</span>
+        <td style="padding: 16px; margin-bottom: 8px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
+          <div style="margin-bottom: 6px;">
+            <span style="color: #18181b; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; background: #e5e7eb; padding: 2px 8px; border-radius: 4px;">${t.protocol}</span>
           </div>
-          <div style="font-weight: 600; margin-bottom: 6px;">
-            <a href="${t.url}" style="color: #111827; text-decoration: none; border-bottom: 1px solid #c7d2fe;" target="_blank">
+          <div style="font-weight: 600; font-size: 15px; margin-bottom: 8px;">
+            <a href="${t.url}" style="color: #18181b; text-decoration: none;" target="_blank">
               ${t.title}
             </a>
           </div>
-          <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">
+          <div style="font-size: 13px; color: #52525b; margin-bottom: 10px; line-height: 1.5;">
             ${t.summary}
           </div>
-          <div style="font-size: 12px; color: #9ca3af;">
-            👁️‍🗨️ ${t.replies} replies · 👁 ${t.views.toLocaleString()} views · 👍 ${t.likes} likes
-            ${t.sentiment === 'contentious' ? ' · 🔥 Hot debate' : ''}
+          <div style="font-size: 12px; color: #71717a;">
+            💬 ${t.replies} · 👁 ${t.views.toLocaleString()} · ❤️ ${t.likes}
+            ${t.sentiment === 'contentious' ? ' · 🔥 Active debate' : ''}
           </div>
         </td>
       </tr>
+      <tr><td style="height: 8px;"></td></tr>
     `).join('');
 
     return `
       <div style="margin-bottom: 32px;">
-        <h2 style="font-size: 18px; font-weight: 600; color: #111827; margin-bottom: 16px;">
+        <h2 style="font-size: 16px; font-weight: 700; color: #18181b; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">
           ${emoji} ${title}
         </h2>
-        <table style="width: 100%;">
+        <table style="width: 100%; border-collapse: separate; border-spacing: 0;">
           ${items}
         </table>
       </div>
@@ -195,69 +196,71 @@ export function formatDigestEmail(digest: DigestContent, userName?: string): str
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #374151; max-width: 600px; margin: 0 auto; padding: 20px;">
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; line-height: 1.6; color: #18181b; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
   
   <!-- Header -->
-  <div style="text-align: center; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #e5e7eb;">
-    <h1 style="font-size: 24px; font-weight: 700; color: #111827; margin: 0;">
-      👁️‍🗨️ discuss.watch ${periodLabel} Digest
+  <div style="text-align: center; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e7eb;">
+    <h1 style="font-size: 22px; font-weight: 700; color: #18181b; margin: 0; letter-spacing: -0.5px;">
+      👁️‍🗨️ discuss.watch
     </h1>
-    <p style="color: #6b7280; margin-top: 8px; font-size: 14px;">
-      ${digest.startDate.toLocaleDateString()} - ${digest.endDate.toLocaleDateString()}
+    <p style="color: #71717a; margin-top: 4px; font-size: 13px; font-weight: 500;">
+      ${periodLabel} Digest · ${digest.startDate.toLocaleDateString()} – ${digest.endDate.toLocaleDateString()}
     </p>
   </div>
 
   <!-- Greeting -->
-  <p style="font-size: 16px; margin-bottom: 24px;">
+  <p style="font-size: 15px; margin-bottom: 24px; color: #3f3f46;">
     ${greeting}! Here's your community roundup.
   </p>
 
   <!-- Quick Stats -->
-  <div style="background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); padding: 16px 20px; border-radius: 12px; margin-bottom: 32px;">
-    <div style="display: flex; justify-content: space-between; font-size: 14px;">
-      <div style="text-align: center;">
-        <div style="font-size: 24px; font-weight: 700; color: #4338ca;">${digest.stats.totalDiscussions}</div>
-        <div style="color: #6b7280; font-size: 12px;">Active Discussions</div>
-      </div>
-      <div style="text-align: center;">
-        <div style="font-size: 24px; font-weight: 700; color: #4338ca;">${digest.stats.totalReplies}</div>
-        <div style="color: #6b7280; font-size: 12px;">Total Replies</div>
-      </div>
-      <div style="text-align: center;">
-        <div style="font-size: 24px; font-weight: 700; color: #4338ca;">${digest.stats.mostActiveProtocol}</div>
-        <div style="color: #6b7280; font-size: 12px;">Most Active</div>
-      </div>
-    </div>
+  <div style="background: #18181b; padding: 20px 24px; border-radius: 12px; margin-bottom: 32px;">
+    <table style="width: 100%;">
+      <tr>
+        <td style="text-align: center; padding: 0 8px;">
+          <div style="font-size: 28px; font-weight: 700; color: #ffffff;">${digest.stats.totalDiscussions}</div>
+          <div style="color: #a1a1aa; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Discussions</div>
+        </td>
+        <td style="text-align: center; padding: 0 8px; border-left: 1px solid #3f3f46; border-right: 1px solid #3f3f46;">
+          <div style="font-size: 28px; font-weight: 700; color: #ffffff;">${digest.stats.totalReplies}</div>
+          <div style="color: #a1a1aa; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Replies</div>
+        </td>
+        <td style="text-align: center; padding: 0 8px;">
+          <div style="font-size: 14px; font-weight: 600; color: #ffffff;">${digest.stats.mostActiveProtocol}</div>
+          <div style="color: #a1a1aa; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Most Active</div>
+        </td>
+      </tr>
+    </table>
   </div>
 
   <!-- Hot Topics -->
   ${formatTopics(digest.hotTopics, `Hot This ${digest.period === 'daily' ? 'Day' : 'Week'}`, '🔥')}
   
-  <!-- New Proposals -->
+  <!-- New This Week -->
   ${formatTopics(digest.newProposals, `New This ${digest.period === 'daily' ? 'Day' : 'Week'}`, '✨')}
   
   <!-- Delegate Corner -->
   ${digest.delegateCorner && digest.delegateCorner.length > 0 ? `
-  <div style="margin-bottom: 32px; padding: 20px; background: #faf5ff; border-radius: 12px; border-left: 4px solid #9333ea;">
-    <h2 style="font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 8px 0;">
+  <div style="margin-bottom: 32px; padding: 20px; background: #fafafa; border-radius: 12px; border: 1px solid #e5e7eb;">
+    <h2 style="font-size: 16px; font-weight: 700; color: #18181b; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.5px;">
       👥 Delegate Corner
     </h2>
-    <p style="font-size: 13px; color: #6b7280; margin: 0 0 16px 0;">
-      Updates from active delegates across protocols
+    <p style="font-size: 12px; color: #71717a; margin: 0 0 16px 0;">
+      Updates from active delegates
     </p>
     <table style="width: 100%;">
       ${digest.delegateCorner.map(t => `
         <tr>
-          <td style="padding: 10px 0; border-bottom: 1px solid #e9d5ff;">
+          <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
             <div style="margin-bottom: 4px;">
-              <span style="color: #9333ea; font-size: 12px; font-weight: 500;">${t.protocol}</span>
+              <span style="color: #3f3f46; font-size: 11px; font-weight: 600; text-transform: uppercase;">${t.protocol}</span>
             </div>
-            <div style="font-weight: 500; margin-bottom: 4px;">
-              <a href="${t.url}" style="color: #111827; text-decoration: none;" target="_blank">
+            <div style="font-weight: 500; margin-bottom: 4px; font-size: 14px;">
+              <a href="${t.url}" style="color: #18181b; text-decoration: none;" target="_blank">
                 ${t.title}
               </a>
             </div>
-            <div style="font-size: 13px; color: #6b7280;">
+            <div style="font-size: 13px; color: #52525b;">
               ${t.summary}
             </div>
           </td>
@@ -273,26 +276,27 @@ export function formatDigestEmail(digest: DigestContent, userName?: string): str
   <!-- CTA -->
   <div style="text-align: center; margin: 32px 0;">
     <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://discuss.watch'}/app" 
-       style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+       style="display: inline-block; background: #18181b; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
       View All Discussions →
     </a>
   </div>
 
   <!-- Footer -->
-  <div style="border-top: 1px solid #e5e7eb; padding-top: 24px; margin-top: 32px; text-align: center; font-size: 12px; color: #9ca3af;">
-    <p>
+  <div style="border-top: 1px solid #e5e7eb; padding-top: 24px; margin-top: 32px; text-align: center; font-size: 12px; color: #71717a;">
+    <p style="margin: 0;">
       You're receiving this because you signed up for discuss.watch digests.
-      <br>
-      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://discuss.watch'}/app?tab=settings" style="color: #6366f1;">
-        Manage email preferences
+    </p>
+    <p style="margin: 8px 0 0 0;">
+      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://discuss.watch'}/app?tab=settings" style="color: #3f3f46; text-decoration: underline;">
+        Manage preferences
       </a>
-      ·
-      <a href="{{unsubscribe_url}}" style="color: #6366f1;">
+      &nbsp;·&nbsp;
+      <a href="{{unsubscribe_url}}" style="color: #3f3f46; text-decoration: underline;">
         Unsubscribe
       </a>
     </p>
-    <p style="margin-top: 16px;">
-      👁️‍🗨️ discuss.watch - All your forums, one feed
+    <p style="margin-top: 20px; color: #a1a1aa;">
+      👁️‍🗨️ discuss.watch — All your forums, one feed
     </p>
   </div>
 
