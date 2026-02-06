@@ -78,7 +78,7 @@ export async function generateDiscussionSummary(
 
   try {
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-opus-4-20250514',
       max_tokens: 1024,
       messages: [
         {
@@ -120,7 +120,7 @@ export async function generateTopicInsight(
 
   try {
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-opus-4-20250514',
       max_tokens: 100,
       messages: [
         {

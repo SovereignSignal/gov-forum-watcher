@@ -368,14 +368,7 @@ export const FORUM_CATEGORIES: ForumCategory[] = [
         logoUrl: 'https://assets.coingecko.com/coins/images/1364/small/Mark_Maker.png',
         tier: 1,
       },
-      {
-        name: 'MakerDAO (Legacy)',
-        url: 'https://forum.makerdao.com/',
-        description: 'Original Maker forum; MIPs, DAI policy',
-        token: 'MKR',
-        logoUrl: 'https://assets.coingecko.com/coins/images/1364/small/Mark_Maker.png',
-        tier: 1,
-      },
+      // MakerDAO Legacy removed - migrated to Sky
       {
         name: 'Morpho',
         url: 'https://forum.morpho.org/',

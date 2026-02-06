@@ -273,7 +273,8 @@ async function generateDigestContent(period: 'daily' | 'weekly'): Promise<Digest
   };
 }
 
-// GET - Preview digest (for testing)
+// GET - Preview digest (generates with Opus, doesn't send)
+// Note: Preview is accessible for testing; actual sends are admin-only via POST
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const period = (searchParams.get('period') as 'daily' | 'weekly') || 'weekly';
@@ -309,7 +310,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Generate and send digests (called by cron or admin test)
+// POST - Generate and send digests (ADMIN ONLY)
+// Users can opt-in to receive digests, but only admins can trigger sends
 export async function POST(request: NextRequest) {
   let body;
   try {
@@ -319,18 +321,12 @@ export async function POST(request: NextRequest) {
   }
   const { period = 'weekly', testEmail } = body;
 
-  // Test emails: allow if user is admin (via header) or via cron secret
-  if (testEmail) {
-    const adminEmail = request.headers.get('x-admin-email');
-    const { isAdminEmail } = await import('@/lib/admin');
-    if (!isAdminEmail(adminEmail) && !validateCronSecret(request)) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-    }
-  } else {
-    // Production sends require cron secret
-    if (!validateCronSecret(request)) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-    }
+  // All digest operations require admin auth (header) or cron secret
+  const adminEmail = request.headers.get('x-admin-email');
+  const { isAdminEmail } = await import('@/lib/admin');
+  
+  if (!isAdminEmail(adminEmail) && !validateCronSecret(request)) {
+    return NextResponse.json({ success: false, error: 'Admin access required' }, { status: 401 });
   }
 
   try {
