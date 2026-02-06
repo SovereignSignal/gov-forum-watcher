@@ -117,18 +117,8 @@ export async function initializeSchema() {
     )
   `;
 
-  // User-dependent tables: drop empty ones that may have bad FK constraints from prior runs
-  const userTables = ['user_preferences', 'keyword_alerts', 'user_bookmarks', 'bookmarks', 'user_forums', 'custom_forums', 'read_state'];
-  for (const table of userTables) {
-    try {
-      const rows = await db`SELECT COUNT(*) as cnt FROM ${db(table)}`;
-      if (Number(rows[0]?.cnt) === 0) {
-        await db`DROP TABLE IF EXISTS ${db(table)} CASCADE`;
-      }
-    } catch {
-      // Table doesn't exist, that's fine
-    }
-  }
+  // User-dependent tables: we used to drop empty ones, but that's risky.
+  // Instead, just ensure they exist with CREATE IF NOT EXISTS.
 
   // Now create them fresh with correct FK constraints
   await db`

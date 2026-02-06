@@ -459,25 +459,25 @@ function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum
   const inputBg = isDark ? '#18181b' : 'rgba(0,0,0,0.03)';
 
   return (
-    <div className="rounded-xl" style={{ backgroundColor: cardBg, border: `1px solid ${cardBorder}` }}>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="font-semibold text-current">Historical Backfill</h2>
-        <div className="flex items-center gap-4 text-sm">
-          <span className="flex items-center gap-1.5 text-current">
-            <span className="w-2 h-2 rounded-full bg-current" />
+    <div className="rounded-xl p-5" style={{ backgroundColor: cardBg, border: `1px solid ${cardBorder}` }}>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-medium" style={{ color: textPrimary }}>Historical Backfill</h2>
+        <div className="flex items-center gap-4 text-sm" style={{ color: textMuted }}>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: textSecondary }} />
             {backfillStatus?.complete || 0} complete
           </span>
-          <span className="flex items-center gap-1.5 text-current">
-            <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: textSecondary }} />
             {backfillStatus?.running || 0} running
           </span>
-          <span className="flex items-center gap-1.5 text-current opacity-50">
-            <span className="w-2 h-2 rounded-full bg-zinc-500" />
+          <span className="flex items-center gap-1.5" style={{ color: textDim }}>
+            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: textDim }} />
             {backfillStatus?.pending || 0} pending
           </span>
           {(backfillStatus?.failed || 0) > 0 && (
-            <span className="flex items-center gap-1.5 text-current">
-              <span className="w-2 h-2 rounded-full bg-current" />
+            <span className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#ef4444' }} />
               {backfillStatus?.failed} failed
             </span>
           )}
@@ -564,11 +564,11 @@ function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum
           <table className="w-full text-sm">
             <thead>
               <tr style={{ borderBottom: `1px solid ${cardBorder}` }}>
-                <th className="pb-3 pr-4 font-medium">Forum</th>
-                <th className="pb-3 pr-4 font-medium">Status</th>
-                <th className="pb-3 pr-4 font-medium">Progress</th>
-                <th className="pb-3 pr-4 font-medium">Topics</th>
-                <th className="pb-3 font-medium">Actions</th>
+                <th className="pb-3 pr-4 text-left text-xs font-medium" style={{ color: textDim }}>Forum</th>
+                <th className="pb-3 pr-4 text-left text-xs font-medium" style={{ color: textDim }}>Status</th>
+                <th className="pb-3 pr-4 text-left text-xs font-medium" style={{ color: textDim }}>Progress</th>
+                <th className="pb-3 pr-4 text-left text-xs font-medium" style={{ color: textDim }}>Topics</th>
+                <th className="pb-3 text-left text-xs font-medium" style={{ color: textDim }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -576,40 +576,37 @@ function BackfillSection({ backfillStatus, actionLoading, onAction, onQueueForum
                 <tr key={job.id} style={{ borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)"}` }}>
                   <td className="py-3 pr-4">
                     <a href={job.forum_url} target="_blank" rel="noopener noreferrer"
-                      style={{ color: textSecondary }}>
+                      className="hover:underline" style={{ color: textPrimary }}>
                       {job.forum_name}
                     </a>
                   </td>
                   <td className="py-3 pr-4">
                     <span className="text-xs font-medium" style={{ color: textMuted }}>{job.status}</span>
-                    <span className="text-xs font-medium" style={{ color: textMuted }}>{job.status}</span>
-                    <span className="text-xs font-medium" style={{ color: textMuted }}>{job.status}</span>
-                    <span className="text-xs font-medium" style={{ color: textMuted }}>{job.status}</span>
-                    <span className="text-xs font-medium" style={{ color: textMuted }}>{job.status}</span>
-                    <span className="text-xs font-medium" style={{ color: textMuted }}>{job.status}</span>
-                    <span className="text-xs font-medium" style={{ color: textMuted }}>{job.status}</span>
                   </td>
-                  <td className="py-3 pr-4 font-mono text-current opacity-60">
+                  <td className="py-3 pr-4 font-mono text-sm" style={{ color: textMuted }}>
                     Page {job.current_page}{job.total_pages ? ` / ${job.total_pages}` : ''}
                   </td>
-                  <td className="py-3 pr-4 font-mono text-current">{job.topics_fetched.toLocaleString()}</td>
+                  <td className="py-3 pr-4 font-mono text-sm" style={{ color: textPrimary }}>{job.topics_fetched.toLocaleString()}</td>
                   <td className="py-3">
                     <div className="flex gap-1">
                       {job.status === 'running' && (
                         <button onClick={() => onAction('pause', job.id)}
-                          className="p-1.5 hover:opacity-80 rounded-lg transition-colors" title="Pause">
+                          className="p-1.5 rounded-lg transition-opacity hover:opacity-70" 
+                          style={{ backgroundColor: btnBg, color: textMuted }} title="Pause">
                           <Pause className="w-4 h-4" />
                         </button>
                       )}
                       {job.status === 'paused' && (
                         <button onClick={() => onAction('resume', job.id)}
-                          className="p-1.5 hover:opacity-80 rounded-lg transition-colors" title="Resume">
+                          className="p-1.5 rounded-lg transition-opacity hover:opacity-70"
+                          style={{ backgroundColor: btnBg, color: textMuted }} title="Resume">
                           <Play className="w-4 h-4" />
                         </button>
                       )}
                       {job.status === 'failed' && (
                         <button onClick={() => onAction('retry', job.id)}
-                          className="p-1.5 hover:opacity-80 rounded-lg transition-colors" title="Retry">
+                          className="p-1.5 rounded-lg transition-opacity hover:opacity-70"
+                          style={{ backgroundColor: btnBg, color: textMuted }} title="Retry">
                           <RotateCcw className="w-4 h-4" />
                         </button>
                       )}
@@ -693,16 +690,17 @@ function ForumHealthSection({ adminEmail, isDark = true }: { adminEmail: string;
         <h2 className="text-sm font-medium" style={{ color: fhTextPrimary }}>Forum Health</h2>
         <div className="flex items-center gap-3">
           {results.length > 0 && (
-            <div className="flex items-center gap-3 text-sm">
-              <span className="text-current">{results.filter(r => r.status === 'ok').length} ok</span>
-              {issues.length > 0 && <span className="text-current">{issues.length} issues</span>}
+            <div className="flex items-center gap-3 text-sm" style={{ color: fhTextMuted }}>
+              <span>{results.filter(r => r.status === 'ok').length} ok</span>
+              {issues.length > 0 && <span style={{ color: '#f59e0b' }}>{issues.length} issues</span>}
               {results.filter(r => r.status === 'pending' || r.status === 'testing').length > 0 && (
-                <span className="text-current opacity-50">{results.filter(r => r.status === 'pending' || r.status === 'testing').length} remaining</span>
+                <span style={{ color: fhTextDim }}>{results.filter(r => r.status === 'pending' || r.status === 'testing').length} remaining</span>
               )}
             </div>
           )}
           <button onClick={testForums} disabled={testing}
-            className="flex items-center gap-2 px-3 py-2 text-sm bg-current opacity-5 hover:opacity-80 border border-zinc-700 rounded-lg transition-all disabled:opacity-50">
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-opacity disabled:opacity-40"
+            style={{ backgroundColor: fhBtnBg, border: `1px solid ${fhBtnBorder}`, color: fhTextPrimary }}>
             {testing ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
             {testing ? 'Testing...' : 'Test All Forums'}
           </button>
@@ -713,32 +711,38 @@ function ForumHealthSection({ adminEmail, isDark = true }: { adminEmail: string;
         <>
           <div className="flex gap-2 mb-4">
             <button onClick={() => setFilter('issues')}
-              className={`px-2.5 py-1 text-xs rounded-md ${filter === 'issues' ? 'bg-current opacity-10 text-current' : 'text-current opacity-50'}`}>
+              className="px-2.5 py-1 text-xs rounded-md transition-opacity"
+              style={{ 
+                backgroundColor: filter === 'issues' ? fhBtnBg : 'transparent', 
+                color: filter === 'issues' ? fhTextPrimary : fhTextDim 
+              }}>
               Issues Only ({issues.length})
             </button>
             <button onClick={() => setFilter('all')}
-              className={`px-2.5 py-1 text-xs rounded-md ${filter === 'all' ? 'bg-current opacity-10 text-current' : 'text-current opacity-50'}`}>
+              className="px-2.5 py-1 text-xs rounded-md transition-opacity"
+              style={{ 
+                backgroundColor: filter === 'all' ? fhBtnBg : 'transparent', 
+                color: filter === 'all' ? fhTextPrimary : fhTextDim 
+              }}>
               All Tested
             </button>
           </div>
 
           {displayResults.length === 0 ? (
-            <p className="text-sm text-current opacity-50">{filter === 'issues' ? 'No issues found' : 'No results yet'}</p>
+            <p className="text-sm" style={{ color: fhTextMuted }}>{filter === 'issues' ? 'No issues found' : 'No results yet'}</p>
           ) : (
             <div className="space-y-1 max-h-64 overflow-y-auto">
               {displayResults.map(r => (
-                <div key={r.url} className="flex items-center justify-between px-3 py-2 rounded-lg ">
+                <div key={r.url} className="flex items-center justify-between px-3 py-2 rounded-lg">
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm text-current">{r.name}</span>
-                    <span className="text-xs text-current opacity-40 ml-2">{r.url}</span>
+                    <span className="text-sm" style={{ color: fhTextPrimary }}>{r.name}</span>
+                    <span className="text-xs ml-2" style={{ color: fhTextDim }}>{r.url}</span>
                   </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
-                    r.status === 'ok' ? 'bg-transparent text-current' :
-                    r.status === 'redirect' ? 'bg-transparent text-current' :
-                    r.status === 'error' ? 'bg-transparent text-current' :
-                    r.status === 'testing' ? 'bg-transparent text-current' :
-                    'bg-current opacity-5 text-current opacity-50'
-                  }`}>
+                  <span className="px-2 py-0.5 rounded-full text-[11px] font-medium" style={{ 
+                    color: r.status === 'ok' ? fhTextMuted : 
+                           r.status === 'error' ? '#ef4444' : 
+                           r.status === 'redirect' ? '#f59e0b' : fhTextMuted
+                  }}>
                     {r.status === 'testing' ? 'testing...' : r.status}
                     {r.error && r.status !== 'ok' ? `: ${r.error.slice(0, 40)}` : ''}
                   </span>
@@ -750,7 +754,7 @@ function ForumHealthSection({ adminEmail, isDark = true }: { adminEmail: string;
       )}
 
       {results.length === 0 && (
-        <p className="text-sm text-current opacity-50">Click "Test All Forums" to check which forum URLs are still reachable.</p>
+        <p className="text-sm" style={{ color: fhTextMuted }}>Click &quot;Test All Forums&quot; to check which forum URLs are still reachable.</p>
       )}
     </div>
   );
