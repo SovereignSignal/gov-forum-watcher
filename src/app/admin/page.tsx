@@ -660,33 +660,47 @@ function ForumHealthSection({ adminEmail, isDark = true }: { adminEmail: string;
     setTesting(true);
     setResults(allForums.map(f => ({ ...f, status: 'pending' as const })));
 
-    // Test in small batches with delays to avoid rate limiting
-    const batchSize = 3;
-    const delayMs = 2000; // 2 second delay between batches
+    // Test sequentially with delays to avoid rate limiting from forums
+    const delayMs = 1500; // 1.5 second delay between each test
     
-    for (let i = 0; i < allForums.length; i += batchSize) {
-      const batch = allForums.slice(i, i + batchSize);
-      await Promise.all(batch.map(async (forum) => {
-        setResults(prev => prev.map(r => r.url === forum.url ? { ...r, status: 'testing' } : r));
+    for (let i = 0; i < allForums.length; i++) {
+      const forum = allForums[i];
+      setResults(prev => prev.map(r => r.url === forum.url ? { ...r, status: 'testing' } : r));
+      
+      // Try up to 2 times with backoff
+      let success = false;
+      for (let attempt = 0; attempt < 2 && !success; attempt++) {
+        if (attempt > 0) {
+          // Wait longer before retry
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+        
         try {
           const res = await fetch(`/api/validate-discourse?url=${encodeURIComponent(forum.url)}`);
           const data = await res.json();
-          setResults(prev => prev.map(r => {
-            if (r.url !== forum.url) return r;
-            if (data.valid) return { ...r, status: 'ok' };
-            if (data.error?.includes('redirect')) return { ...r, status: 'redirect', error: data.error, redirectUrl: data.redirectUrl };
-            if (data.error?.includes('Rate limit')) return { ...r, status: 'error', error: 'Rate limited' };
-            return { ...r, status: 'error', error: data.error || 'Failed' };
-          }));
+          
+          if (data.valid) {
+            setResults(prev => prev.map(r => r.url === forum.url ? { ...r, status: 'ok' } : r));
+            success = true;
+          } else if (data.error?.includes('Rate limit') && attempt === 0) {
+            // Rate limited, will retry
+            continue;
+          } else if (data.error?.includes('redirect')) {
+            setResults(prev => prev.map(r => r.url === forum.url ? { ...r, status: 'redirect', error: data.error, redirectUrl: data.redirectUrl } : r));
+            success = true;
+          } else {
+            setResults(prev => prev.map(r => r.url === forum.url ? { ...r, status: 'error', error: data.error || 'Failed' } : r));
+            success = true;
+          }
         } catch (err) {
-          setResults(prev => prev.map(r =>
-            r.url === forum.url ? { ...r, status: 'error', error: 'Network error' } : r
-          ));
+          if (attempt === 1) {
+            setResults(prev => prev.map(r => r.url === forum.url ? { ...r, status: 'error', error: 'Network error' } : r));
+          }
         }
-      }));
+      }
       
-      // Delay between batches to avoid rate limiting
-      if (i + batchSize < allForums.length) {
+      // Delay between tests
+      if (i < allForums.length - 1) {
         await new Promise(resolve => setTimeout(resolve, delayMs));
       }
     }
