@@ -1,141 +1,100 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb, isDatabaseConfigured } from '@/lib/db';
 
-// POST /api/user/forums - Add or update forum for user
+/**
+ * GET /api/user/forums - Get user's forum selections
+ */
+export async function GET(request: NextRequest) {
+  const privyDid = request.headers.get('x-privy-did');
+  
+  if (!privyDid) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  
+  if (!isDatabaseConfigured()) {
+    return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+  }
+  
+  try {
+    const db = getDb();
+    
+    // Get user
+    const users = await db`SELECT id FROM users WHERE privy_did = ${privyDid}`;
+    if (users.length === 0) {
+      // User doesn't exist yet, return empty
+      return NextResponse.json({ forums: [] });
+    }
+    
+    const userId = users[0].id;
+    
+    // Get user's forum selections
+    const userForums = await db`
+      SELECT forum_data FROM user_forums_data WHERE user_id = ${userId}
+    `;
+    
+    if (userForums.length === 0) {
+      return NextResponse.json({ forums: [] });
+    }
+    
+    return NextResponse.json({ forums: userForums[0].forum_data || [] });
+  } catch (error) {
+    console.error('Error fetching user forums:', error);
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : 'Failed to fetch forums' 
+    }, { status: 500 });
+  }
+}
+
+/**
+ * POST /api/user/forums - Save user's forum selections
+ */
 export async function POST(request: NextRequest) {
+  const privyDid = request.headers.get('x-privy-did');
+  
+  if (!privyDid) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  
   if (!isDatabaseConfigured()) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
   }
-
+  
   try {
-    const body = await request.json();
-    const { privyDid, forumCname, isEnabled } = body;
-
-    if (!privyDid || !forumCname) {
-      return NextResponse.json({ error: 'privyDid and forumCname are required' }, { status: 400 });
+    const { forums } = await request.json();
+    
+    if (!Array.isArray(forums)) {
+      return NextResponse.json({ error: 'Forums must be an array' }, { status: 400 });
     }
-
-    const sql = getDb();
-
-    // Get user ID
-    const users = await sql`
-      SELECT id FROM users WHERE privy_did = ${privyDid}
-    `;
-
+    
+    const db = getDb();
+    
+    // Get or create user
+    let users = await db`SELECT id FROM users WHERE privy_did = ${privyDid}`;
+    
     if (users.length === 0) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      // Create user
+      users = await db`
+        INSERT INTO users (privy_did, created_at, updated_at)
+        VALUES (${privyDid}, NOW(), NOW())
+        RETURNING id
+      `;
     }
-
+    
     const userId = users[0].id;
-
-    // Upsert forum
-    const result = await sql`
-      INSERT INTO user_forums (user_id, forum_cname, is_enabled)
-      VALUES (${userId}, ${forumCname}, ${isEnabled ?? true})
-      ON CONFLICT (user_id, forum_cname)
-      DO UPDATE SET is_enabled = ${isEnabled ?? true}
-      RETURNING forum_cname, is_enabled
+    
+    // Upsert user's forum data
+    await db`
+      INSERT INTO user_forums_data (user_id, forum_data, updated_at)
+      VALUES (${userId}, ${JSON.stringify(forums)}::jsonb, NOW())
+      ON CONFLICT (user_id) 
+      DO UPDATE SET forum_data = ${JSON.stringify(forums)}::jsonb, updated_at = NOW()
     `;
-
-    return NextResponse.json({ forum: result[0] });
+    
+    return NextResponse.json({ status: 'ok', count: forums.length });
   } catch (error) {
-    console.error('Forums API error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to update forum' },
-      { status: 500 }
-    );
-  }
-}
-
-// DELETE /api/user/forums - Remove forum from user
-export async function DELETE(request: NextRequest) {
-  if (!isDatabaseConfigured()) {
-    return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
-  }
-
-  try {
-    const body = await request.json();
-    const { privyDid, forumCname } = body;
-
-    if (!privyDid || !forumCname) {
-      return NextResponse.json({ error: 'privyDid and forumCname are required' }, { status: 400 });
-    }
-
-    const sql = getDb();
-
-    // Get user ID
-    const users = await sql`
-      SELECT id FROM users WHERE privy_did = ${privyDid}
-    `;
-
-    if (users.length === 0) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    const userId = users[0].id;
-
-    // Delete forum
-    await sql`
-      DELETE FROM user_forums
-      WHERE user_id = ${userId} AND forum_cname = ${forumCname}
-    `;
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Forums API error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to delete forum' },
-      { status: 500 }
-    );
-  }
-}
-
-// PUT /api/user/forums/bulk - Bulk update forums (for initial sync)
-export async function PUT(request: NextRequest) {
-  if (!isDatabaseConfigured()) {
-    return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
-  }
-
-  try {
-    const body = await request.json();
-    const { privyDid, forums } = body;
-
-    if (!privyDid || !Array.isArray(forums)) {
-      return NextResponse.json({ error: 'privyDid and forums array are required' }, { status: 400 });
-    }
-
-    const sql = getDb();
-
-    // Get user ID
-    const users = await sql`
-      SELECT id FROM users WHERE privy_did = ${privyDid}
-    `;
-
-    if (users.length === 0) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    const userId = users[0].id;
-
-    // Delete all existing forums for user
-    await sql`DELETE FROM user_forums WHERE user_id = ${userId}`;
-
-    // Insert all forums
-    if (forums.length > 0) {
-      for (const forum of forums) {
-        await sql`
-          INSERT INTO user_forums (user_id, forum_cname, is_enabled)
-          VALUES (${userId}, ${forum.cname}, ${forum.isEnabled ?? true})
-        `;
-      }
-    }
-
-    return NextResponse.json({ success: true, count: forums.length });
-  } catch (error) {
-    console.error('Forums API error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to bulk update forums' },
-      { status: 500 }
-    );
+    console.error('Error saving user forums:', error);
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : 'Failed to save forums' 
+    }, { status: 500 });
   }
 }

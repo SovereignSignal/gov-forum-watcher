@@ -134,6 +134,7 @@ export async function initializeSchema() {
     // Use CASCADE to force drop even with FK dependencies
     await db`DROP TABLE IF EXISTS read_state CASCADE`;
     await db`DROP TABLE IF EXISTS custom_forums CASCADE`;
+    await db`DROP TABLE IF EXISTS user_forums_data CASCADE`;
     await db`DROP TABLE IF EXISTS user_forums CASCADE`; 
     await db`DROP TABLE IF EXISTS bookmarks CASCADE`;
     await db`DROP TABLE IF EXISTS user_bookmarks CASCADE`;
@@ -212,6 +213,15 @@ export async function initializeSchema() {
       )
     `;
     await db`
+      CREATE TABLE IF NOT EXISTS user_forums_data (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+        forum_data JSONB DEFAULT '[]'::jsonb,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      )
+    `;
+    await db`
       CREATE TABLE IF NOT EXISTS custom_forums (
         id SERIAL PRIMARY KEY,
         user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -286,6 +296,15 @@ export async function initializeSchema() {
         forum_cname TEXT NOT NULL,
         is_enabled BOOLEAN DEFAULT true,
         UNIQUE(user_id, forum_cname)
+      )
+    `;
+    await db`
+      CREATE TABLE user_forums_data (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+        forum_data JSONB DEFAULT '[]'::jsonb,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       )
     `;
     await db`
