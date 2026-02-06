@@ -105,7 +105,7 @@ export async function initializeSchema() {
     )
   `;
   
-  // Users table
+  // Users table - must exist before user-dependent tables
   await db`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
@@ -117,10 +117,24 @@ export async function initializeSchema() {
     )
   `;
 
-  // User-dependent tables: we used to drop empty ones, but that's risky.
-  // Instead, just ensure they exist with CREATE IF NOT EXISTS.
+  // Check if users table is empty - if so, we can safely recreate user-dependent tables
+  // This fixes FK constraint issues from bad previous schema states
+  const userCount = await db`SELECT COUNT(*) as cnt FROM users`;
+  const hasUsers = Number(userCount[0]?.cnt) > 0;
+  
+  if (!hasUsers) {
+    // Safe to drop and recreate user-dependent tables
+    console.log('[DB] No users yet, recreating user tables with proper FK constraints...');
+    await db`DROP TABLE IF EXISTS read_state CASCADE`;
+    await db`DROP TABLE IF EXISTS custom_forums CASCADE`;
+    await db`DROP TABLE IF EXISTS user_forums CASCADE`;
+    await db`DROP TABLE IF EXISTS bookmarks CASCADE`;
+    await db`DROP TABLE IF EXISTS user_bookmarks CASCADE`;
+    await db`DROP TABLE IF EXISTS keyword_alerts CASCADE`;
+    await db`DROP TABLE IF EXISTS user_preferences CASCADE`;
+  }
 
-  // Now create them fresh with correct FK constraints
+  // Create user-dependent tables with proper FK constraints
   await db`
     CREATE TABLE IF NOT EXISTS user_preferences (
       id SERIAL PRIMARY KEY,
