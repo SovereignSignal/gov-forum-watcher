@@ -342,6 +342,10 @@ export default function AdminPage() {
               {actionLoading === 'clear-redis-cache' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RotateCcw className="w-3.5 h-3.5" />}
               Clear Redis
             </Btn>
+            <Btn onClick={() => handleAction('reset-user-tables')} disabled={actionLoading !== null} variant="danger">
+              {actionLoading === 'reset-user-tables' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Users className="w-3.5 h-3.5" />}
+              Reset User Tables
+            </Btn>
           </div>
         </Card>
 
