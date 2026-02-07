@@ -1,5 +1,7 @@
 'use client';
 
+import { c } from '@/lib/theme';
+
 interface FilterTabsProps {
   filterMode: 'all' | 'your';
   onFilterChange: (mode: 'all' | 'your') => void;
@@ -15,18 +17,16 @@ export function FilterTabs({
   enabledCount,
   isDark = true,
 }: FilterTabsProps) {
-  const fg = isDark ? '#ffffff' : '#09090b';
-  const fgMuted = isDark ? '#a3a3a3' : '#52525b';
-  const activeBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+  const t = c(isDark);
 
   return (
-    <div className="flex items-center gap-0.5 p-1 rounded-lg" style={{ backgroundColor: isDark ? '#18181b' : 'rgba(0,0,0,0.03)' }}>
+    <div className="flex items-center gap-0.5 p-1 rounded-lg" style={{ backgroundColor: t.bgCard }}>
       <button
         onClick={() => onFilterChange('your')}
         className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
         style={{
-          backgroundColor: filterMode === 'your' ? activeBg : 'transparent',
-          color: filterMode === 'your' ? fg : fgMuted
+          backgroundColor: filterMode === 'your' ? t.bgActive : 'transparent',
+          color: filterMode === 'your' ? t.fg : t.fgMuted
         }}
       >
         Your Forums ({enabledCount})
@@ -35,8 +35,8 @@ export function FilterTabs({
         onClick={() => onFilterChange('all')}
         className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
         style={{
-          backgroundColor: filterMode === 'all' ? activeBg : 'transparent',
-          color: filterMode === 'all' ? fg : fgMuted
+          backgroundColor: filterMode === 'all' ? t.bgActive : 'transparent',
+          color: filterMode === 'all' ? t.fg : t.fgMuted
         }}
       >
         All ({totalCount})

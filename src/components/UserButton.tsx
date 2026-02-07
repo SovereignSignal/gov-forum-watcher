@@ -3,42 +3,33 @@
 import { LogIn, LogOut, User, Loader2 } from 'lucide-react';
 import { useAuth } from './AuthProvider';
 import { useTheme } from '@/hooks/useTheme';
+import { c } from '@/lib/theme';
 
 export function UserButton() {
   const { user, isAuthenticated, isLoading, isConfigured, login, logout } = useAuth();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+  const t = c(isDark);
 
-  // Theme tokens
-  const textPrimary = isDark ? '#ffffff' : '#09090b';
-  const textMuted = isDark ? '#a3a3a3' : '#52525b';
-  const textDim = isDark ? '#71717a' : '#71717a';
-  const hoverBg = isDark ? '#1f1f23' : 'rgba(0,0,0,0.05)';
+  if (!isConfigured) return null;
 
-  // Don't show anything if auth isn't configured
-  if (!isConfigured) {
-    return null;
-  }
-
-  // Show loading state
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2" style={{ color: textMuted }}>
+      <div className="flex items-center gap-2 px-3 py-2" style={{ color: t.fgMuted }}>
         <Loader2 className="w-4 h-4 animate-spin" />
         <span className="text-sm">Loading...</span>
       </div>
     );
   }
 
-  // Show login button when not authenticated
   if (!isAuthenticated || !user) {
     return (
       <button
         onClick={login}
         className="flex items-center gap-2 px-3 py-2 w-full rounded-lg transition-colors text-left"
-        style={{ color: textMuted }}
-        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = hoverBg; e.currentTarget.style.color = textPrimary; }}
-        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = textMuted; }}
+        style={{ color: t.fgMuted }}
+        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = t.bgCardHover; e.currentTarget.style.color = t.fg; }}
+        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = t.fgMuted; }}
       >
         <LogIn className="w-4 h-4" />
         <span className="text-sm font-medium">Sign In</span>
@@ -46,7 +37,6 @@ export function UserButton() {
     );
   }
 
-  // Show user info when authenticated
   const displayName = user.email || truncateAddress(user.walletAddress) || 'User';
 
   return (
@@ -57,16 +47,16 @@ export function UserButton() {
           <User className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium truncate" style={{ color: textPrimary }}>{displayName}</p>
-          <p className="text-xs" style={{ color: textDim }}>Signed in</p>
+          <p className="text-sm font-medium truncate" style={{ color: t.fg }}>{displayName}</p>
+          <p className="text-xs" style={{ color: t.fgDim }}>Signed in</p>
         </div>
       </div>
       <button
         onClick={logout}
         className="flex items-center gap-2 px-3 py-1.5 w-full rounded-lg transition-colors text-left text-sm"
-        style={{ color: textMuted }}
-        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = hoverBg; e.currentTarget.style.color = textPrimary; }}
-        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = textMuted; }}
+        style={{ color: t.fgMuted }}
+        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = t.bgCardHover; e.currentTarget.style.color = t.fg; }}
+        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = t.fgMuted; }}
       >
         <LogOut className="w-3.5 h-3.5" />
         <span>Sign Out</span>

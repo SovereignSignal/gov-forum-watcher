@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { Search, MessageSquare, Grid3X3, ArrowUpDown, CheckCheck, RefreshCw, Sun, Moon, Command } from 'lucide-react';
+import { Search, MessageSquare, Grid3X3, ArrowUpDown, CheckCheck, RefreshCw, Sun, Moon } from 'lucide-react';
+import { c } from '@/lib/theme';
 
 interface Forum {
   id: string;
@@ -38,19 +39,7 @@ export function CommandMenu({
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-
-  // Theme
-  const overlay = isDark ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.25)';
-  const menuBg = isDark ? '#18181b' : '#ffffff';
-  const menuBorder = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)';
-  const inputBg = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)';
-  const textPrimary = isDark ? '#ffffff' : '#09090b';
-  const textMuted = isDark ? '#a3a3a3' : '#52525b';
-  const textDim = isDark ? '#52525b' : '#a1a1aa';
-  const hoverBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)';
-  const activeBg = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)';
-  const sectionColor = isDark ? '#52525b' : '#a1a1aa';
-  const separatorColor = isDark ? '#1f1f23' : 'rgba(0,0,0,0.06)';
+  const t = c(isDark);
 
   // Build command list
   const allItems: CommandItem[] = useMemo(() => {
@@ -142,7 +131,7 @@ export function CommandMenu({
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         if (isOpen) onClose();
-        else onClose(); // Toggle is handled by parent
+        else onClose();
       }
     };
     document.addEventListener('keydown', handler);
@@ -192,14 +181,14 @@ export function CommandMenu({
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh]"
-      style={{ backgroundColor: overlay }}
+      style={{ backgroundColor: isDark ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.25)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
         className="w-full max-w-lg rounded-xl shadow-2xl overflow-hidden"
         style={{
-          backgroundColor: menuBg,
-          border: `1px solid ${menuBorder}`,
+          backgroundColor: t.bgCard,
+          border: `1px solid ${t.borderSubtle}`,
           animation: 'cmdkIn 0.15s ease-out',
         }}
       >
@@ -211,8 +200,8 @@ export function CommandMenu({
         `}</style>
 
         {/* Input */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: separatorColor }}>
-          <Search className="w-4 h-4 flex-shrink-0" style={{ color: textMuted }} />
+        <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: t.border }}>
+          <Search className="w-4 h-4 flex-shrink-0" style={{ color: t.fgMuted }} />
           <input
             ref={inputRef}
             type="text"
@@ -221,10 +210,10 @@ export function CommandMenu({
             onKeyDown={handleKeyDown}
             placeholder="Search forums, actions..."
             className="flex-1 bg-transparent text-sm outline-none placeholder-current"
-            style={{ color: textPrimary, opacity: 1 }}
+            style={{ color: t.fg, opacity: 1 }}
           />
           <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono"
-            style={{ backgroundColor: inputBg, color: textDim, border: `1px solid ${separatorColor}` }}>
+            style={{ backgroundColor: t.bgSubtle, color: t.fgDim, border: `1px solid ${t.border}` }}>
             ESC
           </kbd>
         </div>
@@ -232,14 +221,14 @@ export function CommandMenu({
         {/* Results */}
         <div ref={listRef} className="max-h-72 overflow-y-auto py-2" style={{ overscrollBehavior: 'contain' }}>
           {grouped.length === 0 ? (
-            <div className="px-4 py-8 text-center text-sm" style={{ color: textMuted }}>
+            <div className="px-4 py-8 text-center text-sm" style={{ color: t.fgMuted }}>
               No results for &ldquo;{query}&rdquo;
             </div>
           ) : (
             grouped.map((group) => (
               <div key={group.section}>
                 <div className="px-4 py-1.5 text-[11px] font-medium uppercase tracking-wider"
-                  style={{ color: sectionColor }}>
+                  style={{ color: t.fgDim }}>
                   {group.section}
                 </div>
                 {group.items.map((item) => {
@@ -253,14 +242,14 @@ export function CommandMenu({
                       onMouseEnter={() => setActiveIndex(idx)}
                       className="flex w-full items-center gap-3 px-4 py-2 text-sm text-left transition-colors"
                       style={{
-                        color: textPrimary,
-                        backgroundColor: isActive ? activeBg : 'transparent',
+                        color: t.fg,
+                        backgroundColor: isActive ? t.bgActive : 'transparent',
                       }}
                     >
-                      <span style={{ color: textMuted }}>{item.icon}</span>
+                      <span style={{ color: t.fgMuted }}>{item.icon}</span>
                       <span className="flex-1 truncate">{item.label}</span>
                       {isActive && (
-                        <span className="text-[10px] font-mono" style={{ color: textDim }}>↵</span>
+                        <span className="text-[10px] font-mono" style={{ color: t.fgDim }}>↵</span>
                       )}
                     </button>
                   );
@@ -272,15 +261,15 @@ export function CommandMenu({
 
         {/* Footer */}
         <div className="flex items-center gap-4 px-4 py-2 border-t text-[11px]"
-          style={{ borderColor: separatorColor, color: textDim }}>
+          style={{ borderColor: t.border, color: t.fgDim }}>
           <span className="flex items-center gap-1">
-            <kbd className="px-1 rounded" style={{ backgroundColor: inputBg }}>↑↓</kbd> navigate
+            <kbd className="px-1 rounded" style={{ backgroundColor: t.bgSubtle }}>↑↓</kbd> navigate
           </span>
           <span className="flex items-center gap-1">
-            <kbd className="px-1 rounded" style={{ backgroundColor: inputBg }}>↵</kbd> select
+            <kbd className="px-1 rounded" style={{ backgroundColor: t.bgSubtle }}>↵</kbd> select
           </span>
           <span className="flex items-center gap-1">
-            <kbd className="px-1 rounded" style={{ backgroundColor: inputBg }}>esc</kbd> close
+            <kbd className="px-1 rounded" style={{ backgroundColor: t.bgSubtle }}>esc</kbd> close
           </span>
         </div>
       </div>

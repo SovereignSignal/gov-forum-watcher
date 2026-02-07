@@ -1,5 +1,7 @@
 'use client';
 
+import { c } from '@/lib/theme';
+
 const animationStyle = `
   @keyframes skeleton-pulse {
     0%, 100% { opacity: 1; }
@@ -8,10 +10,9 @@ const animationStyle = `
 `;
 
 export function DiscussionSkeleton({ isDark = true }: { isDark?: boolean }) {
-  const shimmer = isDark ? '#1f1f23' : 'rgba(0,0,0,0.06)';
-  const border = isDark ? '#1f1f23' : 'rgba(0,0,0,0.06)';
+  const t = c(isDark);
   const s: React.CSSProperties = {
-    backgroundColor: shimmer,
+    backgroundColor: t.bgCardHover,
     borderRadius: '4px',
     animation: 'skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
   };
@@ -19,7 +20,7 @@ export function DiscussionSkeleton({ isDark = true }: { isDark?: boolean }) {
   return (
     <div
       className="rounded-lg border"
-      style={{ borderColor: border, padding: '10px 16px' }}
+      style={{ borderColor: t.border, padding: '10px 16px' }}
       aria-hidden="true"
     >
       <div className="flex items-start gap-3">

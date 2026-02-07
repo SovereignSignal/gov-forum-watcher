@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { X, ChevronRight, ChevronLeft, Check, Bell, Bookmark, Search, Plus } from 'lucide-react';
 import { FORUM_CATEGORIES, ForumPreset } from '@/lib/forumPresets';
 import { useTheme } from '@/hooks/useTheme';
+import { c } from '@/lib/theme';
 
 interface OnboardingWizardProps {
   onComplete: (selectedForums: ForumPreset[]) => void;
@@ -22,25 +23,11 @@ export function OnboardingWizard({ onComplete, onSkip }: OnboardingWizardProps) 
   const [expandedCategory, setExpandedCategory] = useState<string | null>('defi-lending');
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+  const t = c(isDark);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const previouslyFocusedRef = useRef<Element | null>(null);
   const firstFocusableRef = useRef<HTMLButtonElement>(null);
-
-  // Theme tokens
-  const overlayBg = 'rgba(0,0,0,0.8)';
-  const modalBg = isDark ? '#18181b' : '#ffffff';
-  const modalBorder = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-  const textPrimary = isDark ? '#ffffff' : '#09090b';
-  const textSecondary = isDark ? '#e5e5e5' : '#3f3f46';
-  const textMuted = isDark ? '#a3a3a3' : '#52525b';
-  const cardBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)';
-  const cardBorder = isDark ? '#27272a' : 'rgba(0,0,0,0.08)';
-  const iconBg = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
-  const btnPrimaryBg = isDark ? '#ffffff' : '#18181b';
-  const btnPrimaryFg = isDark ? '#000000' : '#fafafa';
-  const stepActive = isDark ? '#e5e5e5' : '#3f3f46';
-  const stepInactive = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
 
   useEffect(() => {
     previouslyFocusedRef.current = document.activeElement;
@@ -92,27 +79,27 @@ export function OnboardingWizard({ onComplete, onSkip }: OnboardingWizardProps) 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4" style={{ backgroundColor: overlayBg }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
       <div ref={dialogRef} className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl shadow-2xl overflow-hidden"
-        style={{ backgroundColor: modalBg, border: `1px solid ${modalBorder}` }} role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
+        style={{ backgroundColor: t.bgCard, border: `1px solid ${t.borderSubtle}` }} role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
 
         {/* Close */}
         <button ref={firstFocusableRef} onClick={handleSkip}
-          className="absolute top-4 right-4 p-2 rounded-lg transition-opacity z-10" style={{ color: textMuted }} aria-label="Skip onboarding">
+          className="absolute top-4 right-4 p-2 rounded-lg transition-opacity z-10" style={{ color: t.fgMuted }} aria-label="Skip onboarding">
           <X className="w-5 h-5" />
         </button>
 
         {/* Progress */}
         <div className="flex justify-center gap-2 pt-6 pb-4">
           {STEPS.map((_, i) => (
-            <div key={i} className="h-1.5 w-12 rounded-full transition-colors" style={{ backgroundColor: i <= currentStep ? stepActive : stepInactive }} />
+            <div key={i} className="h-1.5 w-12 rounded-full transition-colors" style={{ backgroundColor: i <= currentStep ? t.fgSecondary : t.borderSubtle }} />
           ))}
         </div>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-8 pb-4">
-          <h2 id="onboarding-title" className="text-2xl font-bold text-center mb-2" style={{ color: textPrimary }}>{STEPS[currentStep].title}</h2>
-          <p className="text-center mb-6 text-sm" style={{ color: textSecondary }}>{STEPS[currentStep].description}</p>
+          <h2 id="onboarding-title" className="text-2xl font-bold text-center mb-2" style={{ color: t.fg }}>{STEPS[currentStep].title}</h2>
+          <p className="text-center mb-6 text-sm" style={{ color: t.fgSecondary }}>{STEPS[currentStep].description}</p>
 
           {currentStep === 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -122,12 +109,12 @@ export function OnboardingWizard({ onComplete, onSkip }: OnboardingWizardProps) 
                 { icon: <Search className="w-5 h-5" />, title: 'Search & Filter', desc: 'Find discussions by keyword, date, or forum' },
                 { icon: <Plus className="w-5 h-5" />, title: 'Add Any Forum', desc: 'Add any Discourse-based governance forum' },
               ].map((item) => (
-                <div key={item.title} className="p-4 rounded-xl" style={{ backgroundColor: cardBg, border: `1px solid ${cardBorder}` }}>
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: iconBg, color: textSecondary }}>
+                <div key={item.title} className="p-4 rounded-xl" style={{ backgroundColor: t.bgSubtle, border: `1px solid ${t.border}` }}>
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: t.bgActive, color: t.fgSecondary }}>
                     {item.icon}
                   </div>
-                  <h3 className="font-medium mb-1 text-sm" style={{ color: textPrimary }}>{item.title}</h3>
-                  <p className="text-sm" style={{ color: textMuted }}>{item.desc}</p>
+                  <h3 className="font-medium mb-1 text-sm" style={{ color: t.fg }}>{item.title}</h3>
+                  <p className="text-sm" style={{ color: t.fgMuted }}>{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -136,8 +123,8 @@ export function OnboardingWizard({ onComplete, onSkip }: OnboardingWizardProps) 
           {currentStep === 1 && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm" style={{ color: textMuted }}>{selectedForums.size} forum{selectedForums.size !== 1 ? 's' : ''} selected</span>
-                <button onClick={handleSelectPopular} className="text-sm font-medium transition-opacity" style={{ color: textSecondary }}>Select popular</button>
+                <span className="text-sm" style={{ color: t.fgMuted }}>{selectedForums.size} forum{selectedForums.size !== 1 ? 's' : ''} selected</span>
+                <button onClick={handleSelectPopular} className="text-sm font-medium transition-opacity" style={{ color: t.fgSecondary }}>Select popular</button>
               </div>
               <div className="space-y-2 max-h-[350px] overflow-y-auto pr-2">
                 {FORUM_CATEGORIES.map((category) => {
@@ -146,13 +133,13 @@ export function OnboardingWizard({ onComplete, onSkip }: OnboardingWizardProps) 
                   const isExpanded = expandedCategory === category.id;
                   const selectedInCategory = categoryForums.filter((f) => selectedForums.has(f.url)).length;
                   return (
-                    <div key={category.id} className="rounded-lg overflow-hidden" style={{ border: `1px solid ${cardBorder}` }}>
+                    <div key={category.id} className="rounded-lg overflow-hidden" style={{ border: `1px solid ${t.border}` }}>
                       <button onClick={() => setExpandedCategory(isExpanded ? null : category.id)}
                         className="w-full flex items-center justify-between p-3 transition-colors text-left"
-                        style={{ backgroundColor: cardBg }} aria-expanded={isExpanded}>
-                        <span className="font-medium text-sm" style={{ color: textPrimary }}>{category.name}</span>
-                        <span className="flex items-center gap-2 text-xs" style={{ color: textMuted }}>
-                          {selectedInCategory > 0 && <span style={{ color: textSecondary }}>{selectedInCategory} selected</span>}
+                        style={{ backgroundColor: t.bgSubtle }} aria-expanded={isExpanded}>
+                        <span className="font-medium text-sm" style={{ color: t.fg }}>{category.name}</span>
+                        <span className="flex items-center gap-2 text-xs" style={{ color: t.fgMuted }}>
+                          {selectedInCategory > 0 && <span style={{ color: t.fgSecondary }}>{selectedInCategory} selected</span>}
                           <ChevronRight className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                         </span>
                       </button>
@@ -163,17 +150,17 @@ export function OnboardingWizard({ onComplete, onSkip }: OnboardingWizardProps) 
                             return (
                               <button key={forum.url} onClick={() => handleToggleForum(forum.url)}
                                 className="w-full flex items-center gap-3 p-2 rounded-lg transition-colors text-left"
-                                style={{ backgroundColor: isSelected ? (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)') : 'transparent',
-                                  border: `1px solid ${isSelected ? (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)') : 'transparent'}` }}
+                                style={{ backgroundColor: isSelected ? t.bgActive : 'transparent',
+                                  border: `1px solid ${isSelected ? t.borderActive : 'transparent'}` }}
                                 aria-pressed={isSelected}>
                                 <div className="w-5 h-5 rounded flex-shrink-0 flex items-center justify-center"
-                                  style={{ backgroundColor: isSelected ? btnPrimaryBg : 'transparent',
-                                    border: `1px solid ${isSelected ? btnPrimaryBg : (isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)')}` }}>
-                                  {isSelected && <Check className="w-3 h-3" style={{ color: btnPrimaryFg }} />}
+                                  style={{ backgroundColor: isSelected ? t.fg : 'transparent',
+                                    border: `1px solid ${isSelected ? t.fg : t.borderActive}` }}>
+                                  {isSelected && <Check className="w-3 h-3" style={{ color: isDark ? '#000' : '#fff' }} />}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <span className="text-sm" style={{ color: textPrimary }}>{forum.name}</span>
-                                  {forum.token && <span className="ml-2 text-xs" style={{ color: textMuted }}>${forum.token}</span>}
+                                  <span className="text-sm" style={{ color: t.fg }}>{forum.name}</span>
+                                  {forum.token && <span className="ml-2 text-xs" style={{ color: t.fgMuted }}>${forum.token}</span>}
                                 </div>
                               </button>
                             );
@@ -194,17 +181,17 @@ export function OnboardingWizard({ onComplete, onSkip }: OnboardingWizardProps) 
                 { n: '2', title: 'Bookmark Important Discussions', desc: 'Click the bookmark icon on any discussion to save it. Access saved discussions from the "Saved" view.' },
                 { n: '3', title: 'Add More Forums Anytime', desc: 'Go to "Communities" in the sidebar to browse 100+ forums or add your own custom Discourse forum URL.' },
               ].map((tip) => (
-                <div key={tip.n} className="p-4 rounded-xl flex gap-4" style={{ backgroundColor: cardBg, border: `1px solid ${cardBorder}` }}>
+                <div key={tip.n} className="p-4 rounded-xl flex gap-4" style={{ backgroundColor: t.bgSubtle, border: `1px solid ${t.border}` }}>
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-bold"
-                    style={{ backgroundColor: btnPrimaryBg, color: btnPrimaryFg }}>{tip.n}</div>
+                    style={{ backgroundColor: t.fg, color: isDark ? '#000' : '#fff' }}>{tip.n}</div>
                   <div>
-                    <h3 className="font-medium mb-1 text-sm" style={{ color: textPrimary }}>{tip.title}</h3>
-                    <p className="text-sm" style={{ color: textMuted }}>{tip.desc}</p>
+                    <h3 className="font-medium mb-1 text-sm" style={{ color: t.fg }}>{tip.title}</h3>
+                    <p className="text-sm" style={{ color: t.fgMuted }}>{tip.desc}</p>
                   </div>
                 </div>
               ))}
-              <div className="p-4 rounded-xl" style={{ backgroundColor: cardBg, border: `1px solid ${cardBorder}` }}>
-                <p className="text-sm" style={{ color: textSecondary }}>
+              <div className="p-4 rounded-xl" style={{ backgroundColor: t.bgSubtle, border: `1px solid ${t.border}` }}>
+                <p className="text-sm" style={{ color: t.fgSecondary }}>
                   {selectedForums.size > 0
                     ? <>You&apos;ve selected <strong>{selectedForums.size}</strong> forum{selectedForums.size !== 1 ? 's' : ''}. Click &quot;Get Started&quot; to load your feed!</>
                     : <>You haven&apos;t selected any forums yet. You can always add forums later from &quot;Communities&quot;.</>}
@@ -215,15 +202,15 @@ export function OnboardingWizard({ onComplete, onSkip }: OnboardingWizardProps) 
         </div>
 
         {/* Navigation */}
-        <div className="flex justify-between items-center px-8 py-4" style={{ borderTop: `1px solid ${cardBorder}` }}>
+        <div className="flex justify-between items-center px-8 py-4" style={{ borderTop: `1px solid ${t.border}` }}>
           <button onClick={handleBack} disabled={currentStep === 0}
             className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition-opacity disabled:opacity-30"
-            style={{ color: textMuted }}>
+            style={{ color: t.fgMuted }}>
             <ChevronLeft className="w-4 h-4" /> Back
           </button>
           <button onClick={handleNext}
             className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium rounded-lg transition-opacity"
-            style={{ backgroundColor: btnPrimaryBg, color: btnPrimaryFg }}>
+            style={{ backgroundColor: t.fg, color: isDark ? '#000' : '#fff' }}>
             {currentStep === STEPS.length - 1 ? 'Get Started' : 'Next'}
             {currentStep < STEPS.length - 1 && <ChevronRight className="w-4 h-4" />}
           </button>

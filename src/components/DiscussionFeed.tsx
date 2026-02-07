@@ -9,7 +9,7 @@ import { DiscussionSkeletonList } from './DiscussionSkeleton';
 import { FeedFilters } from './FeedFilters';
 import { ForumLoadingState } from '@/hooks/useDiscussions';
 import { format, isToday, isThisWeek, isThisMonth } from 'date-fns';
-import { Trash2 } from 'lucide-react';
+import { c } from '@/lib/theme';
 
 const MemoizedDiscussionItem = memo(DiscussionItem);
 
@@ -55,6 +55,7 @@ export function DiscussionFeed({
   const [selectedForumId, setSelectedForumId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>('recent');
+  const t = c(isDark);
 
   // Listen for command menu events
   useEffect(() => {
@@ -70,11 +71,6 @@ export function DiscussionFeed({
       window.removeEventListener('selectSort', handleSelectSort);
     };
   }, []);
-
-  const borderColor = isDark ? '#27272a' : 'rgba(0,0,0,0.06)';
-  const textPrimary = isDark ? '#fafafa' : '#09090b';
-  const textSecondary = isDark ? '#e4e4e7' : '#3f3f46';
-  const textMuted = isDark ? '#a1a1aa' : '#52525b';
 
   // Map cname → category for filtering
   const forumCategoryMap = useMemo(() => {
@@ -151,12 +147,12 @@ export function DiscussionFeed({
       <header className="px-5 sm:px-6 pt-5 pb-3 flex-shrink-0">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold" style={{ color: textPrimary }}>
+            <h1 className="text-xl sm:text-2xl font-bold" style={{ color: t.fg }}>
               {selectedCategory
                 ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Discussions`
                 : 'All Discussions'}
             </h1>
-            <p className="mt-0.5 text-sm" style={{ color: textMuted }}>
+            <p className="mt-0.5 text-sm" style={{ color: t.fgMuted }}>
               {unreadCount > 0 ? `${unreadCount} unread across ` : ''}
               {forums.filter(f => f.isEnabled).length} forums
               {lastUpdated && ` · Updated ${format(lastUpdated, 'h:mm a')}`}
@@ -167,8 +163,8 @@ export function DiscussionFeed({
               <button
                 onClick={() => onMarkAllAsRead(displayedDiscussions.map(d => d.refId))}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
-                style={{ color: textSecondary }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'; }}
+                style={{ color: t.fgSecondary }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = t.bgSubtle; }}
                 onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
               >
                 <CheckCheck className="w-4 h-4" /> Mark read
@@ -176,7 +172,7 @@ export function DiscussionFeed({
             )}
             <button onClick={onRefresh} disabled={isLoading}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
-              style={{ backgroundColor: isDark ? '#1f1f23' : 'rgba(0,0,0,0.05)', color: textSecondary }}>
+              style={{ backgroundColor: t.bgCardHover, color: t.fgSecondary }}>
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
               {isLoading ? 'Loading...' : 'Refresh'}
             </button>
@@ -193,11 +189,9 @@ export function DiscussionFeed({
         sortBy={sortBy} onSortChange={setSortBy} isDark={isDark}
       />
 
-      {/* Defunct forums - subtle inline note, not a loud banner */}
-
       {/* Loading progress */}
       {isLoading && forumStates.length > 0 && (
-        <div className="px-5 py-1.5 border-b text-xs" style={{ borderColor, color: textMuted }}>
+        <div className="px-5 py-1.5 border-b text-xs" style={{ borderColor: t.border, color: t.fgMuted }}>
           Loading: {forumStates.filter(s => s.status === 'success' || s.status === 'error').length}/{forumStates.length}
           {forumStates.filter(s => s.status === 'error').length > 0 && (
             <span style={{ color: '#ef4444' }}> ({forumStates.filter(s => s.status === 'error').length} failed)</span>
@@ -211,10 +205,10 @@ export function DiscussionFeed({
           <DiscussionSkeletonList count={8} isDark={isDark} />
         ) : displayedDiscussions.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center"
-            style={{ borderColor: isDark ? '#27272a' : 'rgba(0,0,0,0.08)' }}>
-            <MessageSquare className="h-8 w-8 mb-4" style={{ color: textMuted }} />
-            <h3 className="font-semibold" style={{ color: textPrimary }}>No discussions found</h3>
-            <p className="mt-1 text-sm" style={{ color: textMuted }}>
+            style={{ borderColor: t.border }}>
+            <MessageSquare className="h-8 w-8 mb-4" style={{ color: t.fgMuted }} />
+            <h3 className="font-semibold" style={{ color: t.fg }}>No discussions found</h3>
+            <p className="mt-1 text-sm" style={{ color: t.fgMuted }}>
               {forums.length === 0 ? 'Add forums in Communities to get started' :
                enabledForumIds.length === 0 ? 'Enable forums to see discussions' :
                searchQuery ? 'Try a different search term' :
@@ -238,7 +232,7 @@ export function DiscussionFeed({
               <div className="py-3 flex justify-center">
                 <button onClick={() => setDisplayCount(prev => prev + 20)}
                   className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                  style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', color: textSecondary }}>
+                  style={{ backgroundColor: t.bgSubtle, color: t.fgSecondary }}>
                   Load more ({filteredAndSortedDiscussions.length - displayCount} remaining)
                 </button>
               </div>

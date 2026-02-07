@@ -2,6 +2,7 @@
 
 import { ArrowUpDown } from 'lucide-react';
 import { DateRangeFilter, DateFilterMode, SortOption, Forum } from '@/types';
+import { c } from '@/lib/theme';
 
 interface FeedFiltersProps {
   dateRange: DateRangeFilter;
@@ -55,11 +56,7 @@ export function FeedFilters({
   forums, sortBy, onSortChange,
   isDark = true,
 }: FeedFiltersProps) {
-  const borderColor = isDark ? '#27272a' : 'rgba(0,0,0,0.06)';
-  const textMuted = isDark ? '#a1a1aa' : '#52525b';
-  const textSecondary = isDark ? '#e4e4e7' : '#3f3f46';
-  const activeBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
-  const selectBg = isDark ? '#18181b' : 'rgba(0,0,0,0.03)';
+  const t = c(isDark);
 
   // Filter forums by selected category for the dropdown
   const filteredForums = selectedCategory
@@ -73,7 +70,7 @@ export function FeedFilters({
   }));
 
   return (
-    <div className="flex flex-wrap items-center gap-2 px-5 py-2.5 border-b text-[13px]" style={{ borderColor }}>
+    <div className="flex flex-wrap items-center gap-2 px-5 py-2.5 border-b text-[13px]" style={{ borderColor: t.border }}>
       {/* Category filter */}
       <div className="flex items-center gap-0.5">
         {categoryCounts.filter(c => c.count > 0 || c.value === null).map((opt) => (
@@ -81,8 +78,8 @@ export function FeedFilters({
             onClick={() => { onCategoryChange(opt.value); onForumFilterChange(null); }}
             className="px-2.5 py-1 rounded-md font-medium transition-colors"
             style={{
-              backgroundColor: selectedCategory === opt.value ? activeBg : 'transparent',
-              color: selectedCategory === opt.value ? textSecondary : textMuted,
+              backgroundColor: selectedCategory === opt.value ? t.bgActive : 'transparent',
+              color: selectedCategory === opt.value ? t.fgSecondary : t.fgMuted,
             }}>
             {opt.label}
             {opt.value !== null && <span className="ml-1 opacity-60">{opt.count}</span>}
@@ -90,23 +87,23 @@ export function FeedFilters({
         ))}
       </div>
 
-      <div className="w-px h-4" style={{ backgroundColor: borderColor }} />
+      <div className="w-px h-4" style={{ backgroundColor: t.border }} />
 
       {/* Date filter mode */}
       <div className="flex items-center gap-0.5">
         <button onClick={() => onDateFilterModeChange('created')}
           className="px-2 py-1 rounded-md font-medium transition-colors"
-          style={{ backgroundColor: dateFilterMode === 'created' ? activeBg : 'transparent', color: dateFilterMode === 'created' ? textSecondary : textMuted }}>
+          style={{ backgroundColor: dateFilterMode === 'created' ? t.bgActive : 'transparent', color: dateFilterMode === 'created' ? t.fgSecondary : t.fgMuted }}>
           Created
         </button>
         <button onClick={() => onDateFilterModeChange('activity')}
           className="px-2 py-1 rounded-md font-medium transition-colors"
-          style={{ backgroundColor: dateFilterMode === 'activity' ? activeBg : 'transparent', color: dateFilterMode === 'activity' ? textSecondary : textMuted }}>
+          style={{ backgroundColor: dateFilterMode === 'activity' ? t.bgActive : 'transparent', color: dateFilterMode === 'activity' ? t.fgSecondary : t.fgMuted }}>
           Activity
         </button>
       </div>
 
-      <div className="w-px h-4" style={{ backgroundColor: borderColor }} />
+      <div className="w-px h-4" style={{ backgroundColor: t.border }} />
 
       {/* Date range */}
       <div className="flex items-center gap-0.5">
@@ -114,20 +111,20 @@ export function FeedFilters({
           <button key={option.value}
             onClick={() => onDateRangeChange(option.value)}
             className="px-2 py-1 rounded-md font-medium transition-colors"
-            style={{ backgroundColor: dateRange === option.value ? activeBg : 'transparent', color: dateRange === option.value ? textSecondary : textMuted }}>
+            style={{ backgroundColor: dateRange === option.value ? t.bgActive : 'transparent', color: dateRange === option.value ? t.fgSecondary : t.fgMuted }}>
             {option.label}
           </button>
         ))}
       </div>
 
-      <div className="w-px h-4" style={{ backgroundColor: borderColor }} />
+      <div className="w-px h-4" style={{ backgroundColor: t.border }} />
 
       {/* Forum filter */}
       {filteredForums.length > 0 && (
         <select value={selectedForumId || ''}
           onChange={(e) => onForumFilterChange(e.target.value || null)}
           className="px-2 py-1 rounded-md font-medium transition-colors cursor-pointer"
-          style={{ backgroundColor: selectedForumId ? activeBg : selectBg, color: textSecondary, border: 'none', fontSize: '13px' }}>
+          style={{ backgroundColor: selectedForumId ? t.bgActive : t.bgInput, color: t.fgSecondary, border: 'none', fontSize: '13px' }}>
           <option value="">{selectedCategory ? `All ${selectedCategory}` : 'All forums'}</option>
           {filteredForums.map((forum) => (
             <option key={forum.id} value={forum.id}>{forum.name}</option>
@@ -137,11 +134,11 @@ export function FeedFilters({
 
       {/* Sort */}
       <div className="flex items-center gap-1 ml-auto">
-        <ArrowUpDown className="w-3 h-3" style={{ color: textMuted }} />
+        <ArrowUpDown className="w-3 h-3" style={{ color: t.fgMuted }} />
         <select value={sortBy}
           onChange={(e) => onSortChange(e.target.value as SortOption)}
           className="px-2 py-1 rounded-md font-medium transition-colors cursor-pointer"
-          style={{ backgroundColor: selectBg, color: textSecondary, border: 'none', fontSize: '13px' }}>
+          style={{ backgroundColor: t.bgInput, color: t.fgSecondary, border: 'none', fontSize: '13px' }}>
           {SORT_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>{option.label}</option>
           ))}

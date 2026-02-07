@@ -3,6 +3,7 @@
 import { format, isToday, isYesterday } from 'date-fns';
 import { MessageSquare, Eye, ThumbsUp, Pin, Lock, Archive, Bookmark, BookmarkCheck, Clock, Sparkles } from 'lucide-react';
 import { DiscussionTopic, KeywordAlert } from '@/types';
+import { c } from '@/lib/theme';
 
 function isValidImageUrl(url: string | undefined): boolean {
   if (!url) return false;
@@ -72,32 +73,26 @@ export function DiscussionItem({
 }: DiscussionItemProps) {
   const topicUrl = `${topic.forumUrl}/t/${topic.slug}/${topic.id}`;
   const activity = getActivityLevel(topic);
-
-  const fg = isDark ? '#ffffff' : '#09090b';
-  const fgMuted = isDark ? '#e5e5e5' : '#3f3f46';
-  const fgDim = isDark ? '#a3a3a3' : '#52525b';
-  const border = isDark ? '#27272a' : 'rgba(0,0,0,0.08)';
-  const cardBg = isDark ? '#18181b' : 'rgba(0,0,0,0.02)';
-  const badgeBg = isDark ? '#1f1f23' : 'rgba(0,0,0,0.05)';
+  const t = c(isDark);
 
   return (
     <article
       className="group relative overflow-hidden rounded-lg border transition-all duration-150"
       style={{
-        borderColor: isRead ? (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)') : border,
-        backgroundColor: isRead ? 'transparent' : cardBg,
+        borderColor: isRead ? t.readBorder : t.border,
+        backgroundColor: isRead ? 'transparent' : t.bgCard,
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.borderColor = isDark ? '#333333' : 'rgba(0,0,0,0.12)'; }}
-      onMouseLeave={(e) => { e.currentTarget.style.borderColor = isRead ? (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)') : border; }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = t.hoverBorder; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = isRead ? t.readBorder : t.border; }}
     >
       {/* Unread indicator */}
-      {!isRead && <div className="absolute left-0 top-0 h-full w-0.5" style={{ backgroundColor: fg }} />}
+      {!isRead && <div className="absolute left-0 top-0 h-full w-0.5" style={{ backgroundColor: t.fg }} />}
 
       <div className="px-3 py-2.5 sm:px-4 sm:py-3">
         <div className="flex items-start gap-3">
           {/* Forum logo */}
           <div className="mt-0.5 hidden h-8 w-8 flex-shrink-0 items-center justify-center rounded-md sm:flex overflow-hidden"
-            style={{ backgroundColor: badgeBg }}>
+            style={{ backgroundColor: t.bgBadge }}>
             {isValidImageUrl(forumLogoUrl) ? (
               <img src={forumLogoUrl} alt="" className="w-5 h-5 object-contain" referrerPolicy="no-referrer"
                 onError={(e) => {
@@ -107,7 +102,7 @@ export function DiscussionItem({
                   if (fallback) fallback.style.display = '';
                 }} />
             ) : null}
-            <span data-fallback className="text-xs font-bold" style={{ color: fg, display: isValidImageUrl(forumLogoUrl) ? 'none' : '' }}>
+            <span data-fallback className="text-xs font-bold" style={{ color: t.fg, display: isValidImageUrl(forumLogoUrl) ? 'none' : '' }}>
               {topic.protocol.slice(0, 2).toUpperCase()}
             </span>
           </div>
@@ -117,30 +112,30 @@ export function DiscussionItem({
             {/* Title row */}
             <div className="flex items-center gap-2 flex-wrap">
               <span className="px-1.5 py-0.5 text-[11px] font-medium rounded border capitalize flex-shrink-0"
-                style={{ borderColor: border, backgroundColor: badgeBg, color: fgMuted }}>
+                style={{ borderColor: t.border, backgroundColor: t.bgBadge, color: t.fgSecondary }}>
                 {topic.protocol}
               </span>
               {topic.tags.slice(0, 2).map((tag) => {
                 const tagName = typeof tag === 'string' ? tag : (tag as { name: string }).name;
                 return (
                   <span key={tagName} className="px-1.5 py-0.5 text-[11px] font-medium rounded flex-shrink-0"
-                    style={{ backgroundColor: badgeBg, color: fgDim }}>
+                    style={{ backgroundColor: t.bgBadge, color: t.fgDim }}>
                     {tagName}
                   </span>
                 );
               })}
               {isNewTopic(topic.createdAt) && (
-                <span className="flex items-center gap-0.5 text-[11px] font-medium flex-shrink-0" style={{ color: fgDim }}>
+                <span className="flex items-center gap-0.5 text-[11px] font-medium flex-shrink-0" style={{ color: t.fgDim }}>
                   <Sparkles className="w-3 h-3" /> new
                 </span>
               )}
               {activity === 'hot' && (
-                <span className="text-[11px] font-medium flex-shrink-0" style={{ color: fgDim }}>hot</span>
+                <span className="text-[11px] font-medium flex-shrink-0" style={{ color: t.fgDim }}>hot</span>
               )}
             </div>
 
             <h3 className="mt-1 text-sm sm:text-[15px] font-medium leading-snug line-clamp-2"
-              style={{ color: isRead ? (isDark ? 'rgba(250,250,250,0.4)' : 'rgba(9,9,11,0.4)') : fg }}>
+              style={{ color: isRead ? t.readFg : t.fg }}>
               <a href={topicUrl} target="_blank" rel="noopener noreferrer"
                 onClick={() => { if (!isRead && onMarkAsRead) onMarkAsRead(topic.refId); }}
                 className="hover:underline">
@@ -149,7 +144,7 @@ export function DiscussionItem({
             </h3>
 
             {/* Meta inline */}
-            <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]" style={{ color: fgDim }}>
+            <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]" style={{ color: t.fgDim }}>
               <span className="flex items-center gap-1"><MessageSquare className="h-3 w-3" />{topic.replyCount}</span>
               <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{topic.views.toLocaleString()}</span>
               {topic.likeCount > 0 && <span className="flex items-center gap-1"><ThumbsUp className="h-3 w-3" />{topic.likeCount}</span>}
@@ -164,7 +159,7 @@ export function DiscussionItem({
           {onToggleBookmark && (
             <button onClick={() => onToggleBookmark(topic)}
               className={`p-1.5 rounded-md transition-all flex-shrink-0 ${isBookmarked ? '' : 'opacity-0 group-hover:opacity-60'}`}
-              style={{ color: fgDim }}>
+              style={{ color: t.fgDim }}>
               {isBookmarked ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
             </button>
           )}

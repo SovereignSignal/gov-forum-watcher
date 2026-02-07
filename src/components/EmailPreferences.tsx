@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Mail, Bell, Flame, Sparkles, Check, Loader2, Send } from 'lucide-react';
 import { DigestPreferences, DigestFrequency } from '@/types';
 import { useAuth } from './AuthProvider';
+import { c } from '@/lib/theme';
 
 interface EmailPreferencesProps {
   onSave?: (prefs: DigestPreferences) => void;
@@ -25,12 +26,7 @@ export function EmailPreferences({ onSave }: EmailPreferencesProps) {
   const [testMessage, setTestMessage] = useState<string | null>(null);
 
   const isDark = typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') || !document.documentElement.classList.contains('light') : true;
-  const fg = isDark ? '#ffffff' : '#09090b';
-  const fgMuted = isDark ? '#e5e5e5' : '#3f3f46';
-  const fgDim = isDark ? '#a3a3a3' : '#52525b';
-  const border = isDark ? '#27272a' : 'rgba(0,0,0,0.08)';
-  const cardBg = isDark ? '#18181b' : 'rgba(0,0,0,0.02)';
-  const activeBg = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+  const t = c(isDark);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -86,26 +82,26 @@ export function EmailPreferences({ onSave }: EmailPreferencesProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-1 flex items-center gap-2" style={{ color: fg }}>
-          <Mail className="w-5 h-5" style={{ color: fgMuted }} />
+        <h3 className="text-lg font-semibold mb-1 flex items-center gap-2" style={{ color: t.fg }}>
+          <Mail className="w-5 h-5" style={{ color: t.fgMuted }} />
           Email Digests
         </h3>
-        <p className="text-sm" style={{ color: fgDim }}>
+        <p className="text-sm" style={{ color: t.fgDim }}>
           Get AI-powered summaries of forum activity delivered to your inbox
         </p>
       </div>
 
       {userEmail && (
-        <div className="p-3 rounded-lg" style={{ backgroundColor: cardBg, border: `1px solid ${border}` }}>
+        <div className="p-3 rounded-lg" style={{ backgroundColor: t.bgCard, border: `1px solid ${t.border}` }}>
           <div className="text-sm">
-            <span style={{ color: fgDim }}>Sending to: </span>
-            <span className="font-medium" style={{ color: fg }}>{userEmail}</span>
+            <span style={{ color: t.fgDim }}>Sending to: </span>
+            <span className="font-medium" style={{ color: t.fg }}>{userEmail}</span>
           </div>
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-medium mb-3" style={{ color: fg }}>Digest Frequency</label>
+        <label className="block text-sm font-medium mb-3" style={{ color: t.fg }}>Digest Frequency</label>
         <div className="grid grid-cols-3 gap-3">
           {(['daily', 'weekly', 'never'] as DigestFrequency[]).map((freq) => {
             const isActive = prefs.frequency === freq;
@@ -113,9 +109,9 @@ export function EmailPreferences({ onSave }: EmailPreferencesProps) {
               <button key={freq} onClick={() => handleFrequencyChange(freq)}
                 className="p-3 rounded-lg text-sm font-medium transition-all"
                 style={{
-                  backgroundColor: isActive ? activeBg : cardBg,
-                  border: `1px solid ${isActive ? (isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)') : border}`,
-                  color: isActive ? fg : fgMuted,
+                  backgroundColor: isActive ? t.bgActiveStrong : t.bgCard,
+                  border: `1px solid ${isActive ? t.borderActive : t.border}`,
+                  color: isActive ? t.fg : t.fgMuted,
                 }}>
                 {freq === 'daily' && '📅 Daily'}
                 {freq === 'weekly' && '📆 Weekly'}
@@ -128,25 +124,22 @@ export function EmailPreferences({ onSave }: EmailPreferencesProps) {
 
       {prefs.frequency !== 'never' && (
         <div>
-          <label className="block text-sm font-medium mb-3" style={{ color: fg }}>Include in Digest</label>
+          <label className="block text-sm font-medium mb-3" style={{ color: t.fg }}>Include in Digest</label>
           <div className="space-y-3">
             <ToggleOption checked={prefs.includeHotTopics} onChange={() => handleToggle('includeHotTopics')}
-              icon={<Flame className="w-4 h-4" />} label="Hot Topics" description="Most discussed and viewed proposals"
-              fg={fg} fgDim={fgDim} border={border} cardBg={cardBg} activeBg={activeBg} isDark={isDark} />
+              icon={<Flame className="w-4 h-4" />} label="Hot Topics" description="Most discussed and viewed proposals" t={t} isDark={isDark} />
             <ToggleOption checked={prefs.includeNewProposals} onChange={() => handleToggle('includeNewProposals')}
-              icon={<Sparkles className="w-4 h-4" />} label="New Proposals" description="Recently created discussions"
-              fg={fg} fgDim={fgDim} border={border} cardBg={cardBg} activeBg={activeBg} isDark={isDark} />
+              icon={<Sparkles className="w-4 h-4" />} label="New Proposals" description="Recently created discussions" t={t} isDark={isDark} />
             <ToggleOption checked={prefs.includeKeywordMatches} onChange={() => handleToggle('includeKeywordMatches')}
-              icon={<Bell className="w-4 h-4" />} label="Keyword Alerts" description="Matches for your tracked keywords"
-              fg={fg} fgDim={fgDim} border={border} cardBg={cardBg} activeBg={activeBg} isDark={isDark} />
+              icon={<Bell className="w-4 h-4" />} label="Keyword Alerts" description="Matches for your tracked keywords" t={t} isDark={isDark} />
           </div>
         </div>
       )}
 
-      <div className="flex flex-wrap gap-3 pt-4 border-t" style={{ borderColor: border }}>
+      <div className="flex flex-wrap gap-3 pt-4 border-t" style={{ borderColor: t.border }}>
         <button onClick={handleSave} disabled={isSaving}
           className="flex items-center gap-2 px-4 py-2 font-medium rounded-lg transition-colors disabled:opacity-50"
-          style={{ backgroundColor: fg, color: isDark ? '#000000' : '#fafafa' }}>
+          style={{ backgroundColor: t.fg, color: isDark ? '#000000' : '#fafafa' }}>
           {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
           Save Preferences
         </button>
@@ -154,7 +147,7 @@ export function EmailPreferences({ onSave }: EmailPreferencesProps) {
         {prefs.frequency !== 'never' && userEmail && (
           <button onClick={handleSendTest} disabled={isSendingTest}
             className="flex items-center gap-2 px-4 py-2 font-medium rounded-lg transition-colors disabled:opacity-50"
-            style={{ backgroundColor: cardBg, border: `1px solid ${border}`, color: fgMuted }}>
+            style={{ backgroundColor: t.bgCard, border: `1px solid ${t.border}`, color: t.fgMuted }}>
             {isSendingTest ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             Send Test Email
           </button>
@@ -177,7 +170,7 @@ export function EmailPreferences({ onSave }: EmailPreferencesProps) {
       {prefs.frequency !== 'never' && (
         <div className="text-sm">
           <a href="/api/digest?format=html&period=weekly" target="_blank" rel="noopener noreferrer"
-            style={{ color: fgMuted }} className="hover:underline">
+            style={{ color: t.fgMuted }} className="hover:underline">
             Preview digest email →
           </a>
         </div>
@@ -186,30 +179,30 @@ export function EmailPreferences({ onSave }: EmailPreferencesProps) {
   );
 }
 
-function ToggleOption({ checked, onChange, icon, label, description, fg, fgDim, border, cardBg, activeBg, isDark }: {
+function ToggleOption({ checked, onChange, icon, label, description, t, isDark }: {
   checked: boolean; onChange: () => void; icon: React.ReactNode; label: string; description: string;
-  fg: string; fgDim: string; border: string; cardBg: string; activeBg: string; isDark: boolean;
+  t: ReturnType<typeof c>; isDark: boolean;
 }) {
   return (
     <button onClick={onChange}
       className="flex items-start gap-3 w-full p-3 rounded-lg text-left transition-all"
       style={{
-        backgroundColor: checked ? activeBg : cardBg,
-        border: `1px solid ${checked ? (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)') : border}`,
+        backgroundColor: checked ? t.bgActiveStrong : t.bgCard,
+        border: `1px solid ${checked ? t.borderActive : t.border}`,
       }}>
       <div className="mt-0.5 w-5 h-5 rounded border flex items-center justify-center"
         style={{
-          backgroundColor: checked ? fg : 'transparent',
-          borderColor: checked ? fg : border,
+          backgroundColor: checked ? t.fg : 'transparent',
+          borderColor: checked ? t.fg : t.border,
         }}>
         {checked && <Check className="w-3 h-3" style={{ color: isDark ? '#000000' : '#fafafa' }} />}
       </div>
       <div className="flex-1">
         <div className="flex items-center gap-2">
-          <span style={{ color: fgDim }}>{icon}</span>
-          <span className="font-medium" style={{ color: fg }}>{label}</span>
+          <span style={{ color: t.fgDim }}>{icon}</span>
+          <span className="font-medium" style={{ color: t.fg }}>{label}</span>
         </div>
-        <p className="text-sm mt-0.5" style={{ color: fgDim }}>{description}</p>
+        <p className="text-sm mt-0.5" style={{ color: t.fgDim }}>{description}</p>
       </div>
     </button>
   );

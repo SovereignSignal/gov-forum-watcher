@@ -3,6 +3,7 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { LogIn, Loader2, Globe, Zap, Bell, Shield, ArrowRight, Sun, Moon } from 'lucide-react';
 import { useAuth } from './AuthProvider';
+import { c } from '@/lib/theme';
 
 interface AuthGateProps {
   children: ReactNode;
@@ -14,9 +15,7 @@ export function AuthGate({ children }: AuthGateProps) {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('discuss-watch-theme') as 'dark' | 'light' | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    }
+    if (savedTheme) setTheme(savedTheme);
   }, []);
 
   const toggleTheme = () => {
@@ -25,22 +24,20 @@ export function AuthGate({ children }: AuthGateProps) {
     localStorage.setItem('discuss-watch-theme', newTheme);
     document.documentElement.classList.toggle('light', newTheme === 'light');
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
-    // Dispatch custom event so Privy can update its theme
     window.dispatchEvent(new Event('themechange'));
   };
 
   const isDark = theme === 'dark';
+  const t = c(isDark);
 
   // Dev bypass
-  if (process.env.NODE_ENV === 'development' && !isConfigured) {
-    return <>{children}</>;
-  }
+  if (process.env.NODE_ENV === 'development' && !isConfigured) return <>{children}</>;
 
   // Loading
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: isDark ? '#0a0a0f' : '#f8f9fa' }}>
-        <Loader2 className="w-8 h-8 text-zinc-400 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: t.bg }}>
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: t.fgMuted }} />
       </div>
     );
   }
@@ -48,11 +45,11 @@ export function AuthGate({ children }: AuthGateProps) {
   // Not configured
   if (!isConfigured) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: isDark ? '#0a0a0f' : '#f8f9fa' }}>
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: t.bg }}>
         <div className="text-center max-w-md">
           <span className="text-5xl block mb-4">👁️‍🗨️</span>
-          <h1 className="text-2xl font-bold mb-2" style={{ color: isDark ? '#fff' : '#111827' }}>discuss.watch</h1>
-          <p style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>
+          <h1 className="text-2xl font-bold mb-2" style={{ color: t.fg }}>discuss.watch</h1>
+          <p style={{ color: t.fgMuted }}>
             Authentication not configured. Set up Privy to enable login.
           </p>
         </div>
@@ -60,161 +57,148 @@ export function AuthGate({ children }: AuthGateProps) {
     );
   }
 
-  // Allow access only if authenticated
-  if (isAuthenticated) {
-    return <>{children}</>;
-  }
+  // Authenticated - show children
+  if (isAuthenticated) return <>{children}</>;
 
-  // Not authenticated and not guest - show login
-    return (
-      <div className="min-h-screen flex" style={{ backgroundColor: isDark ? '#0a0a0f' : '#f8f9fa' }}>
-        {/* Left - Features (desktop only) */}
-        <div 
-          className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 border-r"
-          style={{
-            background: isDark 
-              ? 'linear-gradient(135deg, rgba(49,46,129,0.3) 0%, #171717 50%, #171717 100%)' 
-              : 'linear-gradient(135deg, rgba(199,210,254,0.5) 0%, #ffffff 50%, #ffffff 100%)',
-            borderColor: isDark ? '#27272a' : '#e5e7eb'
-          }}
-        >
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-3xl">👁️‍🗨️</span>
-              <span className="font-bold text-2xl" style={{ color: isDark ? '#fff' : '#111827' }}>discuss.watch</span>
-            </div>
-            <p style={{ color: isDark ? '#6b7280' : '#6b7280' }}>Unified forum feed</p>
+  // Not authenticated - show login
+  return (
+    <div className="min-h-screen flex" style={{ backgroundColor: t.bg }}>
+      {/* Left - Features (desktop only) */}
+      <div
+        className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 border-r"
+        style={{
+          background: isDark
+            ? 'linear-gradient(135deg, rgba(49,46,129,0.3) 0%, #171717 50%, #171717 100%)'
+            : 'linear-gradient(135deg, rgba(199,210,254,0.5) 0%, #ffffff 50%, #ffffff 100%)',
+          borderColor: t.border
+        }}
+      >
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-3xl">👁️‍🗨️</span>
+            <span className="font-bold text-2xl" style={{ color: t.fg }}>discuss.watch</span>
           </div>
-
-          <div className="space-y-8">
-            <h2 className="text-3xl font-bold leading-tight" style={{ color: isDark ? '#fff' : '#111827' }}>
-              All your forums.<br />
-              <span className="text-zinc-400">One feed.</span>
-            </h2>
-            
-            <div className="space-y-4">
-              <FeatureItem icon={<Globe className="w-5 h-5" />} title="100+ Forums" description="Crypto, AI, and open source communities" isDark={isDark} />
-              <FeatureItem icon={<Zap className="w-5 h-5" />} title="Save Hours" description="One feed instead of dozens of tabs" isDark={isDark} />
-              <FeatureItem icon={<Bell className="w-5 h-5" />} title="Keyword Alerts" description="Never miss important discussions" isDark={isDark} />
-              <FeatureItem icon={<Shield className="w-5 h-5" />} title="Privacy First" description="Optional sync, works offline" isDark={isDark} />
-            </div>
-          </div>
-
-          <p style={{ color: '#6b7280' }} className="text-sm">
-            Open source • No tracking • Free forever
-          </p>
+          <p style={{ color: t.fgDim }}>Unified forum feed</p>
         </div>
 
-        {/* Right - Sign in */}
-        <div className="flex-1 flex flex-col">
-          {/* Theme toggle */}
-          <div className="flex justify-end p-4">
-            <button
-              onClick={toggleTheme}
-              className="p-2.5 rounded-lg transition-colors"
-              style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }}
-              aria-label="Toggle theme"
-            >
-              {isDark ? <Sun className="w-5 h-5" style={{ color: '#fff' }} /> : <Moon className="w-5 h-5" style={{ color: '#111827' }} />}
-            </button>
-          </div>
+        <div className="space-y-8">
+          <h2 className="text-3xl font-bold leading-tight" style={{ color: t.fg }}>
+            All your forums.<br />
+            <span style={{ color: t.fgMuted }}>One feed.</span>
+          </h2>
 
-          <div className="flex-1 flex items-center justify-center p-8">
-            <div className="w-full max-w-md">
-              {/* Mobile header */}
-              <div className="lg:hidden text-center mb-8">
-                <span className="text-4xl block mb-2">👁️‍🗨️</span>
-                <h1 className="text-2xl font-bold" style={{ color: isDark ? '#fff' : '#111827' }}>discuss.watch</h1>
-                <p className="text-sm mt-1" style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>
-                  All your forums, one feed
+          <div className="space-y-4">
+            <FeatureItem icon={<Globe className="w-5 h-5" />} title="100+ Forums" description="Crypto, AI, and open source communities" t={t} />
+            <FeatureItem icon={<Zap className="w-5 h-5" />} title="Save Hours" description="One feed instead of dozens of tabs" t={t} />
+            <FeatureItem icon={<Bell className="w-5 h-5" />} title="Keyword Alerts" description="Never miss important discussions" t={t} />
+            <FeatureItem icon={<Shield className="w-5 h-5" />} title="Privacy First" description="Optional sync, works offline" t={t} />
+          </div>
+        </div>
+
+        <p className="text-sm" style={{ color: t.fgDim }}>
+          Open source • No tracking • Free forever
+        </p>
+      </div>
+
+      {/* Right - Sign in */}
+      <div className="flex-1 flex flex-col">
+        {/* Theme toggle */}
+        <div className="flex justify-end p-4">
+          <button
+            onClick={toggleTheme}
+            className="p-2.5 rounded-lg transition-colors"
+            style={{ backgroundColor: t.bgActive }}
+            aria-label="Toggle theme"
+          >
+            {isDark ? <Sun className="w-5 h-5" style={{ color: t.fg }} /> : <Moon className="w-5 h-5" style={{ color: t.fg }} />}
+          </button>
+        </div>
+
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="w-full max-w-md">
+            {/* Mobile header */}
+            <div className="lg:hidden text-center mb-8">
+              <span className="text-4xl block mb-2">👁️‍🗨️</span>
+              <h1 className="text-2xl font-bold" style={{ color: t.fg }}>discuss.watch</h1>
+              <p className="text-sm mt-1" style={{ color: t.fgMuted }}>
+                All your forums, one feed
+              </p>
+            </div>
+
+            {/* Sign in card */}
+            <div className="rounded-2xl p-8" style={{ backgroundColor: t.bgCard, border: `1px solid ${t.border}` }}>
+              <div className="text-center mb-8">
+                <h2 className="text-xl font-semibold mb-2" style={{ color: t.fg }}>Welcome</h2>
+                <p className="text-sm" style={{ color: t.fgMuted }}>
+                  Sign in to sync your feed across devices
                 </p>
               </div>
 
-              {/* Sign in card */}
-              <div 
-                className="rounded-2xl p-8"
-                style={{
-                  backgroundColor: isDark ? '#18181b' : '#ffffff',
-                  border: `1px solid ${isDark ? '#27272a' : '#e5e7eb'}`
-                }}
+              <button
+                onClick={login}
+                className="flex items-center justify-center gap-2 w-full px-6 py-4 font-semibold rounded-xl transition-colors"
+                style={{ backgroundColor: t.fg, color: isDark ? '#000' : '#fff' }}
               >
-                <div className="text-center mb-8">
-                  <h2 className="text-xl font-semibold mb-2" style={{ color: isDark ? '#fff' : '#111827' }}>Welcome</h2>
-                  <p className="text-sm" style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>
-                    Sign in to sync your feed across devices
-                  </p>
-                </div>
+                <LogIn className="w-5 h-5" />
+                Sign In
+                <ArrowRight className="w-4 h-4" />
+              </button>
 
-                <button
-                  onClick={login}
-                  className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-zinc-700 hover:bg-zinc-600 text-white font-semibold rounded-xl transition-colors"
-                >
-                  <LogIn className="w-5 h-5" />
-                  Sign In
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-
-                <div className="mt-6 pt-6" style={{ borderTop: `1px solid ${isDark ? '#27272a' : '#e5e7eb'}` }}>
-                  <p className="text-center text-xs mb-4" style={{ color: isDark ? '#6b7280' : '#9ca3af' }}>
-                    Sign in with
-                  </p>
-                  <div className="flex justify-center gap-4 text-sm" style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>
-                    <span>Email</span>
-                    <span style={{ color: isDark ? '#404040' : '#d1d5db' }}>•</span>
-                    <span>Google</span>
-                    <span style={{ color: isDark ? '#404040' : '#d1d5db' }}>•</span>
-                    <span>Wallet</span>
-                  </div>
+              <div className="mt-6 pt-6" style={{ borderTop: `1px solid ${t.border}` }}>
+                <p className="text-center text-xs mb-4" style={{ color: t.fgDim }}>
+                  Sign in with
+                </p>
+                <div className="flex justify-center gap-4 text-sm" style={{ color: t.fgMuted }}>
+                  <span>Email</span>
+                  <span style={{ color: t.border }}>•</span>
+                  <span>Google</span>
+                  <span style={{ color: t.border }}>•</span>
+                  <span>Wallet</span>
                 </div>
               </div>
-
-              {/* Mobile benefits */}
-              <div className="lg:hidden mt-8 grid grid-cols-2 gap-3">
-                <MobileBenefit icon={<Globe className="w-4 h-4" />} text="100+ forums" isDark={isDark} />
-                <MobileBenefit icon={<Zap className="w-4 h-4" />} text="Save hours" isDark={isDark} />
-                <MobileBenefit icon={<Bell className="w-4 h-4" />} text="Alerts" isDark={isDark} />
-                <MobileBenefit icon={<Shield className="w-4 h-4" />} text="Private" isDark={isDark} />
-              </div>
-
-              <p className="text-center text-xs mt-8" style={{ color: '#6b7280' }}>
-                Free • Open Source • No tracking
-              </p>
             </div>
+
+            {/* Mobile benefits */}
+            <div className="lg:hidden mt-8 grid grid-cols-2 gap-3">
+              <MobileBenefit icon={<Globe className="w-4 h-4" />} text="100+ forums" t={t} />
+              <MobileBenefit icon={<Zap className="w-4 h-4" />} text="Save hours" t={t} />
+              <MobileBenefit icon={<Bell className="w-4 h-4" />} text="Alerts" t={t} />
+              <MobileBenefit icon={<Shield className="w-4 h-4" />} text="Private" t={t} />
+            </div>
+
+            <p className="text-center text-xs mt-8" style={{ color: t.fgDim }}>
+              Free • Open Source • No tracking
+            </p>
           </div>
         </div>
-      </div>
-    );
-}
-
-function FeatureItem({ icon, title, description, isDark }: { 
-  icon: React.ReactNode; 
-  title: string; 
-  description: string;
-  isDark: boolean;
-}) {
-  return (
-    <div className="flex items-start gap-3">
-      <div className="flex-shrink-0 w-10 h-10 bg-zinc-600/10 rounded-lg flex items-center justify-center text-zinc-400">
-        {icon}
-      </div>
-      <div>
-        <h3 className="font-medium" style={{ color: isDark ? '#fff' : '#111827' }}>{title}</h3>
-        <p className="text-sm" style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>{description}</p>
       </div>
     </div>
   );
 }
 
-function MobileBenefit({ icon, text, isDark }: { icon: React.ReactNode; text: string; isDark: boolean }) {
+function FeatureItem({ icon, title, description, t }: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  t: ReturnType<typeof c>;
+}) {
   return (
-    <div 
-      className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm"
-      style={{
-        backgroundColor: isDark ? 'rgba(38,38,38,0.5)' : 'rgba(249,250,251,1)',
-        color: isDark ? '#9ca3af' : '#6b7280'
-      }}
-    >
-      <span className="text-zinc-400">{icon}</span>
+    <div className="flex items-start gap-3">
+      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: t.bgActive, color: t.fgMuted }}>
+        {icon}
+      </div>
+      <div>
+        <h3 className="font-medium" style={{ color: t.fg }}>{title}</h3>
+        <p className="text-sm" style={{ color: t.fgMuted }}>{description}</p>
+      </div>
+    </div>
+  );
+}
+
+function MobileBenefit({ icon, text, t }: { icon: React.ReactNode; text: string; t: ReturnType<typeof c> }) {
+  return (
+    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style={{ backgroundColor: t.bgSubtle, color: t.fgMuted }}>
+      <span style={{ color: t.fgDim }}>{icon}</span>
       {text}
     </div>
   );
